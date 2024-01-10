@@ -127,25 +127,25 @@ impl Chip8 {
             [0x8,   _,   _, 0x3] => self.opcode_8xy3_bitwise_xor(lhs_register_index, rhs_register_index),
             [0x8,   _,   _, 0x4] => self.opcode_8xy4_add(lhs_register_index, rhs_register_index),
             [0x8,   _,   _, 0x5] => self.opcode_8xy5_sub_assign(lhs_register_index, rhs_register_index),
-            [0x8,   _,   _, 0x6] => self.opcode_8xy6(lhs_register_index, rhs_register_index),
-            [0x8,   _,   _, 0x7] => self.opcode_8xy7(lhs_register_index, rhs_register_index),
-            [0x8,   _,   _, 0xE] => self.opcode_8xyE(lhs_register_index, rhs_register_index),
-            [0x9,   _,   _, 0x0] => self.opcode_9xy0(lhs_register_index, rhs_register_index),
-            [0xA,   _,   _,   _] => self.opcode_Annn(address),
-            [0xB,   _,   _,   _] => self.opcode_Bnnn(address),
-            [0xC,   _,   _,   _] => self.opcode_Cxkk(lhs_register_index, value),
-            [0xD,   _,   _,   _] => self.opcode_Dxyn(lhs_register_index, rhs_register_index, height),
-            [0xE,   _, 0x9, 0xE] => self.opcode_Ex9E(lhs_register_index),
-            [0xE,   _, 0xA, 0x1] => self.opcode_ExA1(lhs_register_index),
-            [0xF,   _, 0x0, 0x7] => self.opcode_Fx07(lhs_register_index),
-            [0xF,   _, 0x0, 0xA] => self.opcode_Fx0A(lhs_register_index),
-            [0xF,   _, 0x1, 0x5] => self.opcode_Fx15(lhs_register_index),
-            [0xF,   _, 0x1, 0x8] => self.opcode_Fx18(lhs_register_index),
-            [0xF,   _, 0x1, 0xE] => self.opcode_Fx1E(lhs_register_index),
-            [0xF,   _, 0x2, 0x9] => self.opcode_Fx29(lhs_register_index),
-            [0xF,   _, 0x3, 0x3] => self.opcode_Fx33(lhs_register_index),
-            [0xF,   _, 0x5, 0x5] => self.opcode_Fx55(lhs_register_index),
-            [0xF,   _, 0x6, 0x5] => self.opcode_Fx65(lhs_register_index),
+            [0x8,   _,   _, 0x6] => self.opcode_8xy6_right_shift_assign(lhs_register_index, rhs_register_index),
+            [0x8,   _,   _, 0x7] => self.opcode_8xy7_sub_assign_reverse(lhs_register_index, rhs_register_index),
+            [0x8,   _,   _, 0xE] => self.opcode_8xyE_left_shift_assign(lhs_register_index, rhs_register_index),
+            [0x9,   _,   _, 0x0] => self.opcode_9xy0_skip_if_not_equal(lhs_register_index, rhs_register_index),
+            [0xA,   _,   _,   _] => self.opcode_Annn_load_i(address),
+            [0xB,   _,   _,   _] => self.opcode_Bnnn_jump_offset(address),
+            [0xC,   _,   _,   _] => self.opcode_Cxkk_random(lhs_register_index, value),
+            [0xD,   _,   _,   _] => self.opcode_Dxyn_draw_sprite(lhs_register_index, rhs_register_index, height),
+            [0xE,   _, 0x9, 0xE] => self.opcode_Ex9E_skip_if_key_pressed(lhs_register_index),
+            [0xE,   _, 0xA, 0x1] => self.opcode_ExA1_skip_if_key_not_pressed(lhs_register_index),
+            [0xF,   _, 0x0, 0x7] => self.opcode_Fx07_load_delay_timer(lhs_register_index),
+            [0xF,   _, 0x0, 0xA] => self.opcode_Fx0A_wait_for_key_press(lhs_register_index),
+            [0xF,   _, 0x1, 0x5] => self.opcode_Fx15_set_delay_timer(lhs_register_index),
+            [0xF,   _, 0x1, 0x8] => self.opcode_Fx18_set_sound_timer(lhs_register_index),
+            [0xF,   _, 0x1, 0xE] => self.opcode_Fx1E_add_assign_i(lhs_register_index),
+            [0xF,   _, 0x2, 0x9] => self.opcode_Fx299_load_sprite(lhs_register_index),
+            [0xF,   _, 0x3, 0x3] => self.opcode_Fx33_store_decimal(lhs_register_index),
+            [0xF,   _, 0x5, 0x5] => self.opcode_Fx55_store_registers_i(lhs_register_index),
+            [0xF,   _, 0x6, 0x5] => self.opcode_Fx65_read_registers_i(lhs_register_index),
             _ => eprintln!("Unknown opcode: {}", self.instruction),
         }
 
@@ -216,59 +216,62 @@ impl Chip8 {
     fn opcode_8xy5_sub_assign(&mut self, lhs_register_index: usize, rhs_register_index: usize) {}
 
     /// Stores the least significant bit of `V[x]` in `V[0xF]` and then shifts `V[x]` to the right by 1
-    fn opcode_8xy6(&mut self, lhs_register_index: usize, rhs_register_index: usize) {}
+    fn opcode_8xy6_right_shift_assign(&mut self, lhs_register_index: usize, rhs_register_index: usize) {}
 
     /// Sets `V[x]` to `V[y]` minus `V[x]`. `V[0xF]` is set to 0 when there's an underflow, and 1 when there is not
-    fn opcode_8xy7(&mut self, lhs_register_index: usize, rhs_register_index: usize) {}
+    fn opcode_8xy7_sub_assign_reverse(&mut self, lhs_register_index: usize, rhs_register_index: usize) {}
 
     /// Stores the most significant bit of `V[x]` in `V[0xF]` and then shifts `V[x]` to the left by 1
-    fn opcode_8xyE(&mut self, lhs_register_index: usize, rhs_register_index: usize) {}
+    fn opcode_8xyE_left_shift_assign(&mut self, lhs_register_index: usize, rhs_register_index: usize) {}
 
     /// Skips the next instruction if `V[x]` does not equal `V[y]`
-    fn opcode_9xy0(&mut self, lhs_register_index: usize, rhs_register_index: usize) {}
+    fn opcode_9xy0_skip_if_not_equal(&mut self, lhs_register_index: usize, rhs_register_index: usize) {}
 
     /// Sets I to the address nnn
-    fn opcode_Annn(&mut self, address: u16) {}
+    fn opcode_Annn_load_i(&mut self, address: u16) {}
 
-    /// Jumps to the address nnn plus V[0]
-    fn opcode_Bnnn(&mut self, address: u16) {}
+    /// Jumps to the address nnn plus `[0]`
+    fn opcode_Bnnn_jump_offset(&mut self, address: u16) {}
 
     /// Sets `V[x]` to the result of a bitwise and operation on a random number (Typically: 0 to 255) and kk
-    fn opcode_Cxkk(&mut self, register_index: usize, value: u8) {}
+    fn opcode_Cxkk_random(&mut self, register_index: usize, value: u8) {}
 
     /// draw a sprite
-    fn opcode_Dxyn(&mut self, lhs_register_index: usize, rhs_register_index: usize, height: u8) {}
+    fn opcode_Dxyn_draw_sprite(&mut self, lhs_register_index: usize, rhs_register_index: usize, height: u8) {}
 
-    /// Skips the next instruction if the key stored in `V[x]` is pressed
-    fn opcode_Ex9E(&mut self, register_index: usize) {}
+    /// Skips the next instruction if the keycode stored in `V[x]` is pressed
+    fn opcode_Ex9E_skip_if_key_pressed(&mut self, register_index: usize) {}
 
     /// Skips the next instruction if the key stored in `V[x]` is NOT pressed
-    fn opcode_ExA1(&mut self, register_index: usize) {}
+    fn opcode_ExA1_skip_if_key_not_pressed(&mut self, register_index: usize) {}
 
     /// Sets `V[x]` to the value of the delay timer
-    fn opcode_Fx07(&mut self, register_index: usize) {}
+    fn opcode_Fx07_load_delay_timer(&mut self, ressgister_index: usize) {}
 
     /// A key press is awaited, and then stored in `V[x]`
-    fn opcode_Fx0A(&mut self, register_index: usize) {}
+    fn opcode_Fx0A_wait_for_key_press(&mut self, register_index: usize) {}
 
     /// Sets the delay timer to `V[x]`
-    fn opcode_Fx15(&mut self, register_index: usize) {}
+    fn opcode_Fx15_set_delay_timer(&mut self, register_index: usize) {}
 
     /// Sets the sound timer to `V[x]`
-    fn opcode_Fx18(&mut self, register_index: usize) {}
+    fn opcode_Fx18_set_sound_timer(&mut self, register_index: usize) {}
 
     /// Adds `V[x]` to I. `V[0xF]` is not affected.
-    fn opcode_Fx1E(&mut self, register_index: usize) {}
+    fn opcode_Fx1E_add_assign_i(&mut self, register_index: usize) {}
 
     /// Sets I to the location of the sprite for the character in `V[x]`
-    fn opcode_Fx29(&mut self, register_index: usize) {}
+    fn opcode_Fx299_load_sprite(&mut self, register_index: usize) {}
 
-    /// Stores the binary-coded decimal representation of V  _, with the hundreds digit in memory at location in I, the tens digit at location I+1, and the ones digit at location I+2
-    fn opcode_Fx33(&mut self, register_index: usize) {}
+    /// Store BinaryCodedDecimal representation of `V[x]` in `memory[I..I+2]`
+    fn opcode_Fx33_store_decimal(&mut self, register_index: usize) {}
 
     /// Stores from `V[0]` to `V[x]` (including `V[x]`) in memory, starting at address I. The offset from I is increased by 1 for each value written, but I itself is left unmodified
-    fn opcode_Fx55(&mut self, register_index: usize) {}
+    fn opcode_Fx55_store_registers_i(&mut self, register_index: usize) {}
 
     /// Fills from `V[0]` to `V[x]` (including `V[x]`) with values from memory, starting at address I. The offset from I is increased by 1 for each value read, but I itself is left unmodified
-    fn opcode_Fx65(&mut self, register_index: usize) {}
+    fn opcode_Fx65_read_registers_i(&mut self, register_index: usize) {}
+
+    /// Fills from `V[0]` to `V[x]` (including `V[x]`) with values from memory, starting at address I. The offset from I is increased by 1 for each value read, but I itself is left unmodified
+    fn opcode_Fx65_read_registers_I(&mut self, register_index: usize) {}
 }
