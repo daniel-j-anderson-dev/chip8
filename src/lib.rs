@@ -206,9 +206,9 @@ impl Chip8 {
         }
     }
 
-    /// Skips the next instruction if `v_register[lhs_ri]` equals `v_register[y]`
-    fn opcode_5xy0_skip_if_equal(&mut self, lhs_ri: usize, y: usize) {
-        if self.v_register[lhs_ri] == self.v_register[y] {
+    /// Skips the next instruction if `v_register[lhs_ri]` equals `v_register[rhs_ri]`
+    fn opcode_5xy0_skip_if_equal(&mut self, lhs_ri: usize, rhs_ri: usize) {
+        if self.v_register[lhs_ri] == self.v_register[rhs_ri] {
             self.program_counter += 2;
         }
     }
@@ -223,29 +223,29 @@ impl Chip8 {
         self.v_register[lhs_ri] = self.v_register[lhs_ri].wrapping_add(value);
     }
 
-    /// Sets `v_register[lhs_ri]` to the value of `v_register[y]`
-    fn opcode_8xy0_assign(&mut self, lhs_ri: usize, y: usize) {
-        self.v_register[lhs_ri] = self.v_register[y];
+    /// Sets `v_register[lhs_ri]` to the value of `v_register[rhs_ri]`
+    fn opcode_8xy0_assign(&mut self, lhs_ri: usize, rhs_ri: usize) {
+        self.v_register[lhs_ri] = self.v_register[rhs_ri];
     }
 
-    /// Sets `v_register[lhs_ri]` to (`v_register[lhs_ri]` or `v_register[y]`) bitwise
-    fn opcode_8xy1_bitwise_or(&mut self, lhs_ri: usize, y: usize) {
-        self.v_register[lhs_ri] |= self.v_register[y];
+    /// Sets `v_register[lhs_ri]` to (`v_register[lhs_ri]` or `v_register[rhs_ri]`) bitwise
+    fn opcode_8xy1_bitwise_or(&mut self, lhs_ri: usize, rhs_ri: usize) {
+        self.v_register[lhs_ri] |= self.v_register[rhs_ri];
     }
 
-    /// Sets `v_register[lhs_ri]` to `v_register[lhs_ri]` and `v_register[y]` (bitwise)
-    fn opcode_8xy2_bitwise_and(&mut self, lhs_ri: usize, y: usize) {
-        self.v_register[lhs_ri] &= self.v_register[y];
+    /// Sets `v_register[lhs_ri]` to `v_register[lhs_ri]` and `v_register[rhs_ri]` (bitwise)
+    fn opcode_8xy2_bitwise_and(&mut self, lhs_ri: usize, rhs_ri: usize) {
+        self.v_register[lhs_ri] &= self.v_register[rhs_ri];
     }
 
-    /// Sets `v_register[lhs_ri]` to `v_register[lhs_ri]` xor `v_register[y]` (bitwise)
-    fn opcode_8xy3_bitwise_xor(&mut self, lhs_ri: usize, y: usize) {
-        self.v_register[lhs_ri] ^= self.v_register[y];
+    /// Sets `v_register[lhs_ri]` to `v_register[lhs_ri]` xor `v_register[rhs_ri]` (bitwise)
+    fn opcode_8xy3_bitwise_xor(&mut self, lhs_ri: usize, rhs_ri: usize) {
+        self.v_register[lhs_ri] ^= self.v_register[rhs_ri];
     }
 
-    /// Adds `v_register[y]` to `v_register[lhs_ri]`. `v_register[0xF]` is set to 1 when there's an overflow, and to 0 when there is not
-    fn opcode_8xy4_add(&mut self, lhs_ri: usize, y: usize) {
-        let sum = self.v_register[lhs_ri] as u16 + self.v_register[y] as u16;
+    /// Adds `v_register[rhs_ri]` to `v_register[lhs_ri]`. `v_register[0xF]` is set to 1 when there's an overflow, and to 0 when there is not
+    fn opcode_8xy4_add(&mut self, lhs_ri: usize, rhs_ri: usize) {
+        let sum = self.v_register[lhs_ri] as u16 + self.v_register[rhs_ri] as u16;
         self.v_register[lhs_ri] = (sum & 0xFF) as u8;
         if sum > u8::MAX as u16 {
             self.v_register[0xF] = 1;
@@ -254,33 +254,33 @@ impl Chip8 {
         }
     }
 
-    /// `v_register[y]` is subtracted from `v_register[lhs_ri]`. `v_register[0xF]` is set to 0 when there's an underflow, and 1 when there is not
-    fn opcode_8xy5_sub_assign(&mut self, lhs_ri: usize, y: usize) {
-        if self.v_register[lhs_ri] >= self.v_register[y] {
+    /// `v_register[rhs_ri]` is subtracted from `v_register[lhs_ri]`. `v_register[0xF]` is set to 0 when there's an underflow, and 1 when there is not
+    fn opcode_8xy5_sub_assign(&mut self, lhs_ri: usize, rhs_ri: usize) {
+        if self.v_register[lhs_ri] >= self.v_register[rhs_ri] {
             self.v_register[0xF] = 1;
         } else {
             self.v_register[0xF] = 0;
         }
-        let mut diff = self.v_register[lhs_ri].checked_sub(self.v_register[y]);
+        let mut diff = self.v_register[lhs_ri].checked_sub(self.v_register[rhs_ri]);
     }
 
     /// Stores the least significant bit of `v_register[lhs_ri]` in `v_register[0xF]` and then shifts `v_register[lhs_ri]` to the right by 1
-    fn opcode_8xy6(&mut self, lhs_ri: usize, y: usize) {
-        unimplemented!()
+    fn opcode_8xy6(&mut self, lhs_ri: usize, rhs_ri: usize) {
+
     }
 
-    /// Sets `v_register[lhs_ri]` to `v_register[y]` minus `v_register[lhs_ri]`. `v_register[0xF]` is set to 0 when there's an underflow, and 1 when there is not
-    fn opcode_8xy7(&mut self, lhs_ri: usize, y: usize) {
+    /// Sets `v_register[lhs_ri]` to `v_register[rhs_ri]` minus `v_register[lhs_ri]`. `v_register[0xF]` is set to 0 when there's an underflow, and 1 when there is not
+    fn opcode_8xy7(&mut self, lhs_ri: usize, rhs_ri: usize) {
         unimplemented!()
     }
 
     /// Stores the most significant bit of `v_register[lhs_ri]` in `v_register[0xF]` and then shifts `v_register[lhs_ri]` to the left by 1
-    fn opcode_8xyE(&mut self, lhs_ri: usize, y: usize) {
+    fn opcode_8xyE(&mut self, lhs_ri: usize, rhs_ri: usize) {
         unimplemented!()
     }
 
-    /// Skips the next instruction if `v_register[lhs_ri]` does not equal `v_register[y]`
-    fn opcode_9xy0(&mut self, lhs_ri: usize, y: usize) {
+    /// Skips the next instruction if `v_register[lhs_ri]` does not equal `v_register[rhs_ri]`
+    fn opcode_9xy0(&mut self, lhs_ri: usize, rhs_ri: usize) {
         unimplemented!()
     }
 
@@ -300,7 +300,7 @@ impl Chip8 {
     }
 
     /// draw a sprite
-    fn opcode_Dxyn(&mut self, lhs_ri: usize, y: usize, height: u8) {
+    fn opcode_Dxyn(&mut self, lhs_ri: usize, rhs_ri: usize, height: u8) {
         unimplemented!()
     }
 
