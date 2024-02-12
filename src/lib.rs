@@ -29,7 +29,7 @@ impl Chip8 {
             pixels: [0; 64 * 32],
             key_pad: [false; 16],
         };
-        
+
         chip8.load_font();
         let program = read_file(rom_path)?;
         chip8.load_program(&program)?;
@@ -74,7 +74,7 @@ impl Chip8 {
 }
 impl Chip8 {
     fn get_opcode(&mut self) -> u16 {
-        let program_counter = self.program_counter as usize; 
+        let program_counter = self.program_counter as usize;
         let opcode_index = program_counter..program_counter + 1;
 
         match self.memory.get(opcode_index) {
@@ -84,34 +84,31 @@ impl Chip8 {
     }
 }
 impl Chip8 {
-    pub fn emulate_cycle(&mut self) -> Result<(), Chip8Error> {
-        self.execute_opcode()?;
+    pub fn emulate_cycle(&mut self) {
+        self.execute_opcode();
 
         self.update_delay_timer();
 
         self.update_sound_timer();
-
-        Ok(())
     }
-    /// Returns current opcode
-    fn execute_opcode(&mut self) -> Result<(), Chip8Error> {
+    fn execute_opcode(&mut self) {
         let opcode = self.get_opcode();
-        
+
         self.program_counter += 2; // we have the op code so increment pc
-        
+
         let opcode_hex_digits = [
             ((opcode & 0xF000) >> 12) as u8,
             ((opcode & 0x0F00) >> 8) as u8,
             ((opcode & 0x00F0) >> 4) as u8,
             (opcode & 0x000F) as u8,
         ];
-            
+
         let lhs_register_index = opcode_hex_digits[1] as usize; // second nybl
         let rhs_register_index = opcode_hex_digits[2] as usize; // third nybl
         let height = opcode_hex_digits[3] as u8; // last nybl
         let value = (opcode & 0x00FF) as u8; // last byte
         let address = opcode & 0x0FFF; // last three nybls
-            
+
         // http://devernay.free.fr/hacks/chip8/C8TECH10.HTM#3.1
         match opcode_hex_digits {
             [0x0, 0x0, 0xE, 0x0] => self.opcode_00E0_clear(),
@@ -150,8 +147,6 @@ impl Chip8 {
             [0xF,   _, 0x6, 0x5] => self.opcode_Fx65(lhs_register_index),
             _ => eprintln!("Unknown opcode: {:?}", opcode),
         }
-
-        Ok(())
     }
     fn update_delay_timer(&mut self) {
         if self.delay_timer > 0 {
@@ -249,12 +244,23 @@ impl Chip8 {
 
     /// Adds `V[y]` to `V[x]`. `V[0xF]` is set to 1 when there's an overflow, and to 0 when there is not
     fn opcode_8xy4_add(&mut self, lhs_register_index: usize, rhs_register_index: usize) {
-
+        let sum = self.v_register[lhs_register_index] as u16 + self.v_register[rhs_register_index] as u16;
+        self.v_register[lhs_register_index] = (sum & 0xFF) as u8;
+        if sum > u8::MAX as u16 {
+            self.v_register[0xF] = 1;
+        } else {
+            self.v_register[0xF] = 0;
+        }
     }
 
     /// `V[y]` is subtracted from `V[x]`. `V[0xF]` is set to 0 when there's an underflow, and 1 when there is not
     fn opcode_8xy5_sub_assign(&mut self, lhs_register_index: usize, rhs_register_index: usize) {
-        unimplemented!()
+        if self.v_register[lhs_register_index] >= self.v_register[rhs_register_index] {
+            self.v_register[0xF] = 1;
+        } else {
+            self.v_register[0xF] = 0;
+        }
+        let mut diff = self.v_register[lhs_register_index].checked_sub(self.v_register[rhs_register_index]);
     }
 
     /// Stores the least significant bit of `V[x]` in `V[0xF]` and then shifts `V[x]` to the right by 1
@@ -354,7 +360,7 @@ impl Chip8 {
 }
 
 fn read_file(path: &str) -> Result<Vec<u8>, std::io::Error> {
-    use std::{io::BufReader, fs::File};
+    use std::{fs::File, io::BufReader};
     let mut file = BufReader::new(File::open(path)?);
     let mut data = Vec::new();
     file.read_to_end(&mut data)?;
