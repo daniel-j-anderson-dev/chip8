@@ -11,7 +11,7 @@ impl std::fmt::Display for Chip8Error {
             "Chip8 Error: {}",
             match self {
                 Chip8Error::ProgramTooLarge => String::from(""),
-                Chip8Error::Io(e) => format!("{}", e), 
+                Chip8Error::Io(e) => format!("{}", e),
             }
         )
     }
@@ -20,6 +20,6 @@ impl std::error::Error for Chip8Error {}
 
 impl From<std::io::Error> for Chip8Error {
     fn from(value: std::io::Error) -> Self {
-        Self::Io(value)    
+        Self::Io(value)
     }
 }
