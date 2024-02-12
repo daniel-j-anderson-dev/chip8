@@ -103,8 +103,9 @@ impl Chip8 {
             (opcode & 0x000F) as u8,
         ];
 
-        let lhs_register_index = opcode_hex_digits[1] as usize; // second nybl
-        let rhs_register_index = opcode_hex_digits[2] as usize; // third nybl
+        // 
+        let lhs_ri = opcode_hex_digits[1] as usize; // second nybl left hand side register index
+        let rhs_ri = opcode_hex_digits[2] as usize; // third nybl right hand side register index
         let height = opcode_hex_digits[3] as u8; // last nybl
         let value = (opcode & 0x00FF) as u8; // last byte
         let address = opcode & 0x0FFF; // last three nybls
@@ -115,36 +116,36 @@ impl Chip8 {
             [0x0, 0x0, 0xE, 0xE] => self.opcode_00EE_return(),
             [0x1,   _,   _,   _] => self.opcode_1nnn_jump(address),
             [0x2,   _,   _,   _] => self.opcode_2nnn_subroutine(address),
-            [0x3,   _,   _,   _] => self.opcode_3xkk_skip_if_equal_value(lhs_register_index, value),
-            [0x4,   _,   _,   _] => self.opcode_4xkk_skip_if_not_equal_value(lhs_register_index, value),
-            [0x5,   _,   _, 0x0] => self.opcode_5xy0_skip_if_equal(lhs_register_index, rhs_register_index),
-            [0x6,   _,   _,   _] => self.opcode_6xkk_assign_value(lhs_register_index, value),
-            [0x7,   _,   _,   _] => self.opcode_7xkk_add_assign_value(lhs_register_index, value),
-            [0x8,   _,   _, 0x0] => self.opcode_8xy0_assign(lhs_register_index, rhs_register_index),
-            [0x8,   _,   _, 0x1] => self.opcode_8xy1_bitwise_or(lhs_register_index, rhs_register_index),
-            [0x8,   _,   _, 0x2] => self.opcode_8xy2_bitwise_and(lhs_register_index, rhs_register_index),
-            [0x8,   _,   _, 0x3] => self.opcode_8xy3_bitwise_xor(lhs_register_index, rhs_register_index),
-            [0x8,   _,   _, 0x4] => self.opcode_8xy4_add(lhs_register_index, rhs_register_index),
-            [0x8,   _,   _, 0x5] => self.opcode_8xy5_sub_assign(lhs_register_index, rhs_register_index),
-            [0x8,   _,   _, 0x6] => self.opcode_8xy6(lhs_register_index, rhs_register_index),
-            [0x8,   _,   _, 0x7] => self.opcode_8xy7(lhs_register_index, rhs_register_index),
-            [0x8,   _,   _, 0xE] => self.opcode_8xyE(lhs_register_index, rhs_register_index),
-            [0x9,   _,   _, 0x0] => self.opcode_9xy0(lhs_register_index, rhs_register_index),
+            [0x3,   _,   _,   _] => self.opcode_3xkk_skip_if_equal_value(lhs_ri, value),
+            [0x4,   _,   _,   _] => self.opcode_4xkk_skip_if_not_equal_value(lhs_ri, value),
+            [0x5,   _,   _, 0x0] => self.opcode_5xy0_skip_if_equal(lhs_ri, rhs_ri),
+            [0x6,   _,   _,   _] => self.opcode_6xkk_assign_value(lhs_ri, value),
+            [0x7,   _,   _,   _] => self.opcode_7xkk_add_assign_value(lhs_ri, value),
+            [0x8,   _,   _, 0x0] => self.opcode_8xy0_assign(lhs_ri, rhs_ri),
+            [0x8,   _,   _, 0x1] => self.opcode_8xy1_bitwise_or(lhs_ri, rhs_ri),
+            [0x8,   _,   _, 0x2] => self.opcode_8xy2_bitwise_and(lhs_ri, rhs_ri),
+            [0x8,   _,   _, 0x3] => self.opcode_8xy3_bitwise_xor(lhs_ri, rhs_ri),
+            [0x8,   _,   _, 0x4] => self.opcode_8xy4_add(lhs_ri, rhs_ri),
+            [0x8,   _,   _, 0x5] => self.opcode_8xy5_sub_assign(lhs_ri, rhs_ri),
+            [0x8,   _,   _, 0x6] => self.opcode_8xy6(lhs_ri, rhs_ri),
+            [0x8,   _,   _, 0x7] => self.opcode_8xy7(lhs_ri, rhs_ri),
+            [0x8,   _,   _, 0xE] => self.opcode_8xyE(lhs_ri, rhs_ri),
+            [0x9,   _,   _, 0x0] => self.opcode_9xy0(lhs_ri, rhs_ri),
             [0xA,   _,   _,   _] => self.opcode_Annn(address),
             [0xB,   _,   _,   _] => self.opcode_Bnnn(address),
-            [0xC,   _,   _,   _] => self.opcode_Cxkk(lhs_register_index, value),
-            [0xD,   _,   _,   _] => self.opcode_Dxyn(lhs_register_index, rhs_register_index, height),
-            [0xE,   _, 0x9, 0xE] => self.opcode_Ex9E(lhs_register_index),
-            [0xE,   _, 0xA, 0x1] => self.opcode_ExA1(lhs_register_index),
-            [0xF,   _, 0x0, 0x7] => self.opcode_Fx07(lhs_register_index),
-            [0xF,   _, 0x0, 0xA] => self.opcode_Fx0A(lhs_register_index),
-            [0xF,   _, 0x1, 0x5] => self.opcode_Fx15(lhs_register_index),
-            [0xF,   _, 0x1, 0x8] => self.opcode_Fx18(lhs_register_index),
-            [0xF,   _, 0x1, 0xE] => self.opcode_Fx1E(lhs_register_index),
-            [0xF,   _, 0x2, 0x9] => self.opcode_Fx29(lhs_register_index),
-            [0xF,   _, 0x3, 0x3] => self.opcode_Fx33(lhs_register_index),
-            [0xF,   _, 0x5, 0x5] => self.opcode_Fx55(lhs_register_index),
-            [0xF,   _, 0x6, 0x5] => self.opcode_Fx65(lhs_register_index),
+            [0xC,   _,   _,   _] => self.opcode_Cxkk(lhs_ri, value),
+            [0xD,   _,   _,   _] => self.opcode_Dxyn(lhs_ri, rhs_ri, height),
+            [0xE,   _, 0x9, 0xE] => self.opcode_Ex9E(lhs_ri),
+            [0xE,   _, 0xA, 0x1] => self.opcode_ExA1(lhs_ri),
+            [0xF,   _, 0x0, 0x7] => self.opcode_Fx07(lhs_ri),
+            [0xF,   _, 0x0, 0xA] => self.opcode_Fx0A(lhs_ri),
+            [0xF,   _, 0x1, 0x5] => self.opcode_Fx15(lhs_ri),
+            [0xF,   _, 0x1, 0x8] => self.opcode_Fx18(lhs_ri),
+            [0xF,   _, 0x1, 0xE] => self.opcode_Fx1E(lhs_ri),
+            [0xF,   _, 0x2, 0x9] => self.opcode_Fx29(lhs_ri),
+            [0xF,   _, 0x3, 0x3] => self.opcode_Fx33(lhs_ri),
+            [0xF,   _, 0x5, 0x5] => self.opcode_Fx55(lhs_ri),
+            [0xF,   _, 0x6, 0x5] => self.opcode_Fx65(lhs_ri),
             _ => eprintln!("Unknown opcode: {:?}", opcode),
         }
     }
@@ -191,61 +192,61 @@ impl Chip8 {
         self.program_counter = address;
     }
 
-    /// Skips the next instruction if `V[x]` is equal to last byte of the opcode
-    fn opcode_3xkk_skip_if_equal_value(&mut self, register_index: usize, value: u8) {
-        if self.v_register[register_index] == value {
+    /// Skips the next instruction if `v_register[lhs_ri]` is equal to last byte of the opcode
+    fn opcode_3xkk_skip_if_equal_value(&mut self, lhs_ri: usize, value: u8) {
+        if self.v_register[lhs_ri] == value {
             self.program_counter += 2;
         }
     }
 
-    /// Skips the next instruction if `V[x]` is NOT equal to last byte of the opcode
-    fn opcode_4xkk_skip_if_not_equal_value(&mut self, register_index: usize, value: u8) {
-        if self.v_register[register_index] != value {
+    /// Skips the next instruction if `v_register[lhs_ri]` is NOT equal to last byte of the opcode
+    fn opcode_4xkk_skip_if_not_equal_value(&mut self, lhs_ri: usize, value: u8) {
+        if self.v_register[lhs_ri] != value {
             self.program_counter += 2;
         }
     }
 
-    /// Skips the next instruction if `V[x]` equals `V[y]`
-    fn opcode_5xy0_skip_if_equal(&mut self, lhs_register_index: usize, rhs_register_index: usize) {
-        if self.v_register[lhs_register_index] == self.v_register[rhs_register_index] {
+    /// Skips the next instruction if `v_register[lhs_ri]` equals `v_register[y]`
+    fn opcode_5xy0_skip_if_equal(&mut self, lhs_ri: usize, y: usize) {
+        if self.v_register[lhs_ri] == self.v_register[y] {
             self.program_counter += 2;
         }
     }
 
-    /// Sets `V[x]` to kk
-    fn opcode_6xkk_assign_value(&mut self, register_index: usize, value: u8) {
-        self.v_register[register_index] = value;
+    /// Sets `v_register[lhs_ri]` to kk
+    fn opcode_6xkk_assign_value(&mut self, lhs_ri: usize, value: u8) {
+        self.v_register[lhs_ri] = value;
     }
 
-    /// Adds kk to `V[x]` (carry flag is not changed)
-    fn opcode_7xkk_add_assign_value(&mut self, register_index: usize, value: u8) {
-        self.v_register[register_index] = self.v_register[register_index].wrapping_add(value);
+    /// Adds kk to `v_register[lhs_ri]` (carry flag is not changed)
+    fn opcode_7xkk_add_assign_value(&mut self, lhs_ri: usize, value: u8) {
+        self.v_register[lhs_ri] = self.v_register[lhs_ri].wrapping_add(value);
     }
 
-    /// Sets `V[x]` to the value of `V[y]`
-    fn opcode_8xy0_assign(&mut self, lhs_register_index: usize, rhs_register_index: usize) {
-        self.v_register[lhs_register_index] = self.v_register[rhs_register_index];
+    /// Sets `v_register[lhs_ri]` to the value of `v_register[y]`
+    fn opcode_8xy0_assign(&mut self, lhs_ri: usize, y: usize) {
+        self.v_register[lhs_ri] = self.v_register[y];
     }
 
-    /// Sets `V[x]` to (`V[x]` or `V[y]`) bitwise
-    fn opcode_8xy1_bitwise_or(&mut self, lhs_register_index: usize, rhs_register_index: usize) {
-        self.v_register[lhs_register_index] |= self.v_register[rhs_register_index];
+    /// Sets `v_register[lhs_ri]` to (`v_register[lhs_ri]` or `v_register[y]`) bitwise
+    fn opcode_8xy1_bitwise_or(&mut self, lhs_ri: usize, y: usize) {
+        self.v_register[lhs_ri] |= self.v_register[y];
     }
 
-    /// Sets `V[x]` to `V[x]` and `V[y]` (bitwise)
-    fn opcode_8xy2_bitwise_and(&mut self, lhs_register_index: usize, rhs_register_index: usize) {
-        self.v_register[lhs_register_index] &= self.v_register[rhs_register_index];
+    /// Sets `v_register[lhs_ri]` to `v_register[lhs_ri]` and `v_register[y]` (bitwise)
+    fn opcode_8xy2_bitwise_and(&mut self, lhs_ri: usize, y: usize) {
+        self.v_register[lhs_ri] &= self.v_register[y];
     }
 
-    /// Sets `V[x]` to `V[x]` xor `V[y]` (bitwise)
-    fn opcode_8xy3_bitwise_xor(&mut self, lhs_register_index: usize, rhs_register_index: usize) {
-        self.v_register[lhs_register_index] ^= self.v_register[rhs_register_index];
+    /// Sets `v_register[lhs_ri]` to `v_register[lhs_ri]` xor `v_register[y]` (bitwise)
+    fn opcode_8xy3_bitwise_xor(&mut self, lhs_ri: usize, y: usize) {
+        self.v_register[lhs_ri] ^= self.v_register[y];
     }
 
-    /// Adds `V[y]` to `V[x]`. `V[0xF]` is set to 1 when there's an overflow, and to 0 when there is not
-    fn opcode_8xy4_add(&mut self, lhs_register_index: usize, rhs_register_index: usize) {
-        let sum = self.v_register[lhs_register_index] as u16 + self.v_register[rhs_register_index] as u16;
-        self.v_register[lhs_register_index] = (sum & 0xFF) as u8;
+    /// Adds `v_register[y]` to `v_register[lhs_ri]`. `v_register[0xF]` is set to 1 when there's an overflow, and to 0 when there is not
+    fn opcode_8xy4_add(&mut self, lhs_ri: usize, y: usize) {
+        let sum = self.v_register[lhs_ri] as u16 + self.v_register[y] as u16;
+        self.v_register[lhs_ri] = (sum & 0xFF) as u8;
         if sum > u8::MAX as u16 {
             self.v_register[0xF] = 1;
         } else {
@@ -253,33 +254,33 @@ impl Chip8 {
         }
     }
 
-    /// `V[y]` is subtracted from `V[x]`. `V[0xF]` is set to 0 when there's an underflow, and 1 when there is not
-    fn opcode_8xy5_sub_assign(&mut self, lhs_register_index: usize, rhs_register_index: usize) {
-        if self.v_register[lhs_register_index] >= self.v_register[rhs_register_index] {
+    /// `v_register[y]` is subtracted from `v_register[lhs_ri]`. `v_register[0xF]` is set to 0 when there's an underflow, and 1 when there is not
+    fn opcode_8xy5_sub_assign(&mut self, lhs_ri: usize, y: usize) {
+        if self.v_register[lhs_ri] >= self.v_register[y] {
             self.v_register[0xF] = 1;
         } else {
             self.v_register[0xF] = 0;
         }
-        let mut diff = self.v_register[lhs_register_index].checked_sub(self.v_register[rhs_register_index]);
+        let mut diff = self.v_register[lhs_ri].checked_sub(self.v_register[y]);
     }
 
-    /// Stores the least significant bit of `V[x]` in `V[0xF]` and then shifts `V[x]` to the right by 1
-    fn opcode_8xy6(&mut self, lhs_register_index: usize, rhs_register_index: usize) {
+    /// Stores the least significant bit of `v_register[lhs_ri]` in `v_register[0xF]` and then shifts `v_register[lhs_ri]` to the right by 1
+    fn opcode_8xy6(&mut self, lhs_ri: usize, y: usize) {
         unimplemented!()
     }
 
-    /// Sets `V[x]` to `V[y]` minus `V[x]`. `V[0xF]` is set to 0 when there's an underflow, and 1 when there is not
-    fn opcode_8xy7(&mut self, lhs_register_index: usize, rhs_register_index: usize) {
+    /// Sets `v_register[lhs_ri]` to `v_register[y]` minus `v_register[lhs_ri]`. `v_register[0xF]` is set to 0 when there's an underflow, and 1 when there is not
+    fn opcode_8xy7(&mut self, lhs_ri: usize, y: usize) {
         unimplemented!()
     }
 
-    /// Stores the most significant bit of `V[x]` in `V[0xF]` and then shifts `V[x]` to the left by 1
-    fn opcode_8xyE(&mut self, lhs_register_index: usize, rhs_register_index: usize) {
+    /// Stores the most significant bit of `v_register[lhs_ri]` in `v_register[0xF]` and then shifts `v_register[lhs_ri]` to the left by 1
+    fn opcode_8xyE(&mut self, lhs_ri: usize, y: usize) {
         unimplemented!()
     }
 
-    /// Skips the next instruction if `V[x]` does not equal `V[y]`
-    fn opcode_9xy0(&mut self, lhs_register_index: usize, rhs_register_index: usize) {
+    /// Skips the next instruction if `v_register[lhs_ri]` does not equal `v_register[y]`
+    fn opcode_9xy0(&mut self, lhs_ri: usize, y: usize) {
         unimplemented!()
     }
 
@@ -288,73 +289,73 @@ impl Chip8 {
         unimplemented!()
     }
 
-    /// Jumps to the address nnn plus V[0]
+    /// Jumps to the address nnn plus v_register[0]
     fn opcode_Bnnn(&mut self, address: u16) {
         unimplemented!()
     }
 
-    /// Sets `V[x]` to the result of a bitwise and operation on a random number (Typically: 0 to 255) and kk
-    fn opcode_Cxkk(&mut self, register_index: usize, value: u8) {
+    /// Sets `v_register[lhs_ri]` to the result of a bitwise and operation on a random number (Typically: 0 to 255) and kk
+    fn opcode_Cxkk(&mut self, lhs_ri: usize, value: u8) {
         unimplemented!()
     }
 
     /// draw a sprite
-    fn opcode_Dxyn(&mut self, lhs_register_index: usize, rhs_register_index: usize, height: u8) {
+    fn opcode_Dxyn(&mut self, lhs_ri: usize, y: usize, height: u8) {
         unimplemented!()
     }
 
-    /// Skips the next instruction if the key stored in `V[x]` is pressed
-    fn opcode_Ex9E(&mut self, register_index: usize) {
+    /// Skips the next instruction if the key stored in `v_register[lhs_ri]` is pressed
+    fn opcode_Ex9E(&mut self, lhs_ri: usize) {
         unimplemented!()
     }
 
-    /// Skips the next instruction if the key stored in `V[x]` is NOT pressed
-    fn opcode_ExA1(&mut self, register_index: usize) {
+    /// Skips the next instruction if the key stored in `v_register[lhs_ri]` is NOT pressed
+    fn opcode_ExA1(&mut self, lhs_ri: usize) {
         unimplemented!()
     }
 
-    /// Sets `V[x]` to the value of the delay timer
-    fn opcode_Fx07(&mut self, register_index: usize) {
+    /// Sets `v_register[lhs_ri]` to the value of the delay timer
+    fn opcode_Fx07(&mut self, lhs_ri: usize) {
         unimplemented!()
     }
 
-    /// A key press is awaited, and then stored in `V[x]`
-    fn opcode_Fx0A(&mut self, register_index: usize) {
+    /// A key press is awaited, and then stored in `v_register[lhs_ri]`
+    fn opcode_Fx0A(&mut self, lhs_ri: usize) {
         unimplemented!()
     }
 
-    /// Sets the delay timer to `V[x]`
-    fn opcode_Fx15(&mut self, register_index: usize) {
+    /// Sets the delay timer to `v_register[lhs_ri]`
+    fn opcode_Fx15(&mut self, lhs_ri: usize) {
         unimplemented!()
     }
 
-    /// Sets the sound timer to `V[x]`
-    fn opcode_Fx18(&mut self, register_index: usize) {
+    /// Sets the sound timer to `v_register[lhs_ri]`
+    fn opcode_Fx18(&mut self, lhs_ri: usize) {
         unimplemented!()
     }
 
-    /// Adds `V[x]` to I. `V[0xF]` is not affected.
-    fn opcode_Fx1E(&mut self, register_index: usize) {
+    /// Adds `v_register[lhs_ri]` to I. `v_register[0xF]` is not affected.
+    fn opcode_Fx1E(&mut self, lhs_ri: usize) {
         unimplemented!()
     }
 
-    /// Sets I to the location of the sprite for the character in `V[x]`
-    fn opcode_Fx29(&mut self, register_index: usize) {
+    /// Sets I to the location of the sprite for the character in `v_register[lhs_ri]`
+    fn opcode_Fx29(&mut self, lhs_ri: usize) {
         unimplemented!()
     }
 
-    /// Stores the binary-coded decimal representation of V  _, with the hundreds digit in memory at location in I, the tens digit at location I+1, and the ones digit at location I+2
-    fn opcode_Fx33(&mut self, register_index: usize) {
+    /// Stores the binary-coded decimal representation of v_register  _, with the hundreds digit in memory at location in I, the tens digit at location I+1, and the ones digit at location I+2
+    fn opcode_Fx33(&mut self, lhs_ri: usize) {
         unimplemented!()
     }
 
-    /// Stores from `V[0]` to `V[x]` (including `V[x]`) in memory, starting at address I. The offset from I is increased by 1 for each value written, but I itself is left unmodified
-    fn opcode_Fx55(&mut self, register_index: usize) {
+    /// Stores from `v_register[0]` to `v_register[lhs_ri]` (including `v_register[lhs_ri]`) in memory, starting at address I. The offset from I is increased by 1 for each value written, but I itself is left unmodified
+    fn opcode_Fx55(&mut self, lhs_ri: usize) {
         unimplemented!()
     }
 
-    /// Fills from `V[0]` to `V[x]` (including `V[x]`) with values from memory, starting at address I. The offset from I is increased by 1 for each value read, but I itself is left unmodified
-    fn opcode_Fx65(&mut self, register_index: usize) {
+    /// Fills from `v_register[0]` to `v_register[lhs_ri]` (including `v_register[lhs_ri]`) with values from memory, starting at address I. The offset from I is increased by 1 for each value read, but I itself is left unmodified
+    fn opcode_Fx65(&mut self, lhs_ri: usize) {
         unimplemented!()
     }
 }
