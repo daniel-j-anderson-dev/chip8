@@ -112,46 +112,38 @@ impl Chip8 {
             [0x0, 0x0, 0x0, 0x0] => {}
             [0x0, 0x0, 0xE, 0x0] => self.opcode_00E0_clear(),
             [0x0, 0x0, 0xE, 0xE] => self.opcode_00EE_return(),
-            [0x1, _, _, _] => self.opcode_1nnn_jump(address),
-            [0x2, _, _, _] => self.opcode_2nnn_call_subroutine(address),
-            [0x3, _, _, _] => self.opcode_3xkk_skip_if_equal_value(x_register_index, value),
-            [0x4, _, _, _] => self.opcode_4xkk_skip_if_not_equal_value(x_register_index, value),
-            [0x5, _, _, 0x0] => self.opcode_5xy0_skip_if_equal(x_register_index, y_register_index),
-            [0x6, _, _, _] => self.opcode_6xkk_assign_value(x_register_index, value),
-            [0x7, _, _, _] => self.opcode_7xkk_add_assign_value(x_register_index, value),
-            [0x8, _, _, 0x0] => self.opcode_8xy0_assign(x_register_index, y_register_index),
-            [0x8, _, _, 0x1] => self.opcode_8xy1_bitwise_or(x_register_index, y_register_index),
-            [0x8, _, _, 0x2] => self.opcode_8xy2_bitwise_and(x_register_index, y_register_index),
-            [0x8, _, _, 0x3] => self.opcode_8xy3_bitwise_xor(x_register_index, y_register_index),
-            [0x8, _, _, 0x4] => self.opcode_8xy4_add_assign(x_register_index, y_register_index),
-            [0x8, _, _, 0x5] => self.opcode_8xy5_sub_assign(x_register_index, y_register_index),
-            [0x8, _, _, 0x6] => {
-                self.opcode_8xy6_shift_right_assign(x_register_index, y_register_index)
-            }
-            [0x8, _, _, 0x7] => {
-                self.opcode_8xy7_sub_assign_swapped(x_register_index, y_register_index)
-            }
-            [0x8, _, _, 0xE] => {
-                self.opcode_8xyE_left_shift_assign(x_register_index, y_register_index)
-            }
-            [0x9, _, _, 0x0] => self.opcode_9xy0(x_register_index, y_register_index),
-            [0xA, _, _, _] => self.opcode_Annn_set_i_register(address),
-            [0xB, _, _, _] => self.opcode_Bnnn_jump_offset(address),
-            [0xC, _, _, _] => self.opcode_Cxkk_random_number_assign(x_register_index, value),
-            [0xD, _, _, _] => {
-                self.opcode_Dxyn_draw_sprite(x_register_index, y_register_index, height)
-            }
-            [0xE, _, 0x9, 0xE] => self.opcode_Ex9E_skip_on_key_pressed(x_register_index),
-            [0xE, _, 0xA, 0x1] => self.opcode_ExA1_skip_on_key_not_pressed(x_register_index),
-            [0xF, _, 0x0, 0x7] => self.opcode_Fx07_store_delay_timer(x_register_index),
-            [0xF, _, 0x0, 0xA] => self.opcode_Fx0A_wait_for_key_press(x_register_index),
-            [0xF, _, 0x1, 0x5] => self.opcode_Fx15_set_delay_timer(x_register_index),
-            [0xF, _, 0x1, 0x8] => self.opcode_Fx18_set_sound_timer(x_register_index),
-            [0xF, _, 0x1, 0xE] => self.opcode_Fx1E_i_register_add_assaign(x_register_index),
-            [0xF, _, 0x2, 0x9] => self.opcode_Fx29_set_i_to_font_address(x_register_index),
-            [0xF, _, 0x3, 0x3] => self.opcode_Fx33_store_bcd_at_i(x_register_index),
-            [0xF, _, 0x5, 0x5] => self.opcode_Fx55_store_v_registers(x_register_index),
-            [0xF, _, 0x6, 0x5] => self.opcode_Fx65_load_v_registers(x_register_index),
+            [0x1,   _,   _,   _] => self.opcode_1nnn_jump(address),
+            [0x2,   _,   _,   _] => self.opcode_2nnn_call_subroutine(address),
+            [0x3,   _,   _,   _] => self.opcode_3xkk_skip_if_equal_value(x_register_index, value),
+            [0x4,   _,   _,   _] => self.opcode_4xkk_skip_if_not_equal_value(x_register_index, value),
+            [0x5,   _,   _, 0x0] => self.opcode_5xy0_skip_if_equal(x_register_index, y_register_index),
+            [0x6,   _,   _,   _] => self.opcode_6xkk_assign_value(x_register_index, value),
+            [0x7,   _,   _,   _] => self.opcode_7xkk_add_assign_value(x_register_index, value),
+            [0x8,   _,   _, 0x0] => self.opcode_8xy0_assign(x_register_index, y_register_index),
+            [0x8,   _,   _, 0x1] => self.opcode_8xy1_bitwise_or(x_register_index, y_register_index),
+            [0x8,   _,   _, 0x2] => self.opcode_8xy2_bitwise_and(x_register_index, y_register_index),
+            [0x8,   _,   _, 0x3] => self.opcode_8xy3_bitwise_xor(x_register_index, y_register_index),
+            [0x8,   _,   _, 0x4] => self.opcode_8xy4_add_assign(x_register_index, y_register_index),
+            [0x8,   _,   _, 0x5] => self.opcode_8xy5_sub_assign(x_register_index, y_register_index),
+            [0x8,   _,   _, 0x6] => self.opcode_8xy6_shift_right_assign(x_register_index, y_register_index),
+            [0x8,   _,   _, 0x7] => self.opcode_8xy7_sub_assign_swapped(x_register_index, y_register_index),
+            [0x8,   _,   _, 0xE] => self.opcode_8xyE_left_shift_assign(x_register_index, y_register_index),
+            [0x9,   _,   _, 0x0] => self.opcode_9xy0_skip_if_not_equal(x_register_index, y_register_index),
+            [0xA,   _,   _,   _] => self.opcode_Annn_set_i_register(address),
+            [0xB,   _,   _,   _] => self.opcode_Bnnn_jump_offset(address),
+            [0xC,   _,   _,   _] => self.opcode_Cxkk_random_number_assign(x_register_index, value),
+            [0xD,   _,   _,   _] => self.opcode_Dxyn_draw_sprite(x_register_index, y_register_index, height),
+            [0xE,   _, 0x9, 0xE] => self.opcode_Ex9E_skip_on_key_pressed(x_register_index),
+            [0xE,   _, 0xA, 0x1] => self.opcode_ExA1_skip_on_key_not_pressed(x_register_index),
+            [0xF,   _, 0x0, 0x7] => self.opcode_Fx07_store_delay_timer(x_register_index),
+            [0xF,   _, 0x0, 0xA] => self.opcode_Fx0A_wait_for_key_press(x_register_index),
+            [0xF,   _, 0x1, 0x5] => self.opcode_Fx15_set_delay_timer(x_register_index),
+            [0xF,   _, 0x1, 0x8] => self.opcode_Fx18_set_sound_timer(x_register_index),
+            [0xF,   _, 0x1, 0xE] => self.opcode_Fx1E_i_register_add_assaign(x_register_index),
+            [0xF,   _, 0x2, 0x9] => self.opcode_Fx29_set_i_to_font_address(x_register_index),
+            [0xF,   _, 0x3, 0x3] => self.opcode_Fx33_store_bcd_at_i(x_register_index),
+            [0xF,   _, 0x5, 0x5] => self.opcode_Fx55_store_v_registers(x_register_index),
+            [0xF,   _, 0x6, 0x5] => self.opcode_Fx65_load_v_registers(x_register_index),
             _ => eprintln!("Unknown opcode: {:?}", opcode),
         }
     }
@@ -292,7 +284,7 @@ impl Chip8 {
     }
 
     /// Skips the next instruction if `v_register[x_register_index]` does not equal `v_register[y_register_index]`
-    fn opcode_9xy0(&mut self, x_register_index: usize, y_register_index: usize) {
+    fn opcode_9xy0_skip_if_not_equal(&mut self, x_register_index: usize, y_register_index: usize) {
         if self.v_register[x_register_index] != self.v_register[y_register_index] {
             self.program_counter += 2;
         }
