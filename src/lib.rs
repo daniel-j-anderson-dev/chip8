@@ -145,11 +145,11 @@ impl Chip8 {
             [0xE, _, 0xA, 0x1] => self.opcode_ExA1_skip_on_key_not_pressed(x_register_index),
             [0xF, _, 0x0, 0x7] => self.opcode_Fx07_store_delay_timer(x_register_index),
             [0xF, _, 0x0, 0xA] => self.opcode_Fx0A_wait_for_key_press(x_register_index),
-            [0xF, _, 0x1, 0x5] => self.opcode_Fx15(x_register_index),
-            [0xF, _, 0x1, 0x8] => self.opcode_Fx18(x_register_index),
-            [0xF, _, 0x1, 0xE] => self.opcode_Fx1E(x_register_index),
-            [0xF, _, 0x2, 0x9] => self.opcode_Fx29(x_register_index),
-            [0xF, _, 0x3, 0x3] => self.opcode_Fx33(x_register_index),
+            [0xF, _, 0x1, 0x5] => self.opcode_Fx15_set_delay_timer(x_register_index),
+            [0xF, _, 0x1, 0x8] => self.opcode_Fx18_set_sound_timer(x_register_index),
+            [0xF, _, 0x1, 0xE] => self.opcode_Fx1E_i_register_add_assaign(x_register_index),
+            [0xF, _, 0x2, 0x9] => self.opcode_Fx29_set_i_to_font_address(x_register_index),
+            [0xF, _, 0x3, 0x3] => self.opcode_Fx33_store_bcd_at_i(x_register_index),
             [0xF, _, 0x5, 0x5] => self.opcode_Fx55(x_register_index),
             [0xF, _, 0x6, 0x5] => self.opcode_Fx65(x_register_index),
             _ => eprintln!("Unknown opcode: {:?}", opcode),
@@ -201,58 +201,58 @@ impl Chip8 {
         self.program_counter = address;
     }
 
-    /// Skips the next instruction if `v[x_register_index]` is equal to last byte of the opcode
+    /// Skips the next instruction if `v_register[x_register_index]` is equal to last byte of the opcode
     fn opcode_3xkk_skip_if_equal_value(&mut self, register_index: usize, value: u8) {
         if self.v_register[register_index] == value {
             self.program_counter += 2;
         }
     }
 
-    /// Skips the next instruction if `v[x_register_index]` is NOT equal to last byte of the opcode
+    /// Skips the next instruction if `v_register[x_register_index]` is NOT equal to last byte of the opcode
     fn opcode_4xkk_skip_if_not_equal_value(&mut self, register_index: usize, value: u8) {
         if self.v_register[register_index] != value {
             self.program_counter += 2;
         }
     }
 
-    /// Skips the next instruction if `v[x_register_index]` equals `v[y_register_index]`
+    /// Skips the next instruction if `v_register[x_register_index]` equals `v_register[y_register_index]`
     fn opcode_5xy0_skip_if_equal(&mut self, x_register_index: usize, y_register_index: usize) {
         if self.v_register[x_register_index] == self.v_register[y_register_index] {
             self.program_counter += 2;
         }
     }
 
-    /// Sets `v[x_register_index]` to value
+    /// Sets `v_register[x_register_index]` to value
     fn opcode_6xkk_assign_value(&mut self, register_index: usize, value: u8) {
         self.v_register[register_index] = value;
     }
 
-    /// Adds value to `v[x_register_index]` (carry flag is not changed)
+    /// Adds value to `v_register[x_register_index]` (carry flag is not changed)
     fn opcode_7xkk_add_assign_value(&mut self, register_index: usize, value: u8) {
         self.v_register[register_index] = self.v_register[register_index].wrapping_add(value);
     }
 
-    /// Sets `v[x_register_index]` to the value of `v[y_register_index]`
+    /// Sets `v_register[x_register_index]` to the value of `v_register[y_register_index]`
     fn opcode_8xy0_assign(&mut self, x_register_index: usize, y_register_index: usize) {
         self.v_register[x_register_index] = self.v_register[y_register_index];
     }
 
-    /// Sets `v[x_register_index]` to (`v[x_register_index]` or `v[y_register_index]`) bitwise
+    /// Sets `v_register[x_register_index]` to (`v_register[x_register_index]` or `v_register[y_register_index]`) bitwise
     fn opcode_8xy1_bitwise_or(&mut self, x_register_index: usize, y_register_index: usize) {
         self.v_register[x_register_index] |= self.v_register[y_register_index];
     }
 
-    /// Sets `v[x_register_index]` to `v[x_register_index]` and `v[y_register_index]` (bitwise)
+    /// Sets `v_register[x_register_index]` to `v_register[x_register_index]` and `v_register[y_register_index]` (bitwise)
     fn opcode_8xy2_bitwise_and(&mut self, x_register_index: usize, y_register_index: usize) {
         self.v_register[x_register_index] &= self.v_register[y_register_index];
     }
 
-    /// Sets `v[x_register_index]` to `v[x_register_index]` xor `v[y_register_index]` (bitwise)
+    /// Sets `v_register[x_register_index]` to `v_register[x_register_index]` xor `v_register[y_register_index]` (bitwise)
     fn opcode_8xy3_bitwise_xor(&mut self, x_register_index: usize, y_register_index: usize) {
         self.v_register[x_register_index] ^= self.v_register[y_register_index];
     }
 
-    /// Adds `v[y_register_index]` to `v[x_register_index]`. `v[0xF]` is set to 1 when there's an overflow, and to 0 when there is not
+    /// Adds `v_register[y_register_index]` to `v_register[x_register_index]`. `v_register[0xF]` is set to 1 when there's an overflow, and to 0 when there is not
     fn opcode_8xy4_add_assign(&mut self, x_register_index: usize, y_register_index: usize) {
         let (sum, overflow_occurred) =
             self.v_register[x_register_index].overflowing_add(self.v_register[y_register_index]);
@@ -261,7 +261,7 @@ impl Chip8 {
         self.v_register[0xF] = if overflow_occurred { 1 } else { 0 };
     }
 
-    /// `v[y_register_index]` is subtracted from `v[x_register_index]`. `v[0xF]` is set to 0 when there's an underflow, and 1 when there is not
+    /// `v_register[y_register_index]` is subtracted from `v_register[x_register_index]`. `v_register[0xF]` is set to 0 when there's an underflow, and 1 when there is not
     fn opcode_8xy5_sub_assign(&mut self, x_register_index: usize, y_register_index: usize) {
         let (difference, underflow_occurred) =
             self.v_register[x_register_index].overflowing_sub(self.v_register[y_register_index]);
@@ -270,13 +270,13 @@ impl Chip8 {
         self.v_register[0xF] = if underflow_occurred { 0 } else { 1 };
     }
 
-    /// Stores the least significant bit of `v[x_register_index]` in `v[0xF]` and then shifts `v[x_register_index]` to the right by 1
+    /// Stores the least significant bit of `v_register[x_register_index]` in `v_register[0xF]` and then shifts `v_register[x_register_index]` to the right by 1
     fn opcode_8xy6_shift_right_assign(&mut self, x_register_index: usize, y_register_index: usize) {
         self.v_register[0xF] = self.v_register[x_register_index] & 0b00000001;
         self.v_register[x_register_index] >>= 1;
     }
 
-    /// Sets `v[x_register_index]` to `v[y_register_index]` minus `v[x_register_index]`. `v[0xF]` is set to 0 when there's an underflow, and 1 when there is not
+    /// Sets `v_register[x_register_index]` to `v_register[y_register_index]` minus `v_register[x_register_index]`. `v_register[0xF]` is set to 0 when there's an underflow, and 1 when there is not
     fn opcode_8xy7_sub_assign_swapped(&mut self, x_register_index: usize, y_register_index: usize) {
         let (difference, underflow_occurred) =
             self.v_register[y_register_index].overflowing_sub(self.v_register[x_register_index]);
@@ -285,13 +285,13 @@ impl Chip8 {
         self.v_register[0xF] = if underflow_occurred { 0 } else { 1 };
     }
 
-    /// Stores the most significant bit of `v[x_register_index]` in `v[0xF]` and then shifts `v[x_register_index]` to the left by 1
+    /// Stores the most significant bit of `v_register[x_register_index]` in `v_register[0xF]` and then shifts `v_register[x_register_index]` to the left by 1
     fn opcode_8xyE_left_shift_assign(&mut self, x_register_index: usize, y_register_index: usize) {
         self.v_register[0xF] = self.v_register[x_register_index].reverse_bits() & 0b00000001;
         self.v_register[x_register_index] <<= 1;
     }
 
-    /// Skips the next instruction if `v[x_register_index]` does not equal `v[y_register_index]`
+    /// Skips the next instruction if `v_register[x_register_index]` does not equal `v_register[y_register_index]`
     fn opcode_9xy0(&mut self, x_register_index: usize, y_register_index: usize) {
         if self.v_register[x_register_index] != self.v_register[y_register_index] {
             self.program_counter += 2;
@@ -303,12 +303,12 @@ impl Chip8 {
         self.i_register = address;
     }
 
-    /// Jumps to the address address plus v[0]
+    /// Jumps to the address address plus v_register[0]
     fn opcode_Bnnn_jump_offset(&mut self, address: u16) {
         self.program_counter = address + (self.v_register[0] as u16);
     }
 
-    /// Sets `v[x_register_index]` to the result of a bitwise and operation on a random number (Typically: 0 to 255) and value
+    /// Sets `v_register[x_register_index]` to the result of a bitwise and operation on a random number (Typically: 0 to 255) and value
     fn opcode_Cxkk_random_number_assign(&mut self, register_index: usize, value: u8) {
         self.v_register[register_index] = self.rng.gen::<u8>() & value;
     }
@@ -353,7 +353,7 @@ impl Chip8 {
         self.v_register[0xF] = if white_to_black_occurred { 1 } else { 0 };
     }
 
-    /// Skips the next instruction if the key stored in `v[register_index]` is pressed
+    /// Skips the next instruction if the key stored in `v_register[register_index]` is pressed
     fn opcode_Ex9E_skip_on_key_pressed(&mut self, register_index: usize) {
         let key_index = self.v_register[register_index] as usize;
         let is_key_pressed = self.key_pad[key_index];
@@ -362,7 +362,7 @@ impl Chip8 {
         }
     }
 
-    /// Skips the next instruction if the key stored in `v[register_index]` is NOT pressed
+    /// Skips the next instruction if the key stored in `v_register[register_index]` is NOT pressed
     fn opcode_ExA1_skip_on_key_not_pressed(&mut self, register_index: usize) {
         let key_index = self.v_register[register_index] as usize;
         let is_key_pressed = self.key_pad[key_index];
@@ -371,12 +371,12 @@ impl Chip8 {
         }
     }
 
-    /// Sets `v[register_index]` to the value of the delay timer
+    /// Sets `v_register[register_index]` to the value of the delay timer
     fn opcode_Fx07_store_delay_timer(&mut self, register_index: usize) {
         self.v_register[register_index] = self.delay_timer;
     }
 
-    /// A key press is awaited, and then stored in `v[register_index]`
+    /// A key press is awaited, and then stored in `v_register[register_index]`
     fn opcode_Fx0A_wait_for_key_press(&mut self, register_index: usize) {
         let mut key_press_occurred = false;
 
@@ -398,37 +398,54 @@ impl Chip8 {
         }
     }
 
-    /// Sets the delay timer to `v[register_index]`
-    fn opcode_Fx15(&mut self, register_index: usize) {
-        unimplemented!()
+    /// Sets the delay timer to `v_register[register_index]`
+    fn opcode_Fx15_set_delay_timer(&mut self, register_index: usize) {
+        self.delay_timer = self.v_register[register_index];
     }
 
-    /// Sets the sound timer to `v[register_index]`
-    fn opcode_Fx18(&mut self, register_index: usize) {
-        unimplemented!()
+    /// Sets the sound timer to `v_register[register_index]`
+    fn opcode_Fx18_set_sound_timer(&mut self, register_index: usize) {
+        self.sound_timer = self.v_register[register_index];
     }
 
-    /// Adds `v[register_index]` to I. `v[0xF]` is not affected.
-    fn opcode_Fx1E(&mut self, register_index: usize) {
-        unimplemented!()
+    /// Adds `v_register[register_index]` to I. `v_register[0xF]` is not affected.
+    fn opcode_Fx1E_i_register_add_assaign(&mut self, register_index: usize) {
+        let addend = self.v_register[register_index] as u16;
+        self.i_register = self.i_register.wrapping_add(addend);
     }
 
-    /// Sets I to the location of the sprite for the character in `v[register_index]`
-    fn opcode_Fx29(&mut self, register_index: usize) {
-        unimplemented!()
+    /// Sets I to the location of the sprite for the character in `v_register[register_index]`
+    /// Font starts at memory address 0
+    fn opcode_Fx29_set_i_to_font_address(&mut self, register_index: usize) {
+        let character = self.v_register[register_index] as u16;
+
+        // each character is 5 bytes apart and the first character is at address 0
+        let character_sprite_address = character * 5;
+
+        self.i_register = character_sprite_address;
     }
 
-    /// Stores the binary-coded decimal representation of v  _, with the hundreds digit in memory at location in I, the tens digit at location I+1, and the ones digit at location I+2
-    fn opcode_Fx33(&mut self, register_index: usize) {
-        unimplemented!()
+    /// Stores the binary-coded decimal representation of v_register[register_index], with the hundreds digit in memory at location in I, the tens digit at location I+1, and the ones digit at location I+2
+    fn opcode_Fx33_store_bcd_at_i(&mut self, register_index: usize) {
+        let value = self.v_register[register_index];
+
+        let decimal_digits = [
+            (value / 100) % 10, //
+            (value / 10) % 10,
+            (value / 1) % 10
+        ];
+
+        let i_register = self.i_register as usize;
+
+        self.memory[i_register..=i_register + 2].copy_from_slice(&decimal_digits);
     }
 
-    /// Stores from `v[0]` to `v[register_index]` (including `v[register_index]`) in memory, starting at address I. The offset from I is increased by 1 for each value written, but I itself is left unmodified
+    /// Stores from `v_register[0]` to `v_register[register_index]` (including `v_register[register_index]`) in memory, starting at address I. The offset from I is increased by 1 for each value written, but I itself is left unmodified
     fn opcode_Fx55(&mut self, register_index: usize) {
         unimplemented!()
     }
 
-    /// Fills from `v[0]` to `v[x_register_index]` (including `v[x_register_index]`) with values from memory, starting at address I. The offset from I is increased by 1 for each value read, but I itself is left unmodified
+    /// Fills from `v_register[0]` to `v_register[x_register_index]` (including `v_register[x_register_index]`) with values from memory, starting at address I. The offset from I is increased by 1 for each value read, but I itself is left unmodified
     fn opcode_Fx65(&mut self, register_index: usize) {
         unimplemented!()
     }
@@ -440,4 +457,29 @@ fn read_file(path: &str) -> Result<Vec<u8>, std::io::Error> {
     let mut data = Vec::new();
     file.read_to_end(&mut data)?;
     Ok(data)
+}
+
+#[test]
+fn binary_coded_decimal() {
+    let mut memory = [0u8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    let value = 173u8;
+
+    let i_register = 10usize;
+    let address = i_register..=i_register + 2;
+
+    let decimal_digits = [
+        value / 100, //
+        (value / 10) % 10,
+        value % 10,
+    ];
+
+    memory[address].copy_from_slice(&decimal_digits);
+
+    println!(
+        "{}\n{:?}\n{:>2?}\n{:>2?}",
+        value,
+        decimal_digits,
+        (0..20).collect::<Vec<_>>(),
+        memory
+    )
 }
