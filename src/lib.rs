@@ -150,8 +150,8 @@ impl Chip8 {
             [0xF, _, 0x1, 0xE] => self.opcode_Fx1E_i_register_add_assaign(x_register_index),
             [0xF, _, 0x2, 0x9] => self.opcode_Fx29_set_i_to_font_address(x_register_index),
             [0xF, _, 0x3, 0x3] => self.opcode_Fx33_store_bcd_at_i(x_register_index),
-            [0xF, _, 0x5, 0x5] => self.opcode_Fx55(x_register_index),
-            [0xF, _, 0x6, 0x5] => self.opcode_Fx65(x_register_index),
+            [0xF, _, 0x5, 0x5] => self.opcode_Fx55_store_v_registers(x_register_index),
+            [0xF, _, 0x6, 0x5] => self.opcode_Fx65_load_v_registers(x_register_index),
             _ => eprintln!("Unknown opcode: {:?}", opcode),
         }
     }
@@ -432,7 +432,7 @@ impl Chip8 {
         let decimal_digits = [
             (value / 100) % 10, //
             (value / 10) % 10,
-            (value / 1) % 10
+            (value / 1) % 10,
         ];
 
         let i_register = self.i_register as usize;
@@ -441,13 +441,17 @@ impl Chip8 {
     }
 
     /// Stores from `v_register[0]` to `v_register[register_index]` (including `v_register[register_index]`) in memory, starting at address I. The offset from I is increased by 1 for each value written, but I itself is left unmodified
-    fn opcode_Fx55(&mut self, register_index: usize) {
-        unimplemented!()
+    fn opcode_Fx55_store_v_registers(&mut self, register_index: usize) {
+        let offset = self.i_register as usize;
+        self.memory[offset..offset + register_index]
+            .copy_from_slice(&self.v_register[..register_index]);
     }
 
     /// Fills from `v_register[0]` to `v_register[x_register_index]` (including `v_register[x_register_index]`) with values from memory, starting at address I. The offset from I is increased by 1 for each value read, but I itself is left unmodified
-    fn opcode_Fx65(&mut self, register_index: usize) {
-        unimplemented!()
+    fn opcode_Fx65_load_v_registers(&mut self, register_index: usize) {
+        let offset = self.i_register as usize;
+        self.v_register[..register_index]
+            .copy_from_slice(&self.memory[offset..offset + register_index]);
     }
 }
 
@@ -468,9 +472,9 @@ fn binary_coded_decimal() {
     let address = i_register..=i_register + 2;
 
     let decimal_digits = [
-        value / 100, //
+        (value / 100) % 10, //
         (value / 10) % 10,
-        value % 10,
+        (value / 1) % 10,
     ];
 
     memory[address].copy_from_slice(&decimal_digits);
