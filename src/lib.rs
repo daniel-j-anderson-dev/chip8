@@ -53,6 +53,8 @@ impl Chip8 {
 
     /// Returns an array contain the four nibbles of an opcode.
     /// (a nibble is a four bit number or single hexadecimal digit)
+    /// 
+    /// TODO: Add bounds checking
     fn get_current_instruction(&self) -> [u8; 4] {
         let program_counter = self.program_counter as usize;
 
