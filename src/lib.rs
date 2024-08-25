@@ -26,3 +26,7 @@ pub struct Chip8 {
     /// Decrements at 60hz until zero when a sound is played
     sound_timer: u8,
 }
+
+impl Chip8 {
+    pub const PROGRAM_MEMORY_OFFSET: usize = 200;
+}
