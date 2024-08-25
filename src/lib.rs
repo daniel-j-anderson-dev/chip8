@@ -31,7 +31,7 @@ pub struct Chip8 {
     /// `false` represents a black pixel. `true` represents a white pixel
     display: [[bool; 64]; 32],
 
-    /// `true` represents a pressed button. `false` represents a unpressed button
+    /// A collection of four rows. `true` represents a pressed button. `false` represents a unpressed button
     /// ```
     ///   0   1   2   3
     /// ╔═══╦═══╦═══╦═══╗
