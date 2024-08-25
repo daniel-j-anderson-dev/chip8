@@ -19,6 +19,7 @@ pub struct Chip8 {
     call_stack: [u16; 16],
 
     /// Keeps track of which entry in the stack should be returned to.
+    /// Determines current position in stack.
     call_stack_index: usize,
 
     /// Decrements at 60hz until zero
@@ -32,6 +33,8 @@ pub struct Chip8 {
 }
 
 impl Chip8 {
+    /// Offset is commonly done because of old standards.
+    /// Most programs written for Chip8 expect programs to start here.
     pub const PROGRAM_MEMORY_OFFSET: u16 = 200;
 
     pub fn new() -> Chip8 {
@@ -48,7 +51,8 @@ impl Chip8 {
         }
     }
 
-    /// Returns an array contain the four nibbles of an opcode. (a nibble is a four bit number or single hexadecimal digit)
+    /// Returns an array contain the four nibbles of an opcode.
+    /// (a nibble is a four bit number or single hexadecimal digit)
     pub fn get_current_opcode(&self) -> [u8; 4] {
         unimplemented!();
     }
