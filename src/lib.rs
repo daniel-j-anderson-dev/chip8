@@ -18,8 +18,10 @@ pub struct Chip8 {
     /// `false` represents a black pixel. `true` represents a white pixel
     display: [[bool; 64]; 32],
 
-    /// Keeps track of where in memory to return to
+    /// Keeps track of return memory locations when a subroutine is called
     call_stack: [u16; 16],
+    /// Keeps track of which entry in the stack should be returned to.
+    call_stack_index: usize,
 
     /// Decrements at 60hz until zero
     delay_timer: u8,
