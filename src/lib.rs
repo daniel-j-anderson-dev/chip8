@@ -89,12 +89,8 @@ impl Chip8 {
         let current_instruction = self.get_current_instruction();
 
         match current_instruction {
-            [0x0,   _,   _,   _] => {
-                // Execute machine language subroutine @ address NNN.
-            }
-            [0x0, 0x0, 0xE, 0x0] => {
-                // Clear screen.
-            }
+            [0x0,   _,   _,   _] => {}
+            [0x0, 0x0, 0xE, 0x0] => {}
             [0x0, 0x0, 0xE, 0xE] => {}
             [0x1,   _,   _,   _] => {}
             [0x2,   _,   _,   _] => {}
