@@ -42,3 +42,15 @@ CHIP-8 Instruction Set
     FX33 			bcd vx 			Decode vx into binary-coded decimal
     FX55 			save vx		 	Save v0-vx to i through (i+x)
     FX65 			load vx 			Load v0-vx from i through (i+x)
+
+Variables:
+
+    register 0-F
+
+    i -> memory index register
+
+    memory
+
+delay timer register
+
+sound timer register
