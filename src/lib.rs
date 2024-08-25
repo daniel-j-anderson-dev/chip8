@@ -56,4 +56,16 @@ impl Chip8 {
     pub fn get_current_opcode(&self) -> [u8; 4] {
         unimplemented!();
     }
+
+    /*
+        All the steps of execution in chip8, if it is anything like modern processors:
+            fetch
+                get the memory[program_counter]
+                get the memory[program_counter + 1]
+                or them together into a u16
+                this is the instruction.
+            decode
+            execute
+    */
+    
 }
