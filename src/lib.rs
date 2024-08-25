@@ -53,7 +53,7 @@ impl Chip8 {
 
     /// Returns an array contain the four nibbles of an opcode.
     /// (a nibble is a four bit number or single hexadecimal digit)
-    pub fn get_current_opcode(&self) -> [u8; 4] {
+    pub fn get_current_instruction(&self) -> [u8; 4] {
         unimplemented!();
     }
 
