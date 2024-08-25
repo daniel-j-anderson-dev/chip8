@@ -4,10 +4,11 @@
 pub struct Chip8 {
     memory: [u8; 4096],
 
-    /// Index to the current byte in memory
+    /// Index to the current byte in memory.
     program_counter: u16,
 
-    /// Often called `I`
+    /// Often called `I`.
+    /// Also called memory index register.
     address_register: u16,
 
     /// General purpose registers often called `VX` where X is the index.
