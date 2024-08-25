@@ -20,6 +20,7 @@ pub struct Chip8 {
 
     /// Keeps track of return memory locations when a subroutine is called
     call_stack: [u16; 16],
+    
     /// Keeps track of which entry in the stack should be returned to.
     call_stack_index: usize,
 
