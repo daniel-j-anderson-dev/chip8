@@ -53,7 +53,7 @@ impl Chip8 {
 
     /// Returns an array contain the four nibbles of an opcode.
     /// (a nibble is a four bit number or single hexadecimal digit)
-    pub fn get_current_instruction(&self) -> [u8; 4] {
+    fn get_current_instruction(&self) -> [u8; 4] {
         let program_counter = self.program_counter as usize;
 
         let most_significant_byte = self.memory[program_counter];
@@ -65,6 +65,16 @@ impl Chip8 {
             get_first_nibble(least_significant_byte),
             get_second_nibble(least_significant_byte),
         ]
+    }
+
+    fn execute_current_instruction(&mut self) {
+        let current_instruction = self.get_current_instruction();
+
+        match current_instruction {
+            _ => {}
+        }
+
+        unimplemented!();
     }
     
     /*
