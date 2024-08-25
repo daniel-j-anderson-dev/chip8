@@ -54,7 +54,20 @@ impl Chip8 {
     /// Returns an array contain the four nibbles of an opcode.
     /// (a nibble is a four bit number or single hexadecimal digit)
     pub fn get_current_instruction(&self) -> [u8; 4] {
-        unimplemented!();
+        const FIRST_NIBBLE_BIT_MASK: u8 = 0xF0;
+        const SECOND_NIBBLE_BIT_MASK: u8 = 0x0F;
+        
+        let program_counter = self.program_counter as usize;
+
+        let most_significant_byte = self.memory[program_counter];
+        let least_significant_byte = self.memory[program_counter + 1];
+
+        [
+            (most_significant_byte & FIRST_NIBBLE_BIT_MASK) >> 4,
+            (most_significant_byte & SECOND_NIBBLE_BIT_MASK),
+            (least_significant_byte & FIRST_NIBBLE_BIT_MASK) >> 4,
+            (least_significant_byte & SECOND_NIBBLE_BIT_MASK)
+        ]
     }
 
     /*
