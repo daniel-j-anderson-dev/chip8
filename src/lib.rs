@@ -30,6 +30,21 @@ pub struct Chip8 {
 
     /// `false` represents a black pixel. `true` represents a white pixel
     display: [[bool; 64]; 32],
+
+    /// `true` represents a pressed button. `false` represents a unpressed button
+    /// ```
+    ///   0   1   2   3
+    /// ╔═══╦═══╦═══╦═══╗
+    /// ║ 1 ║ 2 ║ 3 ║ C ║ 0
+    /// ╠═══╬═══╬═══╬═══╣
+    /// ║ 4 ║ 5 ║ 6 ║ D ║ 1
+    /// ╠═══╬═══╬═══╬═══╣
+    /// ║ 7 ║ 8 ║ 9 ║ E ║ 2
+    /// ╠═══╬═══╬═══╬═══╣
+    /// ║ A ║ 0 ║ B ║ F ║ 3
+    /// ╚═══╩═══╩═══╩═══╝
+    /// ```
+    keypad: [[bool; 4]; 4],
 }
 
 impl Chip8 {
@@ -48,6 +63,7 @@ impl Chip8 {
             delay_timer: 0,
             sound_timer: 0,
             display: [[false; 64]; 32],
+            keypad: [[false; 4]; 4],
         }
     }
 
