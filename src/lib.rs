@@ -94,19 +94,7 @@ impl Chip8 {
 
         unimplemented!();
     }
-    
-    /*
-        All the steps of execution in chip8, if it is anything like modern processors:
-            fetch
-                get the memory[program_counter]
-                get the memory[program_counter + 1]
-                bitmagic to get 4 nibbles of instruction
-            decode
-                literally a gauntlet of conditionals and or pattern matching.
-                the corresponding function is done based on the output
-            execute
-    */
-    
+        
 }
 
 fn get_first_nibble(value: u8) -> u8 {
