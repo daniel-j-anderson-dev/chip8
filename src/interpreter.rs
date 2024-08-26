@@ -1,6 +1,6 @@
 mod instructions;
 
-use crate::{get_first_nibble, get_second_nibble};
+use crate::nibbles::{combine_three_nibbles, combine_two_nibbles, get_first_nibble, get_second_nibble};
 
 pub struct Chip8 {
     memory: [u8; 4096],
@@ -33,7 +33,7 @@ pub struct Chip8 {
     display: [[bool; 64]; 32],
 
     /// A collection of four rows. `true` represents a pressed button. `false` represents a unpressed button
-    /// ```
+    /// ```text
     ///   0   1   2   3
     /// ╔═══╦═══╦═══╦═══╗
     /// ║ 1 ║ 2 ║ 3 ║ C ║ 0
@@ -87,45 +87,51 @@ impl Chip8 {
     }
 
     fn execute_current_instruction(&mut self) {
-        let current_instruction = self.get_current_instruction();
+        let nibbles = self.get_current_instruction();
 
-        match current_instruction {
-            [0x0, _, _, _] => {}
-            [0x0, 0x0, 0xE, 0x0] => {}
-            [0x0, 0x0, 0xE, 0xE] => {}
-            [0x1, _, _, _] => {}
-            [0x2, _, _, _] => {}
-            [0x3, _, _, _] => {}
-            [0x4, _, _, _] => {}
-            [0x5, _, _, 0x0] => {}
-            [0x6, _, _, _] => {}
-            [0x7, _, _, _] => {}
-            [0x8, _, _, 0x0] => {}
-            [0x8, _, _, 0x1] => {}
-            [0x8, _, _, 0x2] => {}
-            [0x8, _, _, 0x3] => {}
-            [0x8, _, _, 0x4] => {}
-            [0x8, _, _, 0x5] => {}
-            [0x8, _, _, 0x6] => {}
-            [0x8, _, _, 0x7] => {}
-            [0x8, _, _, 0xE] => {}
-            [0x9, _, _, 0x0] => {}
-            [0xA, _, _, _] => {}
-            [0xB, _, _, _] => {}
-            [0xC, _, _, _] => {}
-            [0xD, _, _, _] => {}
-            [0xE, _, 0x9, 0xE] => {}
-            [0xE, _, 0xA, 0x1] => {}
-            [0xF, _, 0x0, 0x7] => {}
-            [0xF, _, 0x0, 0xA] => {}
-            [0xF, _, 0x1, 0x5] => {}
-            [0xF, _, 0x1, 0x8] => {}
-            [0xF, _, 0x1, 0xE] => {}
-            [0xF, _, 0x2, 0x9] => {}
-            [0xF, _, 0x3, 0x3] => {}
-            [0xF, _, 0x5, 0x5] => {}
-            [0xF, _, 0x6, 0x5] => {},
-            _ => {}
+        let address = combine_three_nibbles(nibbles[1], nibbles[2], nibbles[3]);
+        let value = combine_two_nibbles(nibbles[2], nibbles[3]);
+        let x_register_index = nibbles[1] as usize;
+        let y_register_index = nibbles[2] as usize;
+        let sprite_height = nibbles[3];
+
+        match nibbles {
+            [0x0, _, _, _] => {},
+            [0x0, 0x0, 0xE, 0x0] => self.clear_screen(),
+            [0x0, 0x0, 0xE, 0xE] => self.return_subroutine(),
+            [0x1, _, _, _] => self.jump(address),
+            [0x2, _, _, _] => self.call_subroutine(address),
+            [0x3, _, _, _] => self.skip_if_equal_value(x_register_index, value),
+            [0x4, _, _, _] => self.skip_if_equal_value(x_register_index, value),
+            [0x5, _, _, 0x0] => self.skip_if_equal(x_register_index, y_register_index),
+            [0x6, _, _, _] => self.assign_value(x_register_index, value),
+            [0x7, _, _, _] => self.add_assign_value(x_register_index, value),
+            [0x8, _, _, 0x0] => self.assign(x_register_index, y_register_index),
+            [0x8, _, _, 0x1] => self.bitwise_or(x_register_index, y_register_index),
+            [0x8, _, _, 0x2] => self.bitwise_and(x_register_index, y_register_index),
+            [0x8, _, _, 0x3] => self.bitwise_xor(x_register_index, y_register_index),
+            [0x8, _, _, 0x4] => self.add_assign(x_register_index, y_register_index),
+            [0x8, _, _, 0x5] => self.sub_assign(x_register_index, y_register_index),
+            [0x8, _, _, 0x6] => self.right_shift_assign(x_register_index, y_register_index),
+            [0x8, _, _, 0x7] => self.sub_assign_swapped(x_register_index, y_register_index),
+            [0x8, _, _, 0xE] => self.left_shift_assign(x_register_index, y_register_index),
+            [0x9, _, _, 0x0] => self.skip_if_not_equal(x_register_index, y_register_index),
+            [0xA, _, _, _] => self.set_address_register(address),
+            [0xB, _, _, _] => self.jump_offset(address),
+            [0xC, _, _, _] => self.random_number_assign(x_register_index, value),
+            [0xD, _, _, _] => self.draw_sprite(x_register_index, y_register_index, sprite_height),
+            [0xE, _, 0x9, 0xE] => self.skip_on_key_pressed(x_register_index),
+            [0xE, _, 0xA, 0x1] => self.skip_on_key_not_pressed(x_register_index),
+            [0xF, _, 0x0, 0x7] => self.store_delay_timer(x_register_index),
+            [0xF, _, 0x0, 0xA] => self.wait_for_key_press(x_register_index),
+            [0xF, _, 0x1, 0x5] => self.set_delay_timer(x_register_index),
+            [0xF, _, 0x1, 0x8] => self.set_sound_timer(x_register_index),
+            [0xF, _, 0x1, 0xE] => self.address_register_add_assign(x_register_index),
+            [0xF, _, 0x2, 0x9] => self.set_address_register_to_character_address(x_register_index),
+            [0xF, _, 0x3, 0x3] => self.store_binary_coded_decimal_at_address_register(x_register_index),
+            [0xF, _, 0x5, 0x5] => self.store_variable_registers(x_register_index),
+            [0xF, _, 0x6, 0x5] => self.load_variable_registers(x_register_index),
+            _ => {},
         }
 
         unimplemented!();
