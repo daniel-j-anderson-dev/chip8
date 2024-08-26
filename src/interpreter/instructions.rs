@@ -18,14 +18,14 @@ impl Chip8 {
     }
 
     /// Skips the next instruction if
-    /// `variable_register[register_index]` is equal to last byte of the opcode
-    pub(super) fn skip_if_equal_value(&mut self, register_index: usize, value: u8) {
+    /// `variable_register[x_register_index]` is equal to last byte of the instruction
+    pub(super) fn skip_if_equal_value(&mut self, x_register_index: usize, value: u8) {
         unimplemented!();
     }
 
     /// Skips the next instruction if
-    /// `variable_register[register_index]` is NOT equal to last byte of the opcode
-    pub(super) fn skip_if_not_equal_value(&mut self, register_index: usize, value: u8) {
+    /// `variable_register[x_register_index]` is NOT equal to last byte of the instruction
+    pub(super) fn skip_if_not_equal_value(&mut self, x_register_index: usize, value: u8) {
         unimplemented!();
     }
 
@@ -35,13 +35,13 @@ impl Chip8 {
         unimplemented!();
     }
 
-    /// Sets `variable_register[register_index]` to value
-    pub(super) fn assign_value(&mut self, register_index: usize, value: u8) {
+    /// Sets `variable_register[x_register_index]` to value
+    pub(super) fn assign_value(&mut self, x_register_index: usize, value: u8) {
         unimplemented!();
     }
 
-    /// Adds value to `variable_register[register_index]` (carry flag is not changed)
-    pub(super) fn add_assign_value(&mut self, register_index: usize, value: u8) {
+    /// Adds value to `variable_register[x_register_index]` (carry flag is not changed)
+    pub(super) fn add_assign_value(&mut self, x_register_index: usize, value: u8) {
         unimplemented!();
     }
 
@@ -105,68 +105,68 @@ impl Chip8 {
         unimplemented!();
     }
 
-    /// Sets `variable_register[register_index]` to the result of a bitwise and operation on a random number (Typically: 0 to 255) and value
-    pub(super) fn random_number_assign(&mut self, register_index: usize, value: u8) {
+    /// Sets `variable_register[x_register_index]` to the result of a bitwise and operation on a random number (Typically: 0 to 255) and value
+    pub(super) fn random_number_assign(&mut self, x_register_index: usize, value: u8) {
         unimplemented!();
     }
 
-    pub(super) fn draw_sprite(&mut self, x_register_index: usize, y_register_index: usize, n: u8) {
+    pub(super) fn draw_sprite(&mut self, x_register_index: usize, y_register_index: usize, sprite_height: u8) {
         unimplemented!();
     }
 
-    /// Skips the next instruction if the key stored in `variable_register[register_index]` is pressed
-    pub(super) fn skip_on_key_pressed(&mut self, register_index: usize) {
+    /// Skips the next instruction if the key stored in `variable_register[x_register_index]` is pressed
+    pub(super) fn skip_on_key_pressed(&mut self, x_register_index: usize) {
         unimplemented!();
     }
 
-    /// Skips the next instruction if the key stored in `variable_register[register_index]` is NOT pressed
-    pub(super) fn skip_on_key_not_pressed(&mut self, register_index: usize) {
+    /// Skips the next instruction if the key stored in `variable_register[x_register_index]` is NOT pressed
+    pub(super) fn skip_on_key_not_pressed(&mut self, x_register_index: usize) {
         unimplemented!();
     }
 
-    /// Sets `variable_register[register_index]` to the value of the delay timer
-    pub(super) fn store_delay_timer(&mut self, register_index: usize) {
+    /// Sets `variable_register[x_register_index]` to the value of the delay timer
+    pub(super) fn store_delay_timer(&mut self, x_register_index: usize) {
         unimplemented!();
     }
 
-    /// A key press is awaited, and then stored in `variable_register[register_index]`
-    pub(super) fn wait_for_key_press(&mut self, register_index: usize) {
+    /// A key press is awaited, and then stored in `variable_register[x_register_index]`
+    pub(super) fn wait_for_key_press(&mut self, x_register_index: usize) {
         unimplemented!();
     }
 
-    /// Sets the delay timer to `variable_register[register_index]`
-    pub(super) fn set_delay_timer(&mut self, register_index: usize) {
+    /// Sets the delay timer to `variable_register[x_register_index]`
+    pub(super) fn set_delay_timer(&mut self, x_register_index: usize) {
         unimplemented!();
     }
 
-    /// Sets the sound timer to `variable_register[register_index]`
-    pub(super) fn set_sound_timer(&mut self, register_index: usize) {
+    /// Sets the sound timer to `variable_register[x_register_index]`
+    pub(super) fn set_sound_timer(&mut self, x_register_index: usize) {
         unimplemented!();
     }
 
-    /// Adds `variable_register[register_index]` to address_register. `variable_register[0xF]` is not affected.
-    pub(super) fn address_register_add_assign(&mut self, register_index: usize) {
+    /// Adds `variable_register[x_register_index]` to address_register. `variable_register[0xF]` is not affected.
+    pub(super) fn address_register_add_assign(&mut self, x_register_index: usize) {
         unimplemented!();
     }
 
-    /// Sets address_register to the location of the sprite for the character in `variable_register[register_index]`
+    /// Sets address_register to the location of the sprite for the character in `variable_register[x_register_index]`
     /// Font starts at memory address 0
-    pub(super) fn set_address_register_to_font_address(&mut self, register_index: usize) {
+    pub(super) fn set_address_register_to_character_address(&mut self, x_register_index: usize) {
         unimplemented!();
     }
 
-    /// Stores the binary-coded decimal representation of variable_register[register_index], with the hundreds digit in memory at location in address_register, the tens digit at location address_register+1, and the ones digit at location address_register+2
-    pub(super) fn store_binary_coded_decimal_at_address_register(&mut self, register_index: usize) {
+    /// Stores the binary-coded decimal representation of variable_register[x_register_index], with the hundreds digit in memory at location in address_register, the tens digit at location address_register+1, and the ones digit at location address_register+2
+    pub(super) fn store_binary_coded_decimal_at_address_register(&mut self, x_register_index: usize) {
         unimplemented!();
     }
 
-    /// Stores from `variable_register[0]` to `variable_register[register_index]` (including `variable_register[register_index]`) in memory, starting at address address_register. The offset from address_register is increased by 1 for each value written, but address_register itself is left unmodified
-    pub(super) fn store_variable_registers(&mut self, register_index: usize) {
+    /// Stores from `variable_register[0]` to `variable_register[x_register_index]` (including `variable_register[x_register_index]`) in memory, starting at address address_register. The offset from address_register is increased by 1 for each value written, but address_register itself is left unmodified
+    pub(super) fn store_variable_registers(&mut self, x_register_index: usize) {
         unimplemented!();
     }
 
     /// Fills from `variable_register[0]` to `variable_register[x_register_index]` (including `variable_register[x_register_index]`) with values from memory, starting at address address_register. The offset from address_register is increased by 1 for each value read, but address_register itself is left unmodified
-    pub(super) fn load_variable_registers(&mut self, register_index: usize) {
+    pub(super) fn load_variable_registers(&mut self, x_register_index: usize) {
         unimplemented!();
     }
 }
