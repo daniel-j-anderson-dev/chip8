@@ -89,5 +89,3 @@
        1. save v0 - vx to i - (i + x)
     9. if last 2 nibbles are 65
        1. load v0 - vx from i - (i + x)
-
-hello
