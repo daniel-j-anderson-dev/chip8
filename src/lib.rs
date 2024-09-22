@@ -15,7 +15,7 @@ pub struct Chip8 {
     memory: [u8; 4096],
     stack: [u16; 16],
     stack_pointer: u8,
-    pixels: [bool; Self::SCREEN_WIDTH * Self::SCREEN_HEIGHT],
+    display: [bool; Self::DISPLAY_WIDTH * Self::DISPLAY_HEIGHT],
     key_pad: [bool; 16],
     rng: ThreadRng,
 }
@@ -39,9 +39,10 @@ impl Chip8 {
         0xF0, 0x80, 0xF0, 0x80, 0x80, // F
     ];
     const PROGRAM_MEMORY_OFFSET: usize = 512;
-    const CLEAR_SCREEN: [bool; 2048] = [false; Self::SCREEN_WIDTH * Self::SCREEN_HEIGHT];
-    pub const SCREEN_WIDTH: usize = 64;
-    pub const SCREEN_HEIGHT: usize = 32;
+    const FONT_MEMORY_OFFSET: u16 = 80;
+    const CLEAR_SCREEN: [bool; 2048] = [false; Self::DISPLAY_WIDTH * Self::DISPLAY_HEIGHT];
+    pub const DISPLAY_WIDTH: usize = 64;
+    pub const DISPLAY_HEIGHT: usize = 32;
 }
 impl Chip8 {
     pub fn initialize() -> Self {
@@ -54,7 +55,7 @@ impl Chip8 {
             memory: [0; 4096],
             stack: [0; 16],
             stack_pointer: 0,
-            pixels: Self::CLEAR_SCREEN,
+            display: Self::CLEAR_SCREEN,
             key_pad: [false; 16],
             rng: rand::thread_rng(),
         };
@@ -70,7 +71,8 @@ impl Chip8 {
             return Err(Chip8Error::ProgramTooLarge);
         }
 
-        self.memory[Self::PROGRAM_MEMORY_OFFSET..Self::PROGRAM_MEMORY_OFFSET + program.len()].copy_from_slice(&program);
+        self.memory[Self::PROGRAM_MEMORY_OFFSET..Self::PROGRAM_MEMORY_OFFSET + program.len()]
+            .copy_from_slice(&program);
 
         Ok(())
     }
@@ -86,11 +88,11 @@ impl Chip8 {
         }
     }
     pub fn pixels(&self) -> &[bool] {
-        &self.pixels
+        &self.display
     }
     pub fn is_pixel_white(&self, row_index: usize, column_index: usize) -> bool {
-        let pixel_index = (row_index * Self::SCREEN_WIDTH) + column_index;
-        self.pixels[pixel_index]
+        let pixel_index = (row_index * Self::DISPLAY_WIDTH) + column_index;
+        self.display[pixel_index]
     }
 }
 impl Chip8 {
@@ -121,38 +123,54 @@ impl Chip8 {
             [0x0, 0x0, 0x0, 0x0] => {}
             [0x0, 0x0, 0xE, 0x0] => self.opcode_00E0_clear(),
             [0x0, 0x0, 0xE, 0xE] => self.opcode_00EE_return(),
-            [0x1,   _,   _,   _] => self.opcode_1nnn_jump(address),
-            [0x2,   _,   _,   _] => self.opcode_2nnn_call_subroutine(address),
-            [0x3,   _,   _,   _] => self.opcode_3xkk_skip_if_equal_value(x_register_index, value),
-            [0x4,   _,   _,   _] => self.opcode_4xkk_skip_if_not_equal_value(x_register_index, value),
-            [0x5,   _,   _, 0x0] => self.opcode_5xy0_skip_if_equal(x_register_index, y_register_index),
-            [0x6,   _,   _,   _] => self.opcode_6xkk_assign_value(x_register_index, value),
-            [0x7,   _,   _,   _] => self.opcode_7xkk_add_assign_value(x_register_index, value),
-            [0x8,   _,   _, 0x0] => self.opcode_8xy0_assign(x_register_index, y_register_index),
-            [0x8,   _,   _, 0x1] => self.opcode_8xy1_bitwise_or_assign(x_register_index, y_register_index),
-            [0x8,   _,   _, 0x2] => self.opcode_8xy2_bitwise_and_assign(x_register_index, y_register_index),
-            [0x8,   _,   _, 0x3] => self.opcode_8xy3_bitwise_xor_assign(x_register_index, y_register_index),
-            [0x8,   _,   _, 0x4] => self.opcode_8xy4_add_assign(x_register_index, y_register_index),
-            [0x8,   _,   _, 0x5] => self.opcode_8xy5_sub_assign(x_register_index, y_register_index),
-            [0x8,   _,   _, 0x6] => self.opcode_8xy6_shift_right_assign(x_register_index, y_register_index),
-            [0x8,   _,   _, 0x7] => self.opcode_8xy7_sub_assign_swapped(x_register_index, y_register_index),
-            [0x8,   _,   _, 0xE] => self.opcode_8xyE_left_shift_assign(x_register_index, y_register_index),
-            [0x9,   _,   _, 0x0] => self.opcode_9xy0_skip_if_not_equal(x_register_index, y_register_index),
-            [0xA,   _,   _,   _] => self.opcode_Annn_set_i_register(address),
-            [0xB,   _,   _,   _] => self.opcode_Bnnn_jump_offset(address),
-            [0xC,   _,   _,   _] => self.opcode_Cxkk_random_number_assign(x_register_index, value),
-            [0xD,   _,   _,   _] => self.opcode_Dxyn_draw_sprite(x_register_index, y_register_index, height),
-            [0xE,   _, 0x9, 0xE] => self.opcode_Ex9E_skip_on_key_pressed(x_register_index),
-            [0xE,   _, 0xA, 0x1] => self.opcode_ExA1_skip_on_key_not_pressed(x_register_index),
-            [0xF,   _, 0x0, 0x7] => self.opcode_Fx07_store_delay_timer(x_register_index),
-            [0xF,   _, 0x0, 0xA] => self.opcode_Fx0A_wait_for_key_press(x_register_index),
-            [0xF,   _, 0x1, 0x5] => self.opcode_Fx15_set_delay_timer(x_register_index),
-            [0xF,   _, 0x1, 0x8] => self.opcode_Fx18_set_sound_timer(x_register_index),
-            [0xF,   _, 0x1, 0xE] => self.opcode_Fx1E_i_register_add_assaign(x_register_index),
-            [0xF,   _, 0x2, 0x9] => self.opcode_Fx29_set_i_to_font_address(x_register_index),
-            [0xF,   _, 0x3, 0x3] => self.opcode_Fx33_store_bcd_at_i(x_register_index),
-            [0xF,   _, 0x5, 0x5] => self.opcode_Fx55_store_v_registers(x_register_index),
-            [0xF,   _, 0x6, 0x5] => self.opcode_Fx65_load_v_registers(x_register_index),
+            [0x1, _, _, _] => self.opcode_1nnn_jump(address),
+            [0x2, _, _, _] => self.opcode_2nnn_call_subroutine(address),
+            [0x3, _, _, _] => self.opcode_3xkk_skip_if_equal_value(x_register_index, value),
+            [0x4, _, _, _] => self.opcode_4xkk_skip_if_not_equal_value(x_register_index, value),
+            [0x5, _, _, 0x0] => self.opcode_5xy0_skip_if_equal(x_register_index, y_register_index),
+            [0x6, _, _, _] => self.opcode_6xkk_assign_value(x_register_index, value),
+            [0x7, _, _, _] => self.opcode_7xkk_add_assign_value(x_register_index, value),
+            [0x8, _, _, 0x0] => self.opcode_8xy0_assign(x_register_index, y_register_index),
+            [0x8, _, _, 0x1] => {
+                self.opcode_8xy1_bitwise_or_assign(x_register_index, y_register_index)
+            }
+            [0x8, _, _, 0x2] => {
+                self.opcode_8xy2_bitwise_and_assign(x_register_index, y_register_index)
+            }
+            [0x8, _, _, 0x3] => {
+                self.opcode_8xy3_bitwise_xor_assign(x_register_index, y_register_index)
+            }
+            [0x8, _, _, 0x4] => self.opcode_8xy4_add_assign(x_register_index, y_register_index),
+            [0x8, _, _, 0x5] => self.opcode_8xy5_sub_assign(x_register_index, y_register_index),
+            [0x8, _, _, 0x6] => {
+                self.opcode_8xy6_shift_right_assign(x_register_index, y_register_index)
+            }
+            [0x8, _, _, 0x7] => {
+                self.opcode_8xy7_sub_assign_swapped(x_register_index, y_register_index)
+            }
+            [0x8, _, _, 0xE] => {
+                self.opcode_8xyE_left_shift_assign(x_register_index, y_register_index)
+            }
+            [0x9, _, _, 0x0] => {
+                self.opcode_9xy0_skip_if_not_equal(x_register_index, y_register_index)
+            }
+            [0xA, _, _, _] => self.opcode_Annn_set_i_register(address),
+            [0xB, _, _, _] => self.opcode_Bnnn_jump_offset(address),
+            [0xC, _, _, _] => self.opcode_Cxkk_random_number_assign(x_register_index, value),
+            [0xD, _, _, _] => {
+                self.opcode_Dxyn_draw_sprite(x_register_index, y_register_index, height)
+            }
+            [0xE, _, 0x9, 0xE] => self.opcode_Ex9E_skip_on_key_pressed(x_register_index),
+            [0xE, _, 0xA, 0x1] => self.opcode_ExA1_skip_on_key_not_pressed(x_register_index),
+            [0xF, _, 0x0, 0x7] => self.opcode_Fx07_store_delay_timer(x_register_index),
+            [0xF, _, 0x0, 0xA] => self.opcode_Fx0A_wait_for_key_press(x_register_index),
+            [0xF, _, 0x1, 0x5] => self.opcode_Fx15_set_delay_timer(x_register_index),
+            [0xF, _, 0x1, 0x8] => self.opcode_Fx18_set_sound_timer(x_register_index),
+            [0xF, _, 0x1, 0xE] => self.opcode_Fx1E_i_register_add_assaign(x_register_index),
+            [0xF, _, 0x2, 0x9] => self.opcode_Fx29_set_i_to_font_address(x_register_index),
+            [0xF, _, 0x3, 0x3] => self.opcode_Fx33_store_bcd_at_i(x_register_index),
+            [0xF, _, 0x5, 0x5] => self.opcode_Fx55_store_v_registers(x_register_index),
+            [0xF, _, 0x6, 0x5] => self.opcode_Fx65_load_v_registers(x_register_index),
             _ => eprintln!("Unknown opcode: {:?}", opcode),
         }
     }
@@ -181,7 +199,7 @@ impl Chip8 {
 impl Chip8 {
     /// Clear screen
     fn opcode_00E0_clear(&mut self) {
-        self.pixels = Self::CLEAR_SCREEN;
+        self.display = Self::CLEAR_SCREEN;
     }
 
     /// Return from subroutine
@@ -261,8 +279,8 @@ impl Chip8 {
         let (sum, overflow_occurred) =
             self.v_register[x_register_index].overflowing_add(self.v_register[y_register_index]);
 
-        self.v_register[x_register_index] = sum;
         self.v_register[0xF] = if overflow_occurred { 1 } else { 0 };
+        self.v_register[x_register_index] = sum;
     }
 
     /// `v_register[y_register_index]` is subtracted from `v_register[x_register_index]`. `v_register[0xF]` is set to 0 when there's an underflow, and 1 when there is not
@@ -270,8 +288,8 @@ impl Chip8 {
         let (difference, underflow_occurred) =
             self.v_register[x_register_index].overflowing_sub(self.v_register[y_register_index]);
 
-        self.v_register[x_register_index] = difference;
         self.v_register[0xF] = if underflow_occurred { 0 } else { 1 };
+        self.v_register[x_register_index] = difference;
     }
 
     /// Stores the least significant bit of `v_register[x_register_index]` in `v_register[0xF]` and then shifts `v_register[x_register_index]` to the right by 1
@@ -285,13 +303,13 @@ impl Chip8 {
         let (difference, underflow_occurred) =
             self.v_register[y_register_index].overflowing_sub(self.v_register[x_register_index]);
 
-        self.v_register[x_register_index] = difference;
         self.v_register[0xF] = if underflow_occurred { 0 } else { 1 };
+        self.v_register[x_register_index] = difference;
     }
 
     /// Stores the most significant bit of `v_register[x_register_index]` in `v_register[0xF]` and then shifts `v_register[x_register_index]` to the left by 1
     fn opcode_8xyE_left_shift_assign(&mut self, x_register_index: usize, y_register_index: usize) {
-        self.v_register[0xF] = self.v_register[x_register_index].reverse_bits() & 0b00000001;
+        self.v_register[0xF] = (self.v_register[x_register_index] & 0b10000000) >> 7;
         self.v_register[x_register_index] <<= 1;
     }
 
@@ -318,43 +336,47 @@ impl Chip8 {
     }
 
     /// draw a sprite
-    fn opcode_Dxyn_draw_sprite(&mut self, x_register_index: usize, y_register_index: usize, n: u8) {
+    fn opcode_Dxyn_draw_sprite(
+        &mut self,
+        x_register_index: usize,
+        y_register_index: usize,
+        height: u8,
+    ) {
         // get the position from the two registers
         let initial_x = self.v_register[x_register_index] as usize;
         let initial_y = self.v_register[y_register_index] as usize;
 
-        // width is always 8, height is the last nybl of the opcode
-        let height = n as usize;
-        const WIDTH: usize = 8;
+        let sprite_height = height as usize;
+        const SPRITE_WIDTH: usize = 8;
 
-        let mut white_to_black_occurred = false;
-
-        for row_index in 0..height {
+        for row_index in 0..sprite_height {
             // select the byte specified by the row index
             let row_address = self.i_register as usize + row_index; // calculate the row address
-            let current_row = self.memory[row_address];
+            let sprite_row = self.memory[row_address];
 
-            for column_index in 0..WIDTH {
+            for column_index in 0..SPRITE_WIDTH {
                 // select the bit specified by
-                let current_pixel_mask = 0b10000000u8 >> column_index;
-                let current_pixel = current_row & current_pixel_mask;
+                let sprite_pixel_mask = 0b10000000u8 >> column_index;
+                let sprite_pixel = sprite_row & sprite_pixel_mask;
 
                 // change color of pixel when 1
-                if current_pixel != 0 {
+                if sprite_pixel != 0 {
                     // sprites wrap at screen boundaries
-                    let pixel_x = (initial_x + column_index) % Self::SCREEN_WIDTH;
-                    let pixel_y = (initial_y + row_index) % Self::SCREEN_HEIGHT;
+                    let display_pixel_x_index = (initial_x + column_index) % Self::DISPLAY_WIDTH;
+                    let display_pixel_y_index = (initial_y + row_index) % Self::DISPLAY_HEIGHT;
 
                     // calculate the 1D screen index
-                    let pixel_index = (pixel_y * Self::SCREEN_WIDTH) + pixel_x;
+                    let display_pixel_index =
+                        (display_pixel_y_index * Self::DISPLAY_WIDTH) + display_pixel_x_index;
 
-                    white_to_black_occurred |= self.pixels[pixel_index];
-                    self.pixels[pixel_index] ^= true;
+                    if self.display[display_pixel_index] {
+                        self.v_register[0xF] = 1;
+                    }
+
+                    self.display[display_pixel_index] ^= true;
                 }
             }
         }
-
-        self.v_register[0xF] = if white_to_black_occurred { 1 } else { 0 };
     }
 
     /// Skips the next instruction if the key stored in `v_register[register_index]` is pressed
@@ -382,24 +404,17 @@ impl Chip8 {
 
     /// A key press is awaited, and then stored in `v_register[register_index]`
     fn opcode_Fx0A_wait_for_key_press(&mut self, register_index: usize) {
-        let mut key_press_occurred = false;
-
         // check each key
         for (key_index, is_key_pressed) in self.key_pad.iter().enumerate() {
             if *is_key_pressed {
                 // store the index of the first key press found
                 self.v_register[register_index] = key_index as u8;
-
-                // stop at the first key press
-                key_press_occurred = true;
-                break;
+                return;
             }
         }
 
-        if !key_press_occurred {
-            // try this opcode again if none of the keys were pressed
-            self.program_counter -= 2;
-        }
+        // no key press so redo this instruction
+        self.program_counter -= 2;
     }
 
     /// Sets the delay timer to `v_register[register_index]`
@@ -426,7 +441,7 @@ impl Chip8 {
         // each character is 5 bytes apart and the first character is at address 0
         let character_sprite_address = character * 5;
 
-        self.i_register = character_sprite_address;
+        self.i_register = Self::FONT_MEMORY_OFFSET + character_sprite_address;
     }
 
     /// Stores the binary-coded decimal representation of v_register[register_index], with the hundreds digit in memory at location in I, the tens digit at location I+1, and the ones digit at location I+2
@@ -441,21 +456,25 @@ impl Chip8 {
 
         let i_register = self.i_register as usize;
 
-        self.memory[i_register..=i_register + 2].copy_from_slice(&decimal_digits);
+        for (digit_index, digit) in decimal_digits.into_iter().enumerate() {
+            self.memory[i_register + digit_index] = digit;
+        }
     }
 
     /// Stores from `v_register[0]` to `v_register[register_index]` (including `v_register[register_index]`) in memory, starting at address I. The offset from I is increased by 1 for each value written, but I itself is left unmodified
     fn opcode_Fx55_store_v_registers(&mut self, register_index: usize) {
-        let offset = self.i_register as usize;
-        self.memory[offset..offset + register_index]
-            .copy_from_slice(&self.v_register[..register_index]);
+        let memory_start = self.i_register as usize;
+        let memory_end = memory_start + register_index;
+
+        self.memory[memory_start..=memory_end].copy_from_slice(&self.v_register[..=register_index]);
     }
 
     /// Fills from `v_register[0]` to `v_register[x_register_index]` (including `v_register[x_register_index]`) with values from memory, starting at address I. The offset from I is increased by 1 for each value read, but I itself is left unmodified
     fn opcode_Fx65_load_v_registers(&mut self, register_index: usize) {
-        let offset = self.i_register as usize;
-        self.v_register[..register_index]
-            .copy_from_slice(&self.memory[offset..offset + register_index]);
+        let memory_start = self.i_register as usize;
+        let memory_end = memory_start + register_index;
+
+        self.v_register[..=register_index].copy_from_slice(&self.memory[memory_start..=memory_end]);
     }
 }
 
