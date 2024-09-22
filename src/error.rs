@@ -10,7 +10,8 @@ impl std::fmt::Display for Chip8Error {
             f,
             "Chip8 Error: {}",
             match self {
-                Chip8Error::ProgramTooLarge => format!("Program could not fit into the 4096 bytes of memory"),
+                Chip8Error::ProgramTooLarge =>
+                    format!("Program could not fit into the 4096 bytes of memory"),
                 Chip8Error::Io(e) => format!("{}", e),
             }
         )
