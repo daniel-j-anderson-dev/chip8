@@ -197,8 +197,11 @@ impl Chip8 {
 
     /// Call subroutine at address
     fn opcode_2nnn_call_subroutine(&mut self, address: u16) {
-        self.stack[self.stack_pointer as usize] = self.program_counter;
+        let stack_pointer = self.stack_pointer as usize;
         self.stack_pointer += 1;
+        
+        self.stack[stack_pointer] = self.program_counter;
+
         self.program_counter = address;
     }
 
