@@ -6,7 +6,8 @@ impl Chip8 {
     }
 
     pub(super) fn return_subroutine(&mut self) {
-        unimplemented!();
+        self.call_stack_index -= 1;
+        self.program_counter = self.call_stack[self.call_stack_index as usize];
     }
 
     pub(super) fn jump(&mut self, address: u16) {
@@ -25,7 +26,9 @@ impl Chip8 {
     /// Skips the next instruction if
     /// `variable_register[x_register_index]` is equal to last byte of the instruction
     pub(super) fn skip_if_equal_value(&mut self, x_register_index: usize, value: u8) {
-        unimplemented!();
+        if self.variable_register[x_register_index] == value {
+            self.program_counter += 2;
+        }
     }
 
     /// Skips the next instruction if
