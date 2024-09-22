@@ -104,7 +104,7 @@ impl Chip8 {
             [0x1, _, _, _] => self.jump(address),
             [0x2, _, _, _] => self.call_subroutine(address),
             [0x3, _, _, _] => self.skip_if_equal_value(x_register_index, value),
-            [0x4, _, _, _] => self.skip_if_equal_value(x_register_index, value),
+            [0x4, _, _, _] => self.skip_if_not_equal_value(x_register_index, value),
             [0x5, _, _, 0x0] => self.skip_if_equal(x_register_index, y_register_index),
             [0x6, _, _, _] => self.assign_value(x_register_index, value),
             [0x7, _, _, _] => self.add_assign_value(x_register_index, value),
