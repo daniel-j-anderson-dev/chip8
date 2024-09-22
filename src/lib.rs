@@ -129,9 +129,9 @@ impl Chip8 {
             [0x6,   _,   _,   _] => self.opcode_6xkk_assign_value(x_register_index, value),
             [0x7,   _,   _,   _] => self.opcode_7xkk_add_assign_value(x_register_index, value),
             [0x8,   _,   _, 0x0] => self.opcode_8xy0_assign(x_register_index, y_register_index),
-            [0x8,   _,   _, 0x1] => self.opcode_8xy1_bitwise_or(x_register_index, y_register_index),
-            [0x8,   _,   _, 0x2] => self.opcode_8xy2_bitwise_and(x_register_index, y_register_index),
-            [0x8,   _,   _, 0x3] => self.opcode_8xy3_bitwise_xor(x_register_index, y_register_index),
+            [0x8,   _,   _, 0x1] => self.opcode_8xy1_bitwise_or_assign(x_register_index, y_register_index),
+            [0x8,   _,   _, 0x2] => self.opcode_8xy2_bitwise_and_assign(x_register_index, y_register_index),
+            [0x8,   _,   _, 0x3] => self.opcode_8xy3_bitwise_xor_assign(x_register_index, y_register_index),
             [0x8,   _,   _, 0x4] => self.opcode_8xy4_add_assign(x_register_index, y_register_index),
             [0x8,   _,   _, 0x5] => self.opcode_8xy5_sub_assign(x_register_index, y_register_index),
             [0x8,   _,   _, 0x6] => self.opcode_8xy6_shift_right_assign(x_register_index, y_register_index),
@@ -199,7 +199,7 @@ impl Chip8 {
     fn opcode_2nnn_call_subroutine(&mut self, address: u16) {
         let stack_pointer = self.stack_pointer as usize;
         self.stack_pointer += 1;
-        
+
         self.stack[stack_pointer] = self.program_counter;
 
         self.program_counter = address;
@@ -242,17 +242,17 @@ impl Chip8 {
     }
 
     /// Sets `v_register[x_register_index]` to (`v_register[x_register_index]` or `v_register[y_register_index]`) bitwise
-    fn opcode_8xy1_bitwise_or(&mut self, x_register_index: usize, y_register_index: usize) {
+    fn opcode_8xy1_bitwise_or_assign(&mut self, x_register_index: usize, y_register_index: usize) {
         self.v_register[x_register_index] |= self.v_register[y_register_index];
     }
 
     /// Sets `v_register[x_register_index]` to `v_register[x_register_index]` and `v_register[y_register_index]` (bitwise)
-    fn opcode_8xy2_bitwise_and(&mut self, x_register_index: usize, y_register_index: usize) {
+    fn opcode_8xy2_bitwise_and_assign(&mut self, x_register_index: usize, y_register_index: usize) {
         self.v_register[x_register_index] &= self.v_register[y_register_index];
     }
 
     /// Sets `v_register[x_register_index]` to `v_register[x_register_index]` xor `v_register[y_register_index]` (bitwise)
-    fn opcode_8xy3_bitwise_xor(&mut self, x_register_index: usize, y_register_index: usize) {
+    fn opcode_8xy3_bitwise_xor_assign(&mut self, x_register_index: usize, y_register_index: usize) {
         self.v_register[x_register_index] ^= self.v_register[y_register_index];
     }
 
