@@ -2,7 +2,7 @@ use crate::interpreter::Chip8;
 
 impl Chip8 {
     pub(super) fn clear_screen(&mut self) {
-        unimplemented!();
+        self.display = Self::BLACK_DISPLAY;
     }
 
     pub(super) fn return_subroutine(&mut self) {
@@ -10,11 +10,16 @@ impl Chip8 {
     }
 
     pub(super) fn jump(&mut self, address: u16) {
-        unimplemented!();
+        self.program_counter = address;
     }
 
     pub(super) fn call_subroutine(&mut self, address: u16) {
-        unimplemented!();
+        let old_program_counter = self.program_counter as usize;
+        self.program_counter += 1;
+
+        self.call_stack[old_program_counter] = self.program_counter;
+
+        self.program_counter = address;
     }
 
     /// Skips the next instruction if
