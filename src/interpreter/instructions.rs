@@ -43,7 +43,10 @@ impl Chip8 {
     /// Skips the next instruction if
     /// `variable_register[x_register_index]` equals `variable_register[y_register_index]`
     pub(super) fn skip_if_equal(&mut self, x_register_index: usize, y_register_index: usize) {
-        unimplemented!();
+        // if (registers[(opcode & 0x0F00u) >> 8u] == registers[(opcode & 0x00F0u) >> 4u]) pc += 2;
+        if self.variable_register[x_register_index] == self.variable_register[y_register_index] {
+            self.program_counter == 2;
+        }
     }
 
     /// Sets `variable_register[x_register_index]` to value
