@@ -186,9 +186,8 @@ impl Chip8 {
 
     /// Return from subroutine
     fn opcode_00EE_return(&mut self) {
-        let stack_pointer = self.stack_pointer as usize;
         self.stack_pointer -= 1;
-        self.program_counter = self.stack[stack_pointer];
+        self.program_counter = self.stack[self.stack_pointer as usize];
     }
 
     /// Jumps to address address
