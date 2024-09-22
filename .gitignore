@@ -1,3 +1,4 @@
 /target
 /.vscode
-/c8games
+/chip8_macroquad/c8games
+/chip8_macroquad/target

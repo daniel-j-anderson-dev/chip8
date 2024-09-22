@@ -1,3 +1,5 @@
+//! A chip8 interpreter
+
 mod error;
 
 use self::error::Chip8Error;
@@ -42,7 +44,7 @@ impl Chip8 {
     pub const SCREEN_HEIGHT: usize = 32;
 }
 impl Chip8 {
-    pub fn initialize() -> Result<Self, Chip8Error> {
+    pub fn initialize() -> Self {
         let mut chip8 = Chip8 {
             program_counter: 0,
             i_register: 0,
@@ -59,7 +61,7 @@ impl Chip8 {
 
         chip8.memory[..Self::FONT.len()].copy_from_slice(&Self::FONT);
 
-        Ok(chip8)
+        chip8
     }
     pub fn load_program(&mut self, program_path: &str) -> Result<(), Chip8Error> {
         let program = read_file(program_path)?;
@@ -68,7 +70,7 @@ impl Chip8 {
             return Err(Chip8Error::ProgramTooLarge);
         }
 
-        self.memory[Self::PROGRAM_MEMORY_OFFSET..].copy_from_slice(&program);
+        self.memory[Self::PROGRAM_MEMORY_OFFSET..Self::PROGRAM_MEMORY_OFFSET + program.len()].copy_from_slice(&program);
 
         Ok(())
     }
@@ -82,6 +84,13 @@ impl Chip8 {
             Some(&[first_byte, second_byte]) => ((first_byte as u16) << 8) | second_byte as u16,
             _ => 0,
         }
+    }
+    pub fn pixels(&self) -> &[bool] {
+        &self.pixels
+    }
+    pub fn is_pixel_white(&self, row_index: usize, column_index: usize) -> bool {
+        let pixel_index = (row_index * Self::SCREEN_WIDTH) + column_index;
+        self.pixels[pixel_index]
     }
 }
 impl Chip8 {
@@ -177,8 +186,9 @@ impl Chip8 {
 
     /// Return from subroutine
     fn opcode_00EE_return(&mut self) {
+        let stack_pointer = self.stack_pointer as usize;
         self.stack_pointer -= 1;
-        self.program_counter = self.stack[self.stack_pointer as usize];
+        self.program_counter = self.stack[stack_pointer];
     }
 
     /// Jumps to address address
@@ -330,11 +340,11 @@ impl Chip8 {
                 // change color of pixel when 1
                 if current_pixel != 0 {
                     // sprites wrap at screen boundaries
-                    let pixel_x = (initial_x + column_index) % 64;
-                    let pixel_y = (initial_y + row_index) % 32;
+                    let pixel_x = (initial_x + column_index) % Self::SCREEN_WIDTH;
+                    let pixel_y = (initial_y + row_index) % Self::SCREEN_HEIGHT;
 
                     // calculate the 1D screen index
-                    let pixel_index = (pixel_y * 64) + pixel_x;
+                    let pixel_index = (pixel_y * Self::SCREEN_WIDTH) + pixel_x;
 
                     white_to_black_occurred |= self.pixels[pixel_index];
                     self.pixels[pixel_index] ^= true;
