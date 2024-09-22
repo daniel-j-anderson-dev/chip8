@@ -53,6 +53,8 @@ impl Chip8 {
     /// Most programs written for Chip8 expect programs to start here.
     pub const PROGRAM_MEMORY_OFFSET: u16 = 200;
 
+    pub const BLACK_DISPLAY: [[bool; 64]; 32] = [[false; 64]; 32];
+
     pub fn new() -> Chip8 {
         Self {
             memory: [0; 4096],
@@ -63,7 +65,7 @@ impl Chip8 {
             call_stack_index: 0,
             delay_timer: 0,
             sound_timer: 0,
-            display: [[false; 64]; 32],
+            display: Self::BLACK_DISPLAY,
             keypad: [[false; 4]; 4],
         }
     }
