@@ -75,6 +75,10 @@ impl Interpreter {
         }
     }
 
+    pub fn display(&mut self) -> &[[bool; Self::DISPLAY_WIDTH]; Self::DISPLAY_HEIGHT] {
+        &self.display
+    }
+
     pub fn load_program_from_path(&mut self, path: impl AsRef<std::path::Path>) -> Result<(), std::io::Error> {
         let program_data = std::fs::read(path)?;
         self.load_program_from_bytes(program_data);
