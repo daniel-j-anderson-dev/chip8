@@ -110,7 +110,7 @@ impl Interpreter {
     }
 
     #[rustfmt::skip]
-    fn execute_current_instruction(&mut self) -> bool {
+    pub fn execute_current_instruction(&mut self) -> bool {
         let Some(nibbles) = self.get_current_instruction() else {
             return false;
         };
