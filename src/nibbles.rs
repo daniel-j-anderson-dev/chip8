@@ -9,6 +9,7 @@ pub fn get_first_nibble(value: u8) -> u8 {
     const FIRST_NIBBLE_BIT_MASK: u8 = 0xF0;
     (value & FIRST_NIBBLE_BIT_MASK) >> 4
 }
+
 /// # Example
 /// ```
 /// let byte = 0xAB;
@@ -19,6 +20,7 @@ pub fn get_second_nibble(value: u8) -> u8 {
     const SECOND_NIBBLE_BIT_MASK: u8 = 0x0F;
     value & SECOND_NIBBLE_BIT_MASK
 }
+
 /// convert three nibbles to a single [u16] with the left most nibble being 0.
 /// 
 /// `value[0]` is the most significant nibble. `value[2]` least significant nibble. (big-endian)
@@ -32,6 +34,7 @@ pub fn get_second_nibble(value: u8) -> u8 {
 pub fn concatenate_three_nibbles(first: u8, second: u8, third: u8) -> u16 {
     ((first as u16) << 8) | ((second as u16) << 4) | (third as u16)
 }
+
 /// # Example 
 /// ```
 /// let nibbles = [0xA, 0xB];
