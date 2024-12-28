@@ -3,3 +3,6 @@
 
 pub mod interpreter;
 pub mod nibbles;
+
+#[cfg(test)]
+pub mod test;
