@@ -53,7 +53,7 @@ pub struct Interpreter {
 impl Interpreter {
     /// Offset is commonly done because of old standards.
     /// Most programs written for Chip8 expect programs to start here.
-    pub const PROGRAM_MEMORY_OFFSET: u16 = 200;
+    pub const PROGRAM_START: usize = 200;
 
     pub const DISPLAY_WIDTH: usize = 64;
     pub const DISPLAY_HEIGHT: usize = 32;
@@ -63,7 +63,7 @@ impl Interpreter {
     pub fn new() -> Interpreter {
         Self {
             memory: [0; 4096],
-            program_counter: Self::PROGRAM_MEMORY_OFFSET,
+            program_counter: Self::PROGRAM_START as u16,
             address_register: 0,
             variable_register: [0; 16],
             call_stack: [0; 16],
@@ -73,6 +73,20 @@ impl Interpreter {
             display: Self::BLACK_DISPLAY,
             keypad: [[false; 4]; 4],
         }
+    }
+
+    pub fn load_program_from_path(&mut self, path: impl AsRef<std::path::Path>) -> Result<(), std::io::Error> {
+        let program_data = std::fs::read(path)?;
+        self.load_program_from_bytes(program_data);
+        Ok(())
+    }
+
+    pub fn load_program_from_bytes(&mut self, program_data: impl AsRef<[u8]>) {
+        let program_data = program_data.as_ref();
+        let program_size = program_data.len();
+
+        self.memory[Self::PROGRAM_START..Self::PROGRAM_START + program_size]
+            .copy_from_slice(program_data);
     }
 
     /// Returns an array contain the four nibbles of an opcode.
