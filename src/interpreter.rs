@@ -98,9 +98,9 @@ impl Chip8 {
         let sprite_height = nibbles[3];
 
         match nibbles {
-            [0x0, _, _, _] => {},
             [0x0, 0x0, 0xE, 0x0] => self.clear_screen(),
             [0x0, 0x0, 0xE, 0xE] => self.return_subroutine(),
+            [0x0, _, _, _] => {},
             [0x1, _, _, _] => self.jump(address),
             [0x2, _, _, _] => self.call_subroutine(address),
             [0x3, _, _, _] => self.skip_if_equal_value(x_register_index, value),
