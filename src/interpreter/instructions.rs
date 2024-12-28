@@ -124,7 +124,7 @@ impl Interpreter {
 
         for sprite_row_index in 0..sprite_height as usize {
             let display_row_index = y_position + sprite_row_index;
-            
+
             let sprite_byte = self.memory[address_register + sprite_row_index];
 
             for sprite_column_index in 0..8 {

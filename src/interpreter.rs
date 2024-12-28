@@ -112,8 +112,11 @@ impl Interpreter {
             get_second_nibble(*least_significant_byte),
         ];
 
-        println!("{:x}{:x}{:x}{:x}", nibbles[0], nibbles[1], nibbles[2], nibbles[3], );
-        
+        println!(
+            "{:x}{:x}{:x}{:x}",
+            nibbles[0], nibbles[1], nibbles[2], nibbles[3],
+        );
+
         Some(nibbles)
     }
 
