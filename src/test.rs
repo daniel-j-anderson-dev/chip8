@@ -21,17 +21,19 @@ fn display_to_string(
 pub fn ibm_logo() {
     let mut interpreter = Interpreter::new();
     interpreter
-        .load_program_from_path("assets/roms/ibm_logo.ch8")
+
+
+    .load_program_from_path("assets/roms/ibm_logo.ch8")
         .unwrap();
 
     loop {
-        // print!("{}{}", RESET_TERMINAL, display_to_string(interpreter.display()));
+        print!("{}{}", RESET_TERMINAL, display_to_string(interpreter.display()));
 
         if !interpreter.execute_current_instruction() {
             break;
         }
 
-        get_input("").unwrap();
+        // get_input("").unwrap();
     }
 }
 
