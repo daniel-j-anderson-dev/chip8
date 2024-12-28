@@ -29,7 +29,7 @@ pub fn get_second_nibble(value: u8) -> u8 {
 /// let combined = chip8::nibbles::combine_three_nibbles(nibbles[0], nibbles[1], nibbles[2]);
 /// assert_eq!(combined, 0x0ABC);
 /// ```
-pub fn combine_three_nibbles(first: u8, second: u8, third: u8) -> u16 {
+pub fn concatenate_three_nibbles(first: u8, second: u8, third: u8) -> u16 {
     ((first as u16) << 8) | ((second as u16) << 4) | (third as u16)
 }
 /// # Example 
@@ -38,7 +38,7 @@ pub fn combine_three_nibbles(first: u8, second: u8, third: u8) -> u16 {
 /// let combined = chip8::nibbles::combine_two_nibbles(nibbles[0], nibbles[1]);
 /// assert_eq!(combined, 0xAB);
 /// ```
-pub fn combine_two_nibbles(first: u8, second: u8) -> u8 {
+pub fn concatenate_two_nibbles(first: u8, second: u8) -> u8 {
     (first << 4) | second
 }
 
@@ -59,14 +59,14 @@ fn test_get_second_nibble() {
 #[test]
 fn test_combine_three_nibbles() {
     let nibbles = [0xA, 0xB, 0xC];
-    let combined = combine_three_nibbles(nibbles[0], nibbles[1], nibbles[2]);
+    let combined = concatenate_three_nibbles(nibbles[0], nibbles[1], nibbles[2]);
     let expected = 0x0ABC;
     assert_eq!(combined, expected);
 }
 #[test]
 fn test_combine_two_nibbles() {
     let nibbles = [0xA, 0xB];
-    let combined = combine_two_nibbles(nibbles[0], nibbles[1]);
+    let combined = concatenate_two_nibbles(nibbles[0], nibbles[1]);
     let expected = 0xAB;
     assert_eq!(combined, expected);
 }
