@@ -100,7 +100,6 @@ impl Interpreter {
     /// (a nibble is a four bit number or single hexadecimal digit)
     fn get_current_instruction(&self) -> Option<[u8; 4]> {
         let program_counter = self.program_counter as usize;
-        println!("{:#04x}", program_counter);
 
         let most_significant_byte = self.memory.get(program_counter)?;
         let least_significant_byte = self.memory.get(program_counter + 1)?;
@@ -111,11 +110,6 @@ impl Interpreter {
             get_first_nibble(*least_significant_byte),
             get_second_nibble(*least_significant_byte),
         ];
-
-        println!(
-            "{:x}{:x}{:x}{:x}",
-            nibbles[0], nibbles[1], nibbles[2], nibbles[3],
-        );
 
         Some(nibbles)
     }
