@@ -53,7 +53,7 @@ pub struct Interpreter {
 impl Interpreter {
     /// Offset is commonly done because of old standards.
     /// Most programs written for Chip8 expect programs to start here.
-    pub const PROGRAM_START: usize = 200;
+    pub const PROGRAM_START: usize = 0x200;
 
     pub const DISPLAY_WIDTH: usize = 64;
     pub const DISPLAY_HEIGHT: usize = 32;
@@ -100,6 +100,7 @@ impl Interpreter {
     /// (a nibble is a four bit number or single hexadecimal digit)
     fn get_current_instruction(&self) -> Option<[u8; 4]> {
         let program_counter = self.program_counter as usize;
+        println!("{:#04x}", program_counter);
 
         let most_significant_byte = self.memory.get(program_counter)?;
         let least_significant_byte = self.memory.get(program_counter + 1)?;
