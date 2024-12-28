@@ -79,7 +79,10 @@ impl Interpreter {
         &self.display
     }
 
-    pub fn load_program_from_path(&mut self, path: impl AsRef<std::path::Path>) -> Result<(), std::io::Error> {
+    pub fn load_program_from_path(
+        &mut self,
+        path: impl AsRef<std::path::Path>,
+    ) -> Result<(), std::io::Error> {
         let program_data = std::fs::read(path)?;
         self.load_program_from_bytes(program_data);
         Ok(())
@@ -101,12 +104,16 @@ impl Interpreter {
         let most_significant_byte = self.memory.get(program_counter)?;
         let least_significant_byte = self.memory.get(program_counter + 1)?;
 
-        Some([
+        let nibbles = [
             get_first_nibble(*most_significant_byte),
             get_second_nibble(*most_significant_byte),
             get_first_nibble(*least_significant_byte),
             get_second_nibble(*least_significant_byte),
-        ])
+        ];
+
+        println!("{:x}{:x}{:x}{:x}", nibbles[0], nibbles[1], nibbles[2], nibbles[3], );
+        
+        Some(nibbles)
     }
 
     fn update_timers(&mut self) {
@@ -118,6 +125,7 @@ impl Interpreter {
         let Some(nibbles) = self.get_current_instruction() else {
             return false;
         };
+        self.program_counter += 2;
 
         let address = concatenate_three_nibbles(nibbles[1], nibbles[2], nibbles[3]);
         let value = concatenate_two_nibbles(nibbles[2], nibbles[3]);
