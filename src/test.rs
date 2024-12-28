@@ -35,5 +35,7 @@ pub fn ibm_logo() {
         if !interpreter.execute_current_instruction() {
             break;
         }
+
+        std::thread::sleep(std::time::Duration::from_millis(10));
     }
 }
