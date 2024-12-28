@@ -79,23 +79,29 @@ impl Interpreter {
     /// (a nibble is a four bit number or single hexadecimal digit)
     ///
     /// TODO: Add bounds checking
-    fn get_current_instruction(&self) -> [u8; 4] {
+    fn get_current_instruction(&self) -> Option<[u8; 4]> {
         let program_counter = self.program_counter as usize;
 
-        let most_significant_byte = self.memory[program_counter];
-        let least_significant_byte = self.memory[program_counter + 1];
+        let most_significant_byte = self.memory.get(program_counter)?;
+        let least_significant_byte = self.memory.get(program_counter + 1)?;
 
-        [
-            get_first_nibble(most_significant_byte),
-            get_second_nibble(most_significant_byte),
-            get_first_nibble(least_significant_byte),
-            get_second_nibble(least_significant_byte),
-        ]
+        Some([
+            get_first_nibble(*most_significant_byte),
+            get_second_nibble(*most_significant_byte),
+            get_first_nibble(*least_significant_byte),
+            get_second_nibble(*least_significant_byte),
+        ])
+    }
+
+    fn update_timers(&mut self) {
+        // TODO
     }
 
     #[rustfmt::skip]
-    fn execute_current_instruction(&mut self) {
-        let nibbles = self.get_current_instruction();
+    fn execute_current_instruction(&mut self) -> bool {
+        let Some(nibbles) = self.get_current_instruction() else {
+            return false;
+        };
 
         let address = concatenate_three_nibbles(nibbles[1], nibbles[2], nibbles[3]);
         let value = concatenate_two_nibbles(nibbles[2], nibbles[3]);
@@ -141,6 +147,8 @@ impl Interpreter {
             _ => {}
         }
 
-        unimplemented!();
+        self.update_timers();
+
+        true
     }
 }
