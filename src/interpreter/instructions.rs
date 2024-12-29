@@ -109,40 +109,46 @@ impl Interpreter {
     ///
     /// Adds `VY` to `VX`. `variable_register[0xF]` is set to 1 when there's an overflow, and to 0 when there is not
     pub(super) fn add_assign(&mut self, x_register_index: usize, y_register_index: usize) {
-        // TODO Jacob. 8xy4: +=
-        println!("ADD ASSIGN!!!");
+        let (sum, overflow) = self.variable_register[x_register_index]
+            .overflowing_add(self.variable_register[y_register_index]);
+        self.variable_register[0xF] = if overflow { 1 } else { 0 };
+        self.variable_register[x_register_index] = sum;
     }
 
     /// Opcode: 8xy5
     ///
     /// `VY` is subtracted from `VX`. `variable_register[0xF]` is set to 0 when there's an underflow, and 1 when there is not
     pub(super) fn sub_assign(&mut self, x_register_index: usize, y_register_index: usize) {
-        // TODO Jacob. 8xy5: -=
-        println!("SUBTRACT ASSIGN!!!");
+        let (difference, borrow) = self.variable_register[x_register_index]
+            .overflowing_sub(self.variable_register[y_register_index]);
+        self.variable_register[0xF] = if borrow { 0 } else { 1 };
+        self.variable_register[x_register_index] = difference;
     }
 
     /// Opcode: 8xy6
     ///
     /// Stores the least significant bit of `VX` in `variable_register[0xF]` and then shifts `VX` to the right by 1
     pub(super) fn right_shift_assign(&mut self, x_register_index: usize, y_register_index: usize) {
-        // TODO Jacob. 8xy6: >>=
-        println!("RIGHT SHIFT!!!");
+        self.variable_register[0xF] = self.variable_register[x_register_index] & 0b00000001;
+        self.variable_register[x_register_index] >>= 1;
     }
 
     /// Opcode: 8xy7
     ///
     /// Sets `VX` to `VY` minus `VX`. `variable_register[0xF]` is set to 0 when there's an underflow, and 1 when there is not
     pub(super) fn sub_assign_swapped(&mut self, x_register_index: usize, y_register_index: usize) {
-        // TODO Jacob. 8xy7: -= swapped
-        println!("SUBTRACT ASSIGN SWAPPED!!!");
+        let (difference, borrow) = self.variable_register[y_register_index]
+            .overflowing_sub(self.variable_register[x_register_index]);
+        self.variable_register[0xF] = if borrow { 0 } else { 1 };
+        self.variable_register[x_register_index] = difference;
     }
 
     /// Opcode: 8xyE
     ///
     /// Stores the most significant bit of `VX` in `variable_register[0xF]` and then shifts `VX` to the left by 1
     pub(super) fn left_shift_assign(&mut self, x_register_index: usize, y_register_index: usize) {
-        // TODO Jacob. 8xyE: <<=
-        println!("LEFT SHIFT!!!");
+        self.variable_register[0xF] = (self.variable_register[x_register_index] & 0b10000000) >> 7;
+        self.variable_register[x_register_index] <<= 1;
     }
 
     /// Opcode: 9xy0
@@ -156,16 +162,17 @@ impl Interpreter {
 
     /// Opcode: Annn
     ///
-    /// Sets address_register to the address address
+    /// Sets `I` to the address address
     pub(super) fn address_register_assign(&mut self, address: u16) {
         self.address_register = address
     }
 
-    /// Opcode: Bnnn
+    /// Opcode: Bxnn
     ///
-    /// Jumps to the address address plus variable_register[0]
-    pub(super) fn jump_offset(&mut self, address: u16) {
-        unimplemented!();
+    /// Jumps to the address address plus `VX`
+    /// TODO Bnnn: option to add from `V0` only.
+    pub(super) fn jump_offset(&mut self, x_register_index: usize, address: u16) {
+        self.program_counter = address + self.variable_register[x_register_index] as u16;
     }
 
     /// Opcode: Cxkk
@@ -178,7 +185,7 @@ impl Interpreter {
 
     /// Opcode: Dxyn
     ///
-    /// Draws a sprite at coordinate (`VX`, `VY`) that has a width of 8 pixels and a height of `sprite_height` pixels. Each row of 8 pixels is read as bit-coded starting from memory location `address_register`; `variable_register[0xF]` is set to 1 if any screen pixels are flipped from set to unset when the sprite is drawn, and to 0 if that does not happen
+    /// Draws a sprite at coordinate (`VX`, `VY`) that has a width of 8 pixels and a height of `sprite_height` pixels. Each row of 8 pixels is read as bit-coded starting from memory location ``I``; `variable_register[0xF]` is set to 1 if any screen pixels are flipped from set to unset when the sprite is drawn, and to 0 if that does not happen
     pub(super) fn draw_sprite(
         &mut self,
         x_register_index: usize,
@@ -219,16 +226,22 @@ impl Interpreter {
     ///
     /// Skips the next instruction if the key stored in `VX` is pressed
     pub(super) fn skip_on_key_pressed(&mut self, x_register_index: usize) {
-        // TODO Daniel. Ex9E: Key Down
-        println!("SKIP ON KEY PRESSED!!!");
+        let key = self.variable_register[x_register_index] as usize;
+
+        if self.keypad[key] {
+            self.program_counter += 2;
+        }
     }
 
     /// Opcode: ExA1
     ///
     /// Skips the next instruction if the key stored in `VX` is NOT pressed
     pub(super) fn skip_on_key_not_pressed(&mut self, x_register_index: usize) {
-        // TODO Daniel. ExA1: Key Up
-        println!("SKIP ON KEY NOT PRESSED!!!");
+        let key = self.variable_register[x_register_index] as usize;
+
+        if !self.keypad[key] {
+            self.program_counter += 2;
+        }
     }
 
     /// Opcode: Fx07
@@ -242,8 +255,14 @@ impl Interpreter {
     ///
     /// A key press is awaited, and then stored in `VX`
     pub(super) fn wait_for_key_press(&mut self, x_register_index: usize) {
-        // TODO Daniel. Fx0A: Wait
-        println!("WAIT FOR KEY PRESS!!!");
+        match self
+            .keypad
+            .iter()
+            .position(|&is_key_pressed| is_key_pressed)
+        {
+            Some(key) => self.variable_register[x_register_index] = key as u8,
+            None => self.program_counter -= 2,
+        }
     }
 
     /// Opcode: Fx15
@@ -262,41 +281,55 @@ impl Interpreter {
 
     /// Opcode: Fx1E
     ///
-    /// Adds `VX` to address_register. `variable_register[0xF]` is not affected.
+    /// Adds `VX` to `I`. `VF` is not affected.
     pub(super) fn address_register_add_assign(&mut self, x_register_index: usize) {
         self.address_register += self.variable_register[x_register_index] as u16;
     }
 
     /// Opcode: Fx29
     ///
-    /// Sets address_register to the location of the sprite for the character in `VX`
+    /// Sets `I` to the location of the sprite for the character in `VX`
     /// Font starts at memory address 0
     pub(super) fn address_register_assign_character_address(&mut self, x_register_index: usize) {
-        // TODO Fx29: Char Addr
-        println!("SET CHARACTER ADDRESS!!!");
+        self.address_register = self.variable_register[x_register_index] as u16 & 0x0F;
     }
 
     /// Opcode: Fx33
     ///
-    /// Stores the binary-coded decimal representation of variable_register[x_register_index], with the hundreds digit in memory at location in address_register, the tens digit at location address_register+1, and the ones digit at location address_register+2
+    /// Stores the binary-coded decimal representation of variable_register[x_register_index], with the hundreds digit in memory at location in `I`, the tens digit at location `I`+1, and the ones digit at location `I`+2
     pub(super) fn store_binary_coded_decimal_address(&mut self, x_register_index: usize) {
-        // TODO Fx33: BCD
-        println!("STORE BCD!!!");
+        let mut accumulator = self.variable_register[x_register_index];
+
+        self.memory[self.address_register as usize + 2] = accumulator % 10;
+        accumulator /= 10;
+
+        self.memory[self.address_register as usize + 1] = accumulator % 10;
+        accumulator /= 10;
+
+        self.memory[self.address_register as usize] = accumulator;
     }
 
     /// Opcode: Fx55
     ///
-    /// Stores from `variable_register[0]` to `VX` (including `VX`) in memory, starting at address address_register. The offset from address_register is increased by 1 for each value written, but address_register itself is left unmodified
+    /// Stores from `V0` to `VX` (including `VX`) in memory, starting at address `I`.
+    /// The offset from `I` is increased by 1 for each value written, but `I` itself is left unmodified.
     pub(super) fn store_variable_registers(&mut self, x_register_index: usize) {
-        // TODO Fx55: Store Reg
-        println!("STORE ALL REGISTERS!!!");
+        let address = self.address_register as usize;
+
+        for offset in 0..=x_register_index {
+            self.memory[address + offset] = self.variable_register[offset];
+        }
     }
 
     /// Opcode: Fx65
     ///
-    /// Fills from `variable_register[0]` to `VX` (including `VX`) with values from memory, starting at address address_register. The offset from address_register is increased by 1 for each value read, but address_register itself is left unmodified
+    /// Fills from `V0` to `VX` (including `VX`) with values from memory, starting at address `I`.
+    /// The offset from `I` is increased by 1 for each value read, but `I` itself is left unmodified.
     pub(super) fn load_variable_registers(&mut self, x_register_index: usize) {
-        // TODO Fx65: Load Reg
-        println!("LOAD ALL REGISTERS!!!");
+        let address = self.address_register as usize;
+
+        for offset in 0..=x_register_index {
+            self.variable_register[offset] = self.memory[address + offset];
+        }
     }
 }
