@@ -4,5 +4,5 @@
 pub mod interpreter;
 pub mod nibbles;
 
-#[cfg(test)]
+#[cfg(all(test, feature = "crossterm"))]
 pub mod test;
