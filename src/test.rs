@@ -238,9 +238,7 @@ fn most_dangerous_game() {
 fn life() {
     let mut interpreter = Interpreter::new();
 
-    interpreter
-        .load_program_from_path("roms/life.ch8")
-        .unwrap();
+    interpreter.load_program_from_path("roms/life.ch8").unwrap();
 
     interpreter.execute_program_stdout();
 }
@@ -260,9 +258,7 @@ fn hidden() {
 fn brix() {
     let mut interpreter = Interpreter::new();
 
-    interpreter
-        .load_program_from_path("roms/brix.ch8")
-        .unwrap();
+    interpreter.load_program_from_path("roms/brix.ch8").unwrap();
 
     interpreter.execute_program_stdout();
 }
@@ -282,9 +278,7 @@ fn pong_alt() {
 fn nim() {
     let mut interpreter = Interpreter::new();
 
-    interpreter
-        .load_program_from_path("roms/nim.ch8")
-        .unwrap();
+    interpreter.load_program_from_path("roms/nim.ch8").unwrap();
 
     interpreter.execute_program_stdout();
 }
@@ -425,9 +419,7 @@ fn space_flight() {
 fn tron() {
     let mut interpreter = Interpreter::new();
 
-    interpreter
-        .load_program_from_path("roms/tron.ch8")
-        .unwrap();
+    interpreter.load_program_from_path("roms/tron.ch8").unwrap();
 
     interpreter.execute_program_stdout();
 }
@@ -711,9 +703,7 @@ fn syzygy() {
 fn tank() {
     let mut interpreter = Interpreter::new();
 
-    interpreter
-        .load_program_from_path("roms/tank.ch8")
-        .unwrap();
+    interpreter.load_program_from_path("roms/tank.ch8").unwrap();
 
     interpreter.execute_program_stdout();
 }
@@ -887,9 +877,7 @@ fn coin_flip() {
 fn ufo() {
     let mut interpreter = Interpreter::new();
 
-    interpreter
-        .load_program_from_path("roms/ufo.ch8")
-        .unwrap();
+    interpreter.load_program_from_path("roms/ufo.ch8").unwrap();
 
     interpreter.execute_program_stdout();
 }
@@ -964,9 +952,7 @@ fn hires_test() {
 fn vers() {
     let mut interpreter = Interpreter::new();
 
-    interpreter
-        .load_program_from_path("roms/vers.ch8")
-        .unwrap();
+    interpreter.load_program_from_path("roms/vers.ch8").unwrap();
 
     interpreter.execute_program_stdout();
 }
@@ -975,9 +961,7 @@ fn vers() {
 fn wall() {
     let mut interpreter = Interpreter::new();
 
-    interpreter
-        .load_program_from_path("roms/wall.ch8")
-        .unwrap();
+    interpreter.load_program_from_path("roms/wall.ch8").unwrap();
 
     interpreter.execute_program_stdout();
 }
@@ -997,9 +981,7 @@ fn sierpinski_alt() {
 fn maze() {
     let mut interpreter = Interpreter::new();
 
-    interpreter
-        .load_program_from_path("roms/maze.ch8")
-        .unwrap();
+    interpreter.load_program_from_path("roms/maze.ch8").unwrap();
 
     interpreter.execute_program_stdout();
 }
@@ -1085,9 +1067,7 @@ fn merlin() {
 fn pong() {
     let mut interpreter = Interpreter::new();
 
-    interpreter
-        .load_program_from_path("roms/pong.ch8")
-        .unwrap();
+    interpreter.load_program_from_path("roms/pong.ch8").unwrap();
 
     interpreter.execute_program_stdout();
 }
@@ -1129,9 +1109,7 @@ fn biorhythm() {
 fn cave() {
     let mut interpreter = Interpreter::new();
 
-    interpreter
-        .load_program_from_path("roms/cave.ch8")
-        .unwrap();
+    interpreter.load_program_from_path("roms/cave.ch8").unwrap();
 
     interpreter.execute_program_stdout();
 }
