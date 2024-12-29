@@ -164,7 +164,8 @@ impl Interpreter {
     ///
     /// Jumps to the address address plus variable_register[0]
     pub(super) fn jump_offset(&mut self, address: u16) {
-        unimplemented!();
+        // TODO Bnnn: Jump Offset
+        println!("JUMP OFFSET!!!");
     }
 
     /// Opcode: Cxkk
