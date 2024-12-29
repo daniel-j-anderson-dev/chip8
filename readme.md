@@ -8,25 +8,39 @@ The main api is `chip8::Interpreter`.
 - execute an instruction: `interpreter.execute_current_instruction()`
 - get the display's state: `interpreter.display()`
 
-## Resources used
+*UNIMPLEMENTED INSTRUCTIONS*
+- 8xy4: +=
+- 8xy5: -=
+- 8xy6: >>=
+- 8xyE: <<=
+- Cxkk: Random
+- Ex9E: Key Down
+- EXA1: Key Up
+- Fx0A: Wait
+- Fx29: Char Addr
+- Fx33: BCD
+- Fx55: Store Register
+- Fx65: Load Register
 
-- [Awesome Chip8](https://chip-8.github.io/links/)
-- [Guide to making a CHIP-8 emulator](https://tobiasvl.github.io/blog/write-a-chip-8-emulator)
-- [Building a CHIP-8 Emulator [C++]](https://austinmorlan.com/posts/chip8_emulator/)
-- [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)
+## Example ROM execution in terminal
 
-## Example
+IBM logo
+- ![ibm_logo_example](ibm_logo.gif)
 
-- IBM logo ROM execution in terminal
-  ![ibm_logo_example](ibm_logo.gif)
 
-## All terminal tests
+Fishie
+- ![fishie_example](fishie.gif)
 
-Execute an included Chip8 program in the terminal: `cargo test chip8_program_name -- --nocapture`.
+Hidden (not functioning properly)
+- ![hidden_example](hidden.gif)
+
+## How to run programs in terminal
+
+Execute an included Chip8 program in the terminal: `cargo test included_program -- --nocapture`.
 
 Execute any Chip8 program in the terminal: `cargo test user_program -- --nocapture`. (prompts the user for a chip8 program path)
 
-## Included Program Names
+## Included Programs
 - `pong_2`
 - `hires_stars`
 - `paddles`
@@ -134,3 +148,10 @@ Execute any Chip8 program in the terminal: `cargo test user_program -- --nocaptu
 - `hires_worm_v4`
 - `trip_8_hires_demo`
 - `russian_roulette`
+
+## Resources used
+
+- [Awesome Chip8](https://chip-8.github.io/links/)
+- [Guide to making a CHIP-8 emulator](https://tobiasvl.github.io/blog/write-a-chip-8-emulator)
+- [Building a CHIP-8 Emulator [C++]](https://austinmorlan.com/posts/chip8_emulator/)
+- [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)
