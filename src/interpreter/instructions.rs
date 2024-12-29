@@ -254,7 +254,7 @@ impl Interpreter {
     ///
     /// Adds `variable_register[x_register_index]` to address_register. `variable_register[0xF]` is not affected.
     pub(super) fn address_register_add_assign(&mut self, x_register_index: usize) {
-        unimplemented!();
+        self.address_register += self.variable_register[x_register_index] as u16;
     }
 
     /// Opcode: Fx29
