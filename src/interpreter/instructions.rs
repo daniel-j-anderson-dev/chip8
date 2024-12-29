@@ -219,8 +219,11 @@ impl Interpreter {
     ///
     /// Skips the next instruction if the key stored in `VX` is pressed
     pub(super) fn skip_on_key_pressed(&mut self, x_register_index: usize) {
-        // TODO Daniel. Ex9E: Key Down
-        println!("SKIP ON KEY PRESSED!!!");
+        let key = self.variable_register[x_register_index] as usize;
+
+        if self.keypad[key] {
+            self.program_counter += 2;
+        }
     }
 
     /// Opcode: ExA1
