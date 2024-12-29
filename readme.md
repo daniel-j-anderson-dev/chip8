@@ -1,4 +1,4 @@
-# A [Chip8](https://en.wikipedia.org/wiki/CHIP-8) interpreter library.
+# A [Chip8](https://en.wikipedia.org/wiki/CHIP-8) interpreter library
 
 ## Usage
 
