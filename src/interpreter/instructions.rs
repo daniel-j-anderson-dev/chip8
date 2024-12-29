@@ -319,7 +319,10 @@ impl Interpreter {
     /// Fills from `V0` to `VX` (including `VX`) with values from memory, starting at address `I`.
     /// The offset from `I` is increased by 1 for each value read, but `I` itself is left unmodified.
     pub(super) fn load_variable_registers(&mut self, x_register_index: usize) {
-        // TODO Daniel. Fx65: Load Reg
-        println!("LOAD ALL REGISTERS!!!");
+        let address = self.address_register as usize;
+
+        for offset in 0..=x_register_index {
+            self.variable_register[offset] = self.memory[address + offset];
+        }
     }
 }
