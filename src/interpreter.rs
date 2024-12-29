@@ -4,26 +4,26 @@ use crate::nibbles::{
     concatenate_three_nibbles, concatenate_two_nibbles, get_first_nibble, get_second_nibble,
 };
 
-/// Configuration for the Chip8 interpreter.
+/// Offset is commonly done because of old standards.
+/// Most programs written for Chip8 expect programs to start here.
+pub const PROGRAM_START: usize = 0x200;
+pub const DISPLAY_WIDTH: usize = 64;
+pub const DISPLAY_HEIGHT: usize = 32;
+pub const BLACK_DISPLAY: [[bool; DISPLAY_WIDTH]; DISPLAY_HEIGHT] =
+    [[false; DISPLAY_WIDTH]; DISPLAY_HEIGHT];
+
+/// The chip8 Interpreter that manages the state of a program
+///
+/// TODO: Configuration for the Chip8 interpreter.
 /// These options do not exist yet, but will be useful
 /// once we start implementing the options.
-/// 
+///
 ///     DISPLAY_UPDATE_RATE     = 60 Hz
 ///     KEY_HELD_PLAYS_SOUND    = true
 ///     RUN_SPEED               = 700 instructions per second
 ///     USE_ASSEMBLY_SUBROUTINE = false
 ///     USE_VARIABLE_OFFSET     = true
 ///     INCREMENT_ON_STORE      = false
-
-/// Offset is commonly done because of old standards.
-/// Most programs written for Chip8 expect programs to start here.
-pub const PROGRAM_START: usize = 0x200;
-
-pub const DISPLAY_WIDTH: usize = 64;
-pub const DISPLAY_HEIGHT: usize = 32;
-pub const BLACK_DISPLAY: [[bool; DISPLAY_WIDTH]; DISPLAY_HEIGHT] =
-    [[false; DISPLAY_WIDTH]; DISPLAY_HEIGHT];
-
 pub struct Interpreter {
     memory: [u8; 4096],
 
@@ -103,8 +103,7 @@ impl Interpreter {
         let program_data = program_data.as_ref();
         let program_size = program_data.len();
 
-        self.memory[PROGRAM_START..PROGRAM_START + program_size]
-            .copy_from_slice(program_data);
+        self.memory[PROGRAM_START..PROGRAM_START + program_size].copy_from_slice(program_data);
     }
 
     /// Returns an array contain the four nibbles of an opcode.
@@ -128,7 +127,7 @@ impl Interpreter {
     /// The timing and operation of the timers
     /// are completely separate from the fetch-decode-execute cycle.
     /// The logic will look a little something like this:
-    /// 
+    ///
     /// ```text
     /// if > 0
     ///     decrement @ 60 Hz
