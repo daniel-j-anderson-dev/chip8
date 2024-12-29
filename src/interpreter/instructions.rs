@@ -109,20 +109,20 @@ impl Interpreter {
     ///
     /// Adds `VY` to `VX`. `variable_register[0xF]` is set to 1 when there's an overflow, and to 0 when there is not
     pub(super) fn add_assign(&mut self, x_register_index: usize, y_register_index: usize) {
-        let (result, overflow) = self.variable_register[x_register_index]
+        let (sum, overflow) = self.variable_register[x_register_index]
             .overflowing_add(self.variable_register[y_register_index]);
         self.variable_register[0xF] = if overflow { 1 } else { 0 };
-        self.variable_register[x_register_index] = result;
+        self.variable_register[x_register_index] = sum;
     }
 
     /// Opcode: 8xy5
     ///
     /// `VY` is subtracted from `VX`. `variable_register[0xF]` is set to 0 when there's an underflow, and 1 when there is not
     pub(super) fn sub_assign(&mut self, x_register_index: usize, y_register_index: usize) {
-        let (result, borrow) = self.variable_register[x_register_index]
+        let (difference, borrow) = self.variable_register[x_register_index]
             .overflowing_sub(self.variable_register[y_register_index]);
         self.variable_register[0xF] = if borrow { 0 } else { 1 };
-        self.variable_register[x_register_index] = result;
+        self.variable_register[x_register_index] = difference;
     }
 
     /// Opcode: 8xy6
@@ -137,10 +137,10 @@ impl Interpreter {
     ///
     /// Sets `VX` to `VY` minus `VX`. `variable_register[0xF]` is set to 0 when there's an underflow, and 1 when there is not
     pub(super) fn sub_assign_swapped(&mut self, x_register_index: usize, y_register_index: usize) {
-        let (result, borrow) = self.variable_register[y_register_index]
+        let (difference, borrow) = self.variable_register[y_register_index]
             .overflowing_sub(self.variable_register[x_register_index]);
         self.variable_register[0xF] = if borrow { 0 } else { 1 };
-        self.variable_register[x_register_index] = result;
+        self.variable_register[x_register_index] = difference;
     }
 
     /// Opcode: 8xyE
