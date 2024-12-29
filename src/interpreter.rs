@@ -84,7 +84,7 @@ impl Interpreter {
     pub fn new() -> Interpreter {
         let mut memory = [0; 4096];
         memory[FONT_DATA_START..=FONT_DATA_END].copy_from_slice(&FONT_DATA);
-        
+
         Self {
             memory,
             program_counter: PROGRAM_START as u16,
@@ -118,8 +118,20 @@ impl Interpreter {
 
 // accessors
 impl Interpreter {
-    pub fn display(&mut self) -> &[[bool; DISPLAY_WIDTH]; DISPLAY_HEIGHT] {
+    pub fn display(&self) -> &[[bool; DISPLAY_WIDTH]; DISPLAY_HEIGHT] {
         &self.display
+    }
+
+    pub fn display_to_string(&self) -> String {
+        self.display
+            .iter()
+            .enumerate()
+            .flat_map(|(i, row)| {
+                row.iter()
+                    .map(|&pixel| if pixel { '█' } else { ' ' })
+                    .chain(Some('\n'))
+            })
+            .collect::<String>()
     }
 
     /// Returns an array contain the four nibbles of an opcode.
@@ -212,5 +224,19 @@ impl Interpreter {
         self.update_timers();
 
         true
+    }
+
+    pub fn execute_program_stdout(&mut self) {
+        const CLEAR_TERMINAL: &str = "\x1B[2J";
+        const RESET_TERMINAL_CURSOR: &str = "\x1B[1;1H";
+
+        print!("{}", CLEAR_TERMINAL);
+        loop {
+            print!("{}{}", RESET_TERMINAL_CURSOR, self.display_to_string());
+
+            if !self.execute_current_instruction() {
+                break;
+            }
+        }
     }
 }
