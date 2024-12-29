@@ -73,7 +73,8 @@ impl Interpreter {
     ///
     /// Adds value to `variable_register[x_register_index]` (carry flag is not changed)
     pub(super) fn add_assign_value(&mut self, x_register_index: usize, value: u8) {
-        self.variable_register[x_register_index] += value;
+        self.variable_register[x_register_index] =
+            self.variable_register[x_register_index].wrapping_add(value);
     }
 
     /// Opcode: 8xy0
@@ -108,21 +109,24 @@ impl Interpreter {
     ///
     /// Adds `variable_register[y_register_index]` to `variable_register[x_register_index]`. `variable_register[0xF]` is set to 1 when there's an overflow, and to 0 when there is not
     pub(super) fn add_assign(&mut self, x_register_index: usize, y_register_index: usize) {
-        unimplemented!();
+        // TODO 8xy4: +=
+        println!("ADD ASSIGN!!!");
     }
 
     /// Opcode: 8xy5
     ///
     /// `variable_register[y_register_index]` is subtracted from `variable_register[x_register_index]`. `variable_register[0xF]` is set to 0 when there's an underflow, and 1 when there is not
     pub(super) fn sub_assign(&mut self, x_register_index: usize, y_register_index: usize) {
-        unimplemented!();
+        // TODO 8xy5: -=
+        println!("SUBTRACT ASSIGN!!!");
     }
 
     /// Opcode: 8xy6
     ///
     /// Stores the least significant bit of `variable_register[x_register_index]` in `variable_register[0xF]` and then shifts `variable_register[x_register_index]` to the right by 1
     pub(super) fn right_shift_assign(&mut self, x_register_index: usize, y_register_index: usize) {
-        unimplemented!();
+        // TODO 8xy6: >>=
+        println!("RIGHT SHIFT!!!");
     }
 
     /// Opcode: 8xy7
@@ -136,7 +140,8 @@ impl Interpreter {
     ///
     /// Stores the most significant bit of `variable_register[x_register_index]` in `variable_register[0xF]` and then shifts `variable_register[x_register_index]` to the left by 1
     pub(super) fn left_shift_assign(&mut self, x_register_index: usize, y_register_index: usize) {
-        unimplemented!();
+        // TODO 8xyE: <<=
+        println!("LEFT SHIFT!!!");
     }
 
     /// Opcode: 9xy0
@@ -166,7 +171,8 @@ impl Interpreter {
     ///
     /// Sets `variable_register[x_register_index]` to the result of a bitwise and operation on a random number (Typically: 0 to 255) and value
     pub(super) fn random_number_assign(&mut self, x_register_index: usize, value: u8) {
-        unimplemented!();
+        // TODO Cxkk: Random
+        println!("RANDOM NUMBER!!!");
     }
 
     /// Opcode: Dxyn
@@ -185,12 +191,12 @@ impl Interpreter {
         self.variable_register[0xF] = 0;
 
         for sprite_row_index in 0..sprite_height as usize {
-            let display_row_index = y_position + sprite_row_index;
+            let display_row_index = (y_position + sprite_row_index) % 32;
 
             let sprite_byte = self.memory[address_register + sprite_row_index];
 
             for sprite_column_index in 0..8 {
-                let display_column_index = x_position + sprite_column_index;
+                let display_column_index = (x_position + sprite_column_index) % 64;
 
                 let pixel_bitmask = 0b10000000 >> sprite_column_index as u8;
                 let sprite_pixel = (sprite_byte & pixel_bitmask) > 0;
@@ -212,14 +218,16 @@ impl Interpreter {
     ///
     /// Skips the next instruction if the key stored in `variable_register[x_register_index]` is pressed
     pub(super) fn skip_on_key_pressed(&mut self, x_register_index: usize) {
-        unimplemented!();
+        // TODO Ex9E: Key Down
+        println!("SKIP ON KEY PRESSED!!!");
     }
 
     /// Opcode: ExA1
     ///
     /// Skips the next instruction if the key stored in `variable_register[x_register_index]` is NOT pressed
     pub(super) fn skip_on_key_not_pressed(&mut self, x_register_index: usize) {
-        unimplemented!();
+        // TODO ExA1: Key Up
+        println!("SKIP ON KEY NOT PRESSED!!!");
     }
 
     /// Opcode: Fx07
@@ -233,7 +241,8 @@ impl Interpreter {
     ///
     /// A key press is awaited, and then stored in `variable_register[x_register_index]`
     pub(super) fn wait_for_key_press(&mut self, x_register_index: usize) {
-        unimplemented!();
+        // TODO Fx0A: Wait
+        println!("WAIT FOR KEY PRESS!!!");
     }
 
     /// Opcode: Fx15
@@ -262,27 +271,31 @@ impl Interpreter {
     /// Sets address_register to the location of the sprite for the character in `variable_register[x_register_index]`
     /// Font starts at memory address 0
     pub(super) fn address_register_assign_character_address(&mut self, x_register_index: usize) {
-        unimplemented!();
+        // TODO Fx29: Char Addr
+        println!("SET CHARACTER ADDRESS!!!");
     }
 
     /// Opcode: Fx33
     ///
     /// Stores the binary-coded decimal representation of variable_register[x_register_index], with the hundreds digit in memory at location in address_register, the tens digit at location address_register+1, and the ones digit at location address_register+2
     pub(super) fn store_binary_coded_decimal_address(&mut self, x_register_index: usize) {
-        unimplemented!();
+        // TODO Fx33: BCD
+        println!("STORE BCD!!!");
     }
 
     /// Opcode: Fx55
     ///
     /// Stores from `variable_register[0]` to `variable_register[x_register_index]` (including `variable_register[x_register_index]`) in memory, starting at address address_register. The offset from address_register is increased by 1 for each value written, but address_register itself is left unmodified
     pub(super) fn store_variable_registers(&mut self, x_register_index: usize) {
-        unimplemented!();
+        // TODO Fx55: Store Reg
+        println!("STORE ALL REGISTERS!!!");
     }
 
     /// Opcode: Fx65
     ///
     /// Fills from `variable_register[0]` to `variable_register[x_register_index]` (including `variable_register[x_register_index]`) with values from memory, starting at address address_register. The offset from address_register is increased by 1 for each value read, but address_register itself is left unmodified
     pub(super) fn load_variable_registers(&mut self, x_register_index: usize) {
-        unimplemented!();
+        // TODO Fx65: Load Reg
+        println!("LOAD ALL REGISTERS!!!");
     }
 }
