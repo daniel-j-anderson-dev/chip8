@@ -82,8 +82,11 @@ pub struct Interpreter {
 // initialization
 impl Interpreter {
     pub fn new() -> Interpreter {
+        let mut memory = [0; 4096];
+        memory[FONT_DATA_START..=FONT_DATA_END].copy_from_slice(&FONT_DATA);
+        
         Self {
-            memory: [0; 4096],
+            memory,
             program_counter: PROGRAM_START as u16,
             address_register: 0,
             variable_register: [0; 16],
