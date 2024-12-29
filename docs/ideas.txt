@@ -1,5 +1,3 @@
 BNNN => jump_offset(address)
     // OPTION
     program_counter = address + registers[0]
-
-interpreter needs usize random_state
