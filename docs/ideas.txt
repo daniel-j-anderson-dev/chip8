@@ -1,43 +1,6 @@
-///////////////////////////////////////////////////////////////////
-
-// OPCODES
+BNNN => jump_offset(address)
     // OPTION
-        0NNN => call_assembly_subroutine(address)
-            NONE
-
-///////////////////////////////////////////////////////////////////
-
-    // OPTION
-        // OLD
-        BNNN => jump_offset(address)
-            // OPTION
-            program_counter = address + registers[0]
-
-        // NEW
-        BXNN => jump_offset(x, address)
-            program_counter = address + registers[x]
+    program_counter = address + registers[0]
 
     CXNN => random(x, value)
         registers[x] = get_random_number() & value
-
-///////////////////////////////////////////////////////////////////
-
-    FX33 bcd(x)
-        registers[x] -> 3 decimal digits 
-        store in memory[index]
-
-        example
-            // 156 in decimal.
-            registers[x] = 0x9C 
-
-            // Using integer division for the truncation.
-            memory[index]       = registers[x] / 100
-            memory[index + 1]   = (registers[x] / 10) % 10
-            memory[index + 2]   = registers[x] % 10
-
-    FX55 => store(x)
-        for n registers
-            memory[index + n] = registers[n]
-            
-    FX65 => load(x)
-        opposite "

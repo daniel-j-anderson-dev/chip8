@@ -215,7 +215,7 @@ impl Interpreter {
             [0x8,   _,   _, 0xE] => self.left_shift_assign(x_register_index, y_register_index),
             [0x9,   _,   _, 0x0] => self.skip_if_not_equal(x_register_index, y_register_index),
             [0xA,   _,   _,   _] => self.address_register_assign(address),
-            [0xB,   _,   _,   _] => self.jump_offset(address),
+            [0xB,   _,   _,   _] => self.jump_offset(x_register_index, address),
             [0xC,   _,   _,   _] => self.random_number_assign(x_register_index, value),
             [0xD,   _,   _,   _] => self.draw_sprite(x_register_index, y_register_index, sprite_height),
             [0xE,   _, 0x9, 0xE] => self.skip_on_key_pressed(x_register_index),
