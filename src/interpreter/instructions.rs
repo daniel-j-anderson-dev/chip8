@@ -1,15 +1,19 @@
 use crate::interpreter::Interpreter;
 
 impl Interpreter {
-    pub(super) fn clear_screen(&mut self) {
+
+    /// Clears the display.
+    pub(super) fn clear_display(&mut self) {
         self.display = Self::BLACK_DISPLAY;
     }
 
+    /// Return from a subroutine.
     pub(super) fn return_subroutine(&mut self) {
         self.program_counter = self.call_stack[self.call_stack_index];
         self.call_stack_index -= 1;
     }
 
+    /// Jumps to the given immediate address
     pub(super) fn jump(&mut self, address: u16) {
         self.program_counter = address;
     }
@@ -144,14 +148,14 @@ impl Interpreter {
                 let pixel_bitmask = 0b10000000 >> sprite_column_index as u8;
                 let sprite_pixel = (sprite_byte & pixel_bitmask) > 0;
 
-                let screen_pixel = &mut self.display[display_row_index][display_column_index];
+                let display_pixel = &mut self.display[display_row_index][display_column_index];
 
                 if sprite_pixel {
-                    if *screen_pixel {
+                    if *display_pixel {
                         self.variable_register[0xF] = 1;
                     }
 
-                    *screen_pixel ^= true;
+                    *display_pixel ^= true;
                 }
             }
         }
