@@ -214,7 +214,7 @@ impl Interpreter {
         true
     }
 
-    pub fn execute_program_text_output(&mut self, mut writer: impl std::io::Write) {
+    pub fn execute_program_stdout(&mut self) {
         unimplemented!()
     }
 }
