@@ -84,7 +84,7 @@ impl Interpreter {
     pub fn new() -> Interpreter {
         let mut memory = [0; 4096];
         memory[FONT_DATA_START..=FONT_DATA_END].copy_from_slice(&FONT_DATA);
-        
+
         Self {
             memory,
             program_counter: PROGRAM_START as u16,
@@ -212,5 +212,9 @@ impl Interpreter {
         self.update_timers();
 
         true
+    }
+
+    pub fn execute_program_text_output(&mut self, mut writer: impl std::io::Write) {
+        unimplemented!()
     }
 }
