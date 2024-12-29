@@ -254,7 +254,7 @@ impl Interpreter {
             .position(|&is_key_pressed| is_key_pressed)
         {
             Some(key) => self.variable_register[x_register_index] = key as u8,
-            None => self.program_counter += 2,
+            None => self.program_counter -= 2,
         }
     }
 
