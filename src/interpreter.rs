@@ -4,6 +4,15 @@ use crate::nibbles::{
     concatenate_three_nibbles, concatenate_two_nibbles, get_first_nibble, get_second_nibble,
 };
 
+/// Offset is commonly done because of old standards.
+/// Most programs written for Chip8 expect programs to start here.
+pub const PROGRAM_START: usize = 0x200;
+
+pub const DISPLAY_WIDTH: usize = 64;
+pub const DISPLAY_HEIGHT: usize = 32;
+pub const BLACK_DISPLAY: [[bool; DISPLAY_WIDTH]; DISPLAY_HEIGHT] =
+    [[false; DISPLAY_WIDTH]; DISPLAY_HEIGHT];
+
 pub struct Interpreter {
     memory: [u8; 4096],
 
@@ -51,31 +60,22 @@ pub struct Interpreter {
 }
 
 impl Interpreter {
-    /// Offset is commonly done because of old standards.
-    /// Most programs written for Chip8 expect programs to start here.
-    pub const PROGRAM_START: usize = 0x200;
-
-    pub const DISPLAY_WIDTH: usize = 64;
-    pub const DISPLAY_HEIGHT: usize = 32;
-    pub const BLACK_DISPLAY: [[bool; Self::DISPLAY_WIDTH]; Self::DISPLAY_HEIGHT] =
-        [[false; Self::DISPLAY_WIDTH]; Self::DISPLAY_HEIGHT];
-
     pub fn new() -> Interpreter {
         Self {
             memory: [0; 4096],
-            program_counter: Self::PROGRAM_START as u16,
+            program_counter: PROGRAM_START as u16,
             address_register: 0,
             variable_register: [0; 16],
             call_stack: [0; 16],
             call_stack_index: 0,
             delay_timer: 0,
             sound_timer: 0,
-            display: Self::BLACK_DISPLAY,
+            display: BLACK_DISPLAY,
             keypad: [[false; 4]; 4],
         }
     }
 
-    pub fn display(&mut self) -> &[[bool; Self::DISPLAY_WIDTH]; Self::DISPLAY_HEIGHT] {
+    pub fn display(&mut self) -> &[[bool; DISPLAY_WIDTH]; DISPLAY_HEIGHT] {
         &self.display
     }
 
@@ -92,7 +92,7 @@ impl Interpreter {
         let program_data = program_data.as_ref();
         let program_size = program_data.len();
 
-        self.memory[Self::PROGRAM_START..Self::PROGRAM_START + program_size]
+        self.memory[PROGRAM_START..PROGRAM_START + program_size]
             .copy_from_slice(program_data);
     }
 

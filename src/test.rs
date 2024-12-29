@@ -1,10 +1,8 @@
-use crate::interpreter::Interpreter;
+use crate::interpreter::{Interpreter, BLACK_DISPLAY, DISPLAY_HEIGHT, DISPLAY_WIDTH};
 
 const RESET_TERMINAL: &str = "\x1B[2J\x1B[1;1H\x1B[?25l";
 
-fn display_to_string(
-    display: &[[bool; Interpreter::DISPLAY_WIDTH]; Interpreter::DISPLAY_HEIGHT],
-) -> String {
+fn display_to_string(display: &[[bool; DISPLAY_WIDTH]; DISPLAY_HEIGHT]) -> String {
     let mut display_string = String::new();
 
     for row in display {

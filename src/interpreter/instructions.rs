@@ -1,11 +1,11 @@
-use crate::interpreter::Interpreter;
+use crate::interpreter::{Interpreter, BLACK_DISPLAY, DISPLAY_HEIGHT, DISPLAY_WIDTH};
 
 impl Interpreter {
     /// Opcode: 00E0
     ///
     /// Clears the display.
     pub(super) fn clear_display(&mut self) {
-        self.display = Self::BLACK_DISPLAY;
+        self.display = BLACK_DISPLAY;
     }
 
     /// Opcode: 00EE
@@ -179,8 +179,8 @@ impl Interpreter {
         sprite_height: u8,
     ) {
         let address_register = self.address_register as usize;
-        let x_position = self.variable_register[x_register_index] as usize % Self::DISPLAY_WIDTH;
-        let y_position = self.variable_register[y_register_index] as usize % Self::DISPLAY_HEIGHT;
+        let x_position = self.variable_register[x_register_index] as usize % DISPLAY_WIDTH;
+        let y_position = self.variable_register[y_register_index] as usize % DISPLAY_HEIGHT;
 
         self.variable_register[0xF] = 0;
 
