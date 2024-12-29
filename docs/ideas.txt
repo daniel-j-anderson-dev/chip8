@@ -22,14 +22,6 @@
 
 ///////////////////////////////////////////////////////////////////
 
-    FX1E => add_to_index(x)
-        result = index + registers[x]
-        if result > 0xFFF
-            registers[15] = 1
-        else
-            registers[15] = 0
-        index = result % 0x1000
-
     FX33 bcd(x)
         registers[x] -> 3 decimal digits 
         store in memory[index]
@@ -43,10 +35,9 @@
             memory[index + 1]   = (registers[x] / 10) % 10
             memory[index + 2]   = registers[x] % 10
 
-    // OPTION
-        // increment index each time (OLD) or leave index alone (NEW)?
-        FX55 => store(x)
-            for n registers
-                memory[index + n] = registers[n]
-        FX65 => load(x)
-            opposite "
+    FX55 => store(x)
+        for n registers
+            memory[index + n] = registers[n]
+            
+    FX65 => load(x)
+        opposite "

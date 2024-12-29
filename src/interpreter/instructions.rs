@@ -162,16 +162,16 @@ impl Interpreter {
 
     /// Opcode: Annn
     ///
-    /// Sets address_register to the address address
+    /// Sets `I` to the address address
     pub(super) fn address_register_assign(&mut self, address: u16) {
         self.address_register = address
     }
 
-    /// Opcode: Bnnn
+    /// Opcode: Bxnn
     ///
     /// Jumps to the address address plus variable_register[0]
     pub(super) fn jump_offset(&mut self, address: u16) {
-        // TODO Bnnn: Jump Offset
+        // TODO Jacob. Bxnn: Jump Offset
         println!("JUMP OFFSET!!!");
     }
 
@@ -185,7 +185,7 @@ impl Interpreter {
 
     /// Opcode: Dxyn
     ///
-    /// Draws a sprite at coordinate (`VX`, `VY`) that has a width of 8 pixels and a height of `sprite_height` pixels. Each row of 8 pixels is read as bit-coded starting from memory location `address_register`; `variable_register[0xF]` is set to 1 if any screen pixels are flipped from set to unset when the sprite is drawn, and to 0 if that does not happen
+    /// Draws a sprite at coordinate (`VX`, `VY`) that has a width of 8 pixels and a height of `sprite_height` pixels. Each row of 8 pixels is read as bit-coded starting from memory location ``I``; `variable_register[0xF]` is set to 1 if any screen pixels are flipped from set to unset when the sprite is drawn, and to 0 if that does not happen
     pub(super) fn draw_sprite(
         &mut self,
         x_register_index: usize,
@@ -281,14 +281,14 @@ impl Interpreter {
 
     /// Opcode: Fx1E
     ///
-    /// Adds `VX` to address_register. `variable_register[0xF]` is not affected.
+    /// Adds `VX` to `I`. `VF` is not affected.
     pub(super) fn address_register_add_assign(&mut self, x_register_index: usize) {
         self.address_register += self.variable_register[x_register_index] as u16;
     }
 
     /// Opcode: Fx29
     ///
-    /// Sets address_register to the location of the sprite for the character in `VX`
+    /// Sets `I` to the location of the sprite for the character in `VX`
     /// Font starts at memory address 0
     pub(super) fn address_register_assign_character_address(&mut self, x_register_index: usize) {
         self.address_register = self.variable_register[x_register_index] as u16 & 0x0F;
@@ -296,25 +296,25 @@ impl Interpreter {
 
     /// Opcode: Fx33
     ///
-    /// Stores the binary-coded decimal representation of variable_register[x_register_index], with the hundreds digit in memory at location in address_register, the tens digit at location address_register+1, and the ones digit at location address_register+2
+    /// Stores the binary-coded decimal representation of variable_register[x_register_index], with the hundreds digit in memory at location in `I`, the tens digit at location `I`+1, and the ones digit at location `I`+2
     pub(super) fn store_binary_coded_decimal_address(&mut self, x_register_index: usize) {
-        // TODO Fx33: BCD
+        // TODO Jacob. Fx33: BCD
         println!("STORE BCD!!!");
     }
 
     /// Opcode: Fx55
     ///
-    /// Stores from `variable_register[0]` to `VX` (including `VX`) in memory, starting at address address_register. The offset from address_register is increased by 1 for each value written, but address_register itself is left unmodified
+    /// Stores from `variable_register[0]` to `VX` (including `VX`) in memory, starting at address `I`. The offset from `I` is increased by 1 for each value written, but `I` itself is left unmodified
     pub(super) fn store_variable_registers(&mut self, x_register_index: usize) {
-        // TODO Fx55: Store Reg
+        // TODO Daniel. Fx55: Store Reg
         println!("STORE ALL REGISTERS!!!");
     }
 
     /// Opcode: Fx65
     ///
-    /// Fills from `variable_register[0]` to `VX` (including `VX`) with values from memory, starting at address address_register. The offset from address_register is increased by 1 for each value read, but address_register itself is left unmodified
+    /// Fills from `variable_register[0]` to `VX` (including `VX`) with values from memory, starting at address `I`. The offset from `I` is increased by 1 for each value read, but `I` itself is left unmodified
     pub(super) fn load_variable_registers(&mut self, x_register_index: usize) {
-        // TODO Fx65: Load Reg
+        // TODO Daniel. Fx65: Load Reg
         println!("LOAD ALL REGISTERS!!!");
     }
 }
