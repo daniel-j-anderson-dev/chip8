@@ -65,18 +65,29 @@ pub struct Interpreter {
 
     /// A collection of four rows. `true` represents a pressed button. `false` represents a unpressed button
     /// ```text
-    ///   0   1   2   3
+    /// keypad
     /// ╔═══╦═══╦═══╦═══╗
-    /// ║ 1 ║ 2 ║ 3 ║ C ║ 0
+    /// ║ 1 ║ 2 ║ 3 ║ C ║
     /// ╠═══╬═══╬═══╬═══╣
-    /// ║ 4 ║ 5 ║ 6 ║ D ║ 1
+    /// ║ 4 ║ 5 ║ 6 ║ D ║
     /// ╠═══╬═══╬═══╬═══╣
-    /// ║ 7 ║ 8 ║ 9 ║ E ║ 2
+    /// ║ 7 ║ 8 ║ 9 ║ E ║
     /// ╠═══╬═══╬═══╬═══╣
-    /// ║ A ║ 0 ║ B ║ F ║ 3
+    /// ║ A ║ 0 ║ B ║ F ║
+    /// ╚═══╩═══╩═══╩═══╝
+    ///
+    /// indexes
+    /// ╔═══╦═══╦═══╦═══╗
+    /// ║ 0 ║ 1 ║ 2 ║ 3 ║
+    /// ╠═══╬═══╬═══╬═══╣
+    /// ║ 4 ║ 5 ║ 6 ║ 7 ║
+    /// ╠═══╬═══╬═══╬═══╣
+    /// ║ 8 ║ 9 ║ A ║ B ║
+    /// ╠═══╬═══╬═══╬═══╣
+    /// ║ C ║ D ║ E ║ F ║
     /// ╚═══╩═══╩═══╩═══╝
     /// ```
-    keypad: [[bool; 4]; 4],
+    keypad: [bool; 16],
 }
 
 // initialization
@@ -95,7 +106,7 @@ impl Interpreter {
             delay_timer: 0,
             sound_timer: 0,
             display: BLACK_DISPLAY,
-            keypad: [[false; 4]; 4],
+            keypad: [false; 16],
         }
     }
 
