@@ -218,7 +218,7 @@ impl Interpreter {
     ///
     /// Skips the next instruction if the key stored in `VX` is pressed
     pub(super) fn skip_on_key_pressed(&mut self, x_register_index: usize) {
-        // TODO Ex9E: Key Down
+        // TODO Daniel. Ex9E: Key Down
         println!("SKIP ON KEY PRESSED!!!");
     }
 
@@ -226,7 +226,7 @@ impl Interpreter {
     ///
     /// Skips the next instruction if the key stored in `VX` is NOT pressed
     pub(super) fn skip_on_key_not_pressed(&mut self, x_register_index: usize) {
-        // TODO ExA1: Key Up
+        // TODO Daniel. ExA1: Key Up
         println!("SKIP ON KEY NOT PRESSED!!!");
     }
 
@@ -241,7 +241,7 @@ impl Interpreter {
     ///
     /// A key press is awaited, and then stored in `VX`
     pub(super) fn wait_for_key_press(&mut self, x_register_index: usize) {
-        // TODO Fx0A: Wait
+        // TODO Daniel. Fx0A: Wait
         println!("WAIT FOR KEY PRESS!!!");
     }
 
