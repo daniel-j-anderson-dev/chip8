@@ -209,56 +209,56 @@ impl Interpreter {
     }
 
     /// Opcode: Ex9E
-    /// 
+    ///
     /// Skips the next instruction if the key stored in `variable_register[x_register_index]` is pressed
     pub(super) fn skip_on_key_pressed(&mut self, x_register_index: usize) {
         unimplemented!();
     }
 
     /// Opcode: ExA1
-    /// 
+    ///
     /// Skips the next instruction if the key stored in `variable_register[x_register_index]` is NOT pressed
     pub(super) fn skip_on_key_not_pressed(&mut self, x_register_index: usize) {
         unimplemented!();
     }
 
     /// Opcode: Fx07
-    /// 
+    ///
     /// Sets `variable_register[x_register_index]` to the value of the delay timer
     pub(super) fn store_delay_timer(&mut self, x_register_index: usize) {
         self.variable_register[x_register_index] = self.delay_timer;
     }
 
     /// Opcode: Fx0A
-    /// 
+    ///
     /// A key press is awaited, and then stored in `variable_register[x_register_index]`
     pub(super) fn wait_for_key_press(&mut self, x_register_index: usize) {
         unimplemented!();
     }
 
     /// Opcode: Fx15
-    /// 
+    ///
     /// Sets the delay timer to `variable_register[x_register_index]`
     pub(super) fn delay_timer_assign(&mut self, x_register_index: usize) {
         self.delay_timer = self.variable_register[x_register_index];
     }
 
     /// Opcode: Fx18
-    /// 
+    ///
     /// Sets the sound timer to `variable_register[x_register_index]`
     pub(super) fn sound_timer_assign(&mut self, x_register_index: usize) {
         self.sound_timer = self.variable_register[x_register_index];
     }
 
     /// Opcode: Fx1E
-    /// 
+    ///
     /// Adds `variable_register[x_register_index]` to address_register. `variable_register[0xF]` is not affected.
     pub(super) fn address_register_add_assign(&mut self, x_register_index: usize) {
         unimplemented!();
     }
 
     /// Opcode: Fx29
-    /// 
+    ///
     /// Sets address_register to the location of the sprite for the character in `variable_register[x_register_index]`
     /// Font starts at memory address 0
     pub(super) fn address_register_assign_character_address(&mut self, x_register_index: usize) {
@@ -266,21 +266,21 @@ impl Interpreter {
     }
 
     /// Opcode: Fx33
-    /// 
+    ///
     /// Stores the binary-coded decimal representation of variable_register[x_register_index], with the hundreds digit in memory at location in address_register, the tens digit at location address_register+1, and the ones digit at location address_register+2
     pub(super) fn store_binary_coded_decimal_address(&mut self, x_register_index: usize) {
         unimplemented!();
     }
 
     /// Opcode: Fx55
-    /// 
+    ///
     /// Stores from `variable_register[0]` to `variable_register[x_register_index]` (including `variable_register[x_register_index]`) in memory, starting at address address_register. The offset from address_register is increased by 1 for each value written, but address_register itself is left unmodified
     pub(super) fn store_variable_registers(&mut self, x_register_index: usize) {
         unimplemented!();
     }
 
     /// Opcode: Fx65
-    /// 
+    ///
     /// Fills from `variable_register[0]` to `variable_register[x_register_index]` (including `variable_register[x_register_index]`) with values from memory, starting at address address_register. The offset from address_register is increased by 1 for each value read, but address_register itself is left unmodified
     pub(super) fn load_variable_registers(&mut self, x_register_index: usize) {
         unimplemented!();
