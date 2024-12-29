@@ -226,16 +226,14 @@ impl Interpreter {
     ///
     /// Skips the next instruction if the key stored in `VX` is pressed
     pub(super) fn skip_on_key_pressed(&mut self, x_register_index: usize) {
-        // TODO Daniel. Ex9E: Key Down
-        println!("SKIP ON KEY PRESSED!!!");
+
     }
 
     /// Opcode: ExA1
     ///
     /// Skips the next instruction if the key stored in `VX` is NOT pressed
     pub(super) fn skip_on_key_not_pressed(&mut self, x_register_index: usize) {
-        // TODO Daniel. ExA1: Key Up
-        println!("SKIP ON KEY NOT PRESSED!!!");
+
     }
 
     /// Opcode: Fx07
@@ -249,8 +247,7 @@ impl Interpreter {
     ///
     /// A key press is awaited, and then stored in `VX`
     pub(super) fn wait_for_key_press(&mut self, x_register_index: usize) {
-        // TODO Daniel. Fx0A: Wait
-        println!("WAIT FOR KEY PRESS!!!");
+
     }
 
     /// Opcode: Fx15
@@ -279,8 +276,7 @@ impl Interpreter {
     /// Sets address_register to the location of the sprite for the character in `VX`
     /// Font starts at memory address 0
     pub(super) fn address_register_assign_character_address(&mut self, x_register_index: usize) {
-        // TODO Fx29: Char Addr
-        println!("SET CHARACTER ADDRESS!!!");
+        self.address_register = self.variable_register[x_register_index] as u16 & 0x0F;
     }
 
     /// Opcode: Fx33
