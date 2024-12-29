@@ -230,8 +230,11 @@ impl Interpreter {
     ///
     /// Skips the next instruction if the key stored in `VX` is NOT pressed
     pub(super) fn skip_on_key_not_pressed(&mut self, x_register_index: usize) {
-        // TODO Daniel. ExA1: Key Up
-        println!("SKIP ON KEY NOT PRESSED!!!");
+        let key = self.variable_register[x_register_index] as usize;
+
+        if !self.keypad[key] {
+            self.program_counter += 2;
+        }
     }
 
     /// Opcode: Fx07
