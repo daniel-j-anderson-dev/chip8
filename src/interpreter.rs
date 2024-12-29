@@ -184,6 +184,24 @@ impl Interpreter {
     /// ```
     fn update_timers(&mut self) {
         // TODO Timers
+        /*
+            // We want to decrement our timers once every ~16.67ms (1/60s).
+            let timer_interval = Duration::from_millis(16); 
+            if self.last_timer_tick.elapsed() >= timer_interval {
+                self.last_timer_tick = Instant::now();
+                
+                // Decrement delay timer if > 0
+                if self.delay_timer > 0 {
+                    self.delay_timer -= 1;
+                }
+
+                // Decrement sound timer if > 0, print "BEEP!!!"
+                if self.sound_timer > 0 {
+                    self.sound_timer -= 1;
+                    println!("BEEP!!!");
+                }
+            }
+        */
     }
 
     #[rustfmt::skip]
