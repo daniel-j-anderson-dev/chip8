@@ -248,8 +248,14 @@ impl Interpreter {
     ///
     /// A key press is awaited, and then stored in `VX`
     pub(super) fn wait_for_key_press(&mut self, x_register_index: usize) {
-        // TODO Daniel. Fx0A: Wait
-        println!("WAIT FOR KEY PRESS!!!");
+        match self
+            .keypad
+            .iter()
+            .position(|&is_key_pressed| is_key_pressed)
+        {
+            Some(key) => self.variable_register[x_register_index] = key as u8,
+            None => self.program_counter += 2,
+        }
     }
 
     /// Opcode: Fx15
