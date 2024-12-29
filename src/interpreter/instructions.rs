@@ -109,7 +109,7 @@ impl Interpreter {
     ///
     /// Adds `VY` to `VX`. `variable_register[0xF]` is set to 1 when there's an overflow, and to 0 when there is not
     pub(super) fn add_assign(&mut self, x_register_index: usize, y_register_index: usize) {
-        // TODO 8xy4: +=
+        // TODO Jacob. 8xy4: +=
         println!("ADD ASSIGN!!!");
     }
 
@@ -117,7 +117,7 @@ impl Interpreter {
     ///
     /// `VY` is subtracted from `VX`. `variable_register[0xF]` is set to 0 when there's an underflow, and 1 when there is not
     pub(super) fn sub_assign(&mut self, x_register_index: usize, y_register_index: usize) {
-        // TODO 8xy5: -=
+        // TODO Jacob. 8xy5: -=
         println!("SUBTRACT ASSIGN!!!");
     }
 
@@ -125,7 +125,7 @@ impl Interpreter {
     ///
     /// Stores the least significant bit of `VX` in `variable_register[0xF]` and then shifts `VX` to the right by 1
     pub(super) fn right_shift_assign(&mut self, x_register_index: usize, y_register_index: usize) {
-        // TODO 8xy6: >>=
+        // TODO Jacob. 8xy6: >>=
         println!("RIGHT SHIFT!!!");
     }
 
@@ -133,14 +133,15 @@ impl Interpreter {
     ///
     /// Sets `VX` to `VY` minus `VX`. `variable_register[0xF]` is set to 0 when there's an underflow, and 1 when there is not
     pub(super) fn sub_assign_swapped(&mut self, x_register_index: usize, y_register_index: usize) {
-        unimplemented!();
+        // TODO Jacob. 8xy7: -= swapped
+        println!("SUBTRACT ASSIGN SWAPPED!!!");
     }
 
     /// Opcode: 8xyE
     ///
     /// Stores the most significant bit of `VX` in `variable_register[0xF]` and then shifts `VX` to the left by 1
     pub(super) fn left_shift_assign(&mut self, x_register_index: usize, y_register_index: usize) {
-        // TODO 8xyE: <<=
+        // TODO Jacob. 8xyE: <<=
         println!("LEFT SHIFT!!!");
     }
 
@@ -219,7 +220,7 @@ impl Interpreter {
     ///
     /// Skips the next instruction if the key stored in `VX` is pressed
     pub(super) fn skip_on_key_pressed(&mut self, x_register_index: usize) {
-        // TODO Ex9E: Key Down
+        // TODO Daniel. Ex9E: Key Down
         println!("SKIP ON KEY PRESSED!!!");
     }
 
@@ -227,7 +228,7 @@ impl Interpreter {
     ///
     /// Skips the next instruction if the key stored in `VX` is NOT pressed
     pub(super) fn skip_on_key_not_pressed(&mut self, x_register_index: usize) {
-        // TODO ExA1: Key Up
+        // TODO Daniel. ExA1: Key Up
         println!("SKIP ON KEY NOT PRESSED!!!");
     }
 
@@ -242,7 +243,7 @@ impl Interpreter {
     ///
     /// A key press is awaited, and then stored in `VX`
     pub(super) fn wait_for_key_press(&mut self, x_register_index: usize) {
-        // TODO Fx0A: Wait
+        // TODO Daniel. Fx0A: Wait
         println!("WAIT FOR KEY PRESS!!!");
     }
 
