@@ -226,14 +226,22 @@ impl Interpreter {
     ///
     /// Skips the next instruction if the key stored in `VX` is pressed
     pub(super) fn skip_on_key_pressed(&mut self, x_register_index: usize) {
+        let key = self.variable_register[x_register_index] as usize;
 
+        if self.keypad[key] {
+            self.program_counter += 2;
+        }
     }
 
     /// Opcode: ExA1
     ///
     /// Skips the next instruction if the key stored in `VX` is NOT pressed
     pub(super) fn skip_on_key_not_pressed(&mut self, x_register_index: usize) {
+        let key = self.variable_register[x_register_index] as usize;
 
+        if !self.keypad[key] {
+            self.program_counter += 2;
+        }
     }
 
     /// Opcode: Fx07
@@ -247,7 +255,14 @@ impl Interpreter {
     ///
     /// A key press is awaited, and then stored in `VX`
     pub(super) fn wait_for_key_press(&mut self, x_register_index: usize) {
-
+        match self
+            .keypad
+            .iter()
+            .position(|&is_key_pressed| is_key_pressed)
+        {
+            Some(key) => self.variable_register[x_register_index] = key as u8,
+            None => self.program_counter -= 2,
+        }
     }
 
     /// Opcode: Fx15
