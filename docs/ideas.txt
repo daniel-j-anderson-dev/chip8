@@ -7,39 +7,7 @@
 
 ///////////////////////////////////////////////////////////////////
 
-    8XY4 => add(x, y)
-        result = registers[x] + registers[y]
-        if result > 255
-            registers[15] = 1
-        else
-            registers[15] = 0
-        registers[x] = result % 255
 
-    8XY5 => sub(x, y)
-        result = registers[x] - registers[y]
-        if registers[x] > registers[y]
-            registers[15] = 1
-        else
-            registers[15] = 0
-        registers[x] = result //SOME ADDITIONAL ARITHMETIC
-
-    8XY7 => sub_swapped(x, y)
-        result = registers[y] - registers[x]
-        if registers[y] > registers[x]
-            registers[15] = 1
-        else
-            registers[15] = 0
-        registers[x] = result //SOME ADDITIONAL ARITHMETIC
-
-    8XY6 => right_shift(x, y)
-        // OPTION
-        registers[x] = registers[y]
-
-        if registers[x] & 0b10000000 == 1
-            registers[15] = 1
-        else
-            registers[15] = 0
-        registers[x] = registers[x] >> 1
 
     8XYE => left_shift(x, y)
         // OPTION
