@@ -22,7 +22,7 @@ fn user_program() {
     let program_path = get_input("Enter path to a Chip8 program: ").unwrap();
     interpreter.load_program_from_path(program_path).unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -33,7 +33,7 @@ fn pong_2() {
         .load_program_from_path("roms/pong_2.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -44,7 +44,7 @@ fn hires_stars() {
         .load_program_from_path("roms/hires_stars.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -55,7 +55,7 @@ fn paddles() {
         .load_program_from_path("roms/paddles.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -66,7 +66,7 @@ fn hires_particle_demo() {
         .load_program_from_path("roms/hires_particle_demo.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -77,7 +77,7 @@ fn puzzle_15_alt() {
         .load_program_from_path("roms/15_puzzle_alt.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -88,7 +88,7 @@ fn ch8_logo() {
         .load_program_from_path("roms/ch8_logo.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -99,7 +99,7 @@ fn ibm_logo() {
         .load_program_from_path("roms/ibm_logo.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -110,7 +110,7 @@ fn kaleidoscope() {
         .load_program_from_path("roms/kaleidoscope.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -121,7 +121,7 @@ fn hi_lo() {
         .load_program_from_path("roms/hi_lo.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -132,7 +132,7 @@ fn guess() {
         .load_program_from_path("roms/guess.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -143,7 +143,7 @@ fn submarine() {
         .load_program_from_path("roms/submarine.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -154,7 +154,7 @@ fn jumping_x_and_o() {
         .load_program_from_path("roms/jumping_x_and_o.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -165,7 +165,7 @@ fn soccer() {
         .load_program_from_path("roms/soccer.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -176,7 +176,7 @@ fn zero_pong() {
         .load_program_from_path("roms/zero_pong.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -187,7 +187,7 @@ fn puzzle() {
         .load_program_from_path("roms/puzzle.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -198,7 +198,7 @@ fn division_test() {
         .load_program_from_path("roms/division_test.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -209,7 +209,7 @@ fn bmp_viewer_hello() {
         .load_program_from_path("roms/bmp_viewer_hello.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -220,7 +220,7 @@ fn blitz() {
         .load_program_from_path("roms/blitz.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -231,7 +231,7 @@ fn most_dangerous_game() {
         .load_program_from_path("roms/most_dangerous_game.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -240,7 +240,7 @@ fn life() {
 
     interpreter.load_program_from_path("roms/life.ch8").unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -251,7 +251,7 @@ fn hidden() {
         .load_program_from_path("roms/hidden.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -260,7 +260,7 @@ fn brix() {
 
     interpreter.load_program_from_path("roms/brix.ch8").unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -271,7 +271,7 @@ fn pong_alt() {
         .load_program_from_path("roms/pong_alt.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -280,7 +280,7 @@ fn nim() {
 
     interpreter.load_program_from_path("roms/nim.ch8").unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -291,7 +291,7 @@ fn reversi() {
         .load_program_from_path("roms/reversi.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -302,7 +302,7 @@ fn blinky() {
         .load_program_from_path("roms/blinky.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -313,7 +313,7 @@ fn tapeworm() {
         .load_program_from_path("roms/tapeworm.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -324,7 +324,7 @@ fn blinky_alt() {
         .load_program_from_path("roms/blinky_alt.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -335,7 +335,7 @@ fn missile() {
         .load_program_from_path("roms/missile.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -346,7 +346,7 @@ fn squash() {
         .load_program_from_path("roms/squash.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -357,7 +357,7 @@ fn breakout() {
         .load_program_from_path("roms/breakout.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -368,7 +368,7 @@ fn breakout_brix() {
         .load_program_from_path("roms/breakout_brix.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -379,7 +379,7 @@ fn tic_tac_toe() {
         .load_program_from_path("roms/tic_tac_toe.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -390,7 +390,7 @@ fn space_intercept() {
         .load_program_from_path("roms/space_intercept.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -401,7 +401,7 @@ fn maze_alt() {
         .load_program_from_path("roms/maze_alt.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -412,7 +412,7 @@ fn space_flight() {
         .load_program_from_path("roms/space_flight.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -421,7 +421,7 @@ fn tron() {
 
     interpreter.load_program_from_path("roms/tron.ch8").unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -432,7 +432,7 @@ fn vertical_brix() {
         .load_program_from_path("roms/vertical_brix.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -443,7 +443,7 @@ fn animal_race() {
         .load_program_from_path("roms/animal_race.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -454,7 +454,7 @@ fn hires_s_triangle() {
         .load_program_from_path("roms/hires_s_triangle.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -465,7 +465,7 @@ fn tetris() {
         .load_program_from_path("roms/tetris.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -476,7 +476,7 @@ fn sierpinski() {
         .load_program_from_path("roms/sierpinski.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -487,7 +487,7 @@ fn space_invaders() {
         .load_program_from_path("roms/space_invaders.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -498,7 +498,7 @@ fn astro_dodge_hires() {
         .load_program_from_path("roms/astro_dodge_hires.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -509,7 +509,7 @@ fn spooky_spot() {
         .load_program_from_path("roms/spooky_spot.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -520,7 +520,7 @@ fn fishie() {
         .load_program_from_path("roms/fishie.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -531,7 +531,7 @@ fn astro_dodge() {
         .load_program_from_path("roms/astro_dodge.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -542,7 +542,7 @@ fn bowling() {
         .load_program_from_path("roms/bowling.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -553,7 +553,7 @@ fn connect_4() {
         .load_program_from_path("roms/connect_4.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -564,7 +564,7 @@ fn mastermind_4_row() {
         .load_program_from_path("roms/mastermind_4_row.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -575,7 +575,7 @@ fn random_number_test() {
         .load_program_from_path("roms/random_number_test.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -586,7 +586,7 @@ fn sum_fun() {
         .load_program_from_path("roms/sum_fun.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -597,7 +597,7 @@ fn time_bomb() {
         .load_program_from_path("roms/time_bomb.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -608,7 +608,7 @@ fn delay_timer_test() {
         .load_program_from_path("roms/delay_timer_test.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -619,7 +619,7 @@ fn slide() {
         .load_program_from_path("roms/slide.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -630,7 +630,7 @@ fn keypad_test() {
         .load_program_from_path("roms/keypad_test.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -641,7 +641,7 @@ fn framed_mk2() {
         .load_program_from_path("roms/framed_mk2.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -652,7 +652,7 @@ fn trip_8_demo() {
         .load_program_from_path("roms/trip_8_demo.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -663,7 +663,7 @@ fn rush_hour_alt() {
         .load_program_from_path("roms/rush_hour_alt.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -674,7 +674,7 @@ fn framed_mk1() {
         .load_program_from_path("roms/framed_mk1.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -685,7 +685,7 @@ fn lunar_lander() {
         .load_program_from_path("roms/lunar_lander.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -696,7 +696,7 @@ fn syzygy() {
         .load_program_from_path("roms/syzygy.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -705,7 +705,7 @@ fn tank() {
 
     interpreter.load_program_from_path("roms/tank.ch8").unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -716,7 +716,7 @@ fn rush_hour() {
         .load_program_from_path("roms/rush_hour.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -727,7 +727,7 @@ fn deflection() {
         .load_program_from_path("roms/deflection.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -738,7 +738,7 @@ fn brick_brix() {
         .load_program_from_path("roms/brick_brix.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -749,7 +749,7 @@ fn wipe_off() {
         .load_program_from_path("roms/wipe_off.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -760,7 +760,7 @@ fn worm_v4() {
         .load_program_from_path("roms/worm_v4.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -771,7 +771,7 @@ fn programmable_space_fighters() {
         .load_program_from_path("roms/programmable_space_fighters.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -782,7 +782,7 @@ fn figures() {
         .load_program_from_path("roms/figures.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -793,7 +793,7 @@ fn addition_problems() {
         .load_program_from_path("roms/addition_problems.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -804,7 +804,7 @@ fn sqrt_test() {
         .load_program_from_path("roms/sqrt_test.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -815,7 +815,7 @@ fn space_invaders_alt() {
         .load_program_from_path("roms/space_invaders_alt.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -826,7 +826,7 @@ fn ch8_picture() {
         .load_program_from_path("roms/ch8_picture.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -837,7 +837,7 @@ fn stars() {
         .load_program_from_path("roms/stars.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -848,7 +848,7 @@ fn min_game() {
         .load_program_from_path("roms/min_game.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -859,7 +859,7 @@ fn pong_1_player() {
         .load_program_from_path("roms/pong_1_player.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -870,7 +870,7 @@ fn coin_flip() {
         .load_program_from_path("roms/coin_flip.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -879,7 +879,7 @@ fn ufo() {
 
     interpreter.load_program_from_path("roms/ufo.ch8").unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -890,7 +890,7 @@ fn guess_alt() {
         .load_program_from_path("roms/guess_alt.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -901,7 +901,7 @@ fn rocket_launch() {
         .load_program_from_path("roms/rocket_launch.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -912,7 +912,7 @@ fn zero_demo() {
         .load_program_from_path("roms/zero_demo.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -923,7 +923,7 @@ fn filter() {
         .load_program_from_path("roms/filter.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -934,7 +934,7 @@ fn shooting_stars() {
         .load_program_from_path("roms/shooting_stars.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -945,7 +945,7 @@ fn hires_test() {
         .load_program_from_path("roms/hires_test.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -954,7 +954,7 @@ fn vers() {
 
     interpreter.load_program_from_path("roms/vers.ch8").unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -963,7 +963,7 @@ fn wall() {
 
     interpreter.load_program_from_path("roms/wall.ch8").unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -974,7 +974,7 @@ fn sierpinski_alt() {
         .load_program_from_path("roms/sierpinski_alt.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -983,7 +983,7 @@ fn maze() {
 
     interpreter.load_program_from_path("roms/maze.ch8").unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -994,7 +994,7 @@ fn craps() {
         .load_program_from_path("roms/craps.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -1005,7 +1005,7 @@ fn rocket_launcher() {
         .load_program_from_path("roms/rocket_launcher.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -1016,7 +1016,7 @@ fn puzzle_15() {
         .load_program_from_path("roms/15_puzzle.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -1027,7 +1027,7 @@ fn particle_demo() {
         .load_program_from_path("roms/particle_demo.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -1038,7 +1038,7 @@ fn clock() {
         .load_program_from_path("roms/clock.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -1049,7 +1049,7 @@ fn x_mirror() {
         .load_program_from_path("roms/x_mirror.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -1060,7 +1060,7 @@ fn merlin() {
         .load_program_from_path("roms/merlin.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -1069,7 +1069,7 @@ fn pong() {
 
     interpreter.load_program_from_path("roms/pong.ch8").unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -1080,7 +1080,7 @@ fn landing() {
         .load_program_from_path("roms/landing.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -1091,7 +1091,7 @@ fn airplane() {
         .load_program_from_path("roms/airplane.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -1102,7 +1102,7 @@ fn biorhythm() {
         .load_program_from_path("roms/biorhythm.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -1111,7 +1111,7 @@ fn cave() {
 
     interpreter.load_program_from_path("roms/cave.ch8").unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -1122,7 +1122,7 @@ fn sequence_shoot() {
         .load_program_from_path("roms/sequence_shoot.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -1133,7 +1133,7 @@ fn hires_maze() {
         .load_program_from_path("roms/hires_maze.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -1144,7 +1144,7 @@ fn rocket() {
         .load_program_from_path("roms/rocket.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -1155,7 +1155,7 @@ fn hires_worm_v4() {
         .load_program_from_path("roms/hires_worm_v4.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -1166,7 +1166,7 @@ fn trip_8_hires_demo() {
         .load_program_from_path("roms/trip_8_hires_demo.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
 
 #[test]
@@ -1177,5 +1177,5 @@ fn russian_roulette() {
         .load_program_from_path("roms/russian_roulette.ch8")
         .unwrap();
 
-    interpreter.execute_program_stdout();
+    interpreter.execute_program_terminal();
 }
