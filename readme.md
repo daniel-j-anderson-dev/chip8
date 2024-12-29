@@ -11,3 +11,7 @@ The main api is `chip8::Interpreter`.
 - [Guide to making a CHIP-8 emulator](https://tobiasvl.github.io/blog/write-a-chip-8-emulator)
 - [Building a CHIP-8 Emulator [C++]](https://austinmorlan.com/posts/chip8_emulator/)
 - [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)
+
+## Example
+- Run the IBM logo ROM in a terminal with `cargo test ibm_logo -- --nocapture`
+  <img src = "assets/ibm_logo.gif">
