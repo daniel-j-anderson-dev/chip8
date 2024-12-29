@@ -1,4 +1,3 @@
-
 /// # Example
 /// ```
 /// let byte = 0xAB;
@@ -22,9 +21,9 @@ pub fn get_second_nibble(value: u8) -> u8 {
 }
 
 /// convert three nibbles to a single [u16] with the left most nibble being 0.
-/// 
+///
 /// `value[0]` is the most significant nibble. `value[2]` least significant nibble. (big-endian)
-/// 
+///
 /// # Example
 /// ```
 /// let nibbles = [0xA, 0xB, 0xC];
@@ -35,7 +34,7 @@ pub fn concatenate_three_nibbles(first: u8, second: u8, third: u8) -> u16 {
     ((first as u16) << 8) | ((second as u16) << 4) | (third as u16)
 }
 
-/// # Example 
+/// # Example
 /// ```
 /// let nibbles = [0xA, 0xB];
 /// let combined = chip8::nibbles::combine_two_nibbles(nibbles[0], nibbles[1]);

@@ -1,3 +1,5 @@
+///////////////////////////////////////////////////////////////////
+
 // CONFIGURATION OPTIONS
     DISPLAY_UPDATE_RATE     = 60 Hz
     KEY_HELD_PLAYS_SOUND    = true
@@ -5,6 +7,8 @@
     USE_ASSEMBLY_SUBROUTINE = false
     USE_VARIABLE_OFFSET     = true
     INCREMENT_ON_STORE      = false
+
+///////////////////////////////////////////////////////////////////
 
 // TIMER LOGIC
     timers -> separate from normal FDE loop.

@@ -2,7 +2,6 @@ use crate::interpreter::Interpreter;
 
 const RESET_TERMINAL: &str = "\x1B[2J\x1B[1;1H\x1B[?25l";
 
-
 fn display_to_string(
     display: &[[bool; Interpreter::DISPLAY_WIDTH]; Interpreter::DISPLAY_HEIGHT],
 ) -> String {
