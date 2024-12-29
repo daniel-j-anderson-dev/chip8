@@ -4,6 +4,17 @@ use crate::nibbles::{
     concatenate_three_nibbles, concatenate_two_nibbles, get_first_nibble, get_second_nibble,
 };
 
+/// Configuration for the Chip8 interpreter.
+/// These options do not exist yet, but will be useful
+/// once we start implementing the options.
+/// 
+///     DISPLAY_UPDATE_RATE     = 60 Hz
+///     KEY_HELD_PLAYS_SOUND    = true
+///     RUN_SPEED               = 700 instructions per second
+///     USE_ASSEMBLY_SUBROUTINE = false
+///     USE_VARIABLE_OFFSET     = true
+///     INCREMENT_ON_STORE      = false
+
 /// Offset is commonly done because of old standards.
 /// Most programs written for Chip8 expect programs to start here.
 pub const PROGRAM_START: usize = 0x200;
@@ -114,6 +125,17 @@ impl Interpreter {
         Some(nibbles)
     }
 
+    /// The timing and operation of the timers
+    /// are completely separate from the fetch-decode-execute cycle.
+    /// The logic will look a little something like this:
+    /// 
+    /// ```text
+    /// if > 0
+    ///     decrement @ 60 Hz
+    /// else
+    ///     if sound_timer
+    ///         play_sound()
+    /// ```
     fn update_timers(&mut self) {
         // TODO
     }

@@ -1,25 +1,5 @@
 ///////////////////////////////////////////////////////////////////
 
-// CONFIGURATION OPTIONS
-    DISPLAY_UPDATE_RATE     = 60 Hz
-    KEY_HELD_PLAYS_SOUND    = true
-    RUN_SPEED               = 700 instructions per second
-    USE_ASSEMBLY_SUBROUTINE = false
-    USE_VARIABLE_OFFSET     = true
-    INCREMENT_ON_STORE      = false
-
-///////////////////////////////////////////////////////////////////
-
-// TIMER LOGIC
-    timers -> separate from normal FDE loop.
-        if > 0
-            decrement @ 60 Hz
-        else
-            if sound_timer
-                play_sound()
-
-///////////////////////////////////////////////////////////////////
-
 // OPCODES
     // OPTION
         0NNN => call_assembly_subroutine(address)
