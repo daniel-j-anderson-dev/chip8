@@ -60,6 +60,10 @@ pub struct Interpreter {
     /// Decrements at 60hz until zero when a sound is played
     sound_timer: u8,
 
+    /// Using a simple PRNG in the Cxkk instruction.
+    /// This state is used to generate random numbers.
+    random_state: usize,
+
     /// `false` represents a black pixel. `true` represents a white pixel
     display: [[bool; 64]; 32],
 
@@ -105,6 +109,7 @@ impl Interpreter {
             call_stack_index: 0,
             delay_timer: 0,
             sound_timer: 0,
+            random_state: 0x13275389,
             display: BLACK_DISPLAY,
             keypad: [false; 16],
         }

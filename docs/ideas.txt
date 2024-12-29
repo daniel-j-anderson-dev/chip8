@@ -1,6 +1,3 @@
 BNNN => jump_offset(address)
     // OPTION
     program_counter = address + registers[0]
-
-    CXNN => random(x, value)
-        registers[x] = get_random_number() & value

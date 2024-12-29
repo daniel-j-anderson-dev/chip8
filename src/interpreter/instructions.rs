@@ -177,10 +177,14 @@ impl Interpreter {
 
     /// Opcode: Cxkk
     ///
-    /// Sets `VX` to the result of a bitwise and operation on a random number (Typically: 0 to 255) and `value`
+    /// Sets `VX` to the result of a bitwise and operation on a random number (Typically: 0 to 255) and `KK`
     pub(super) fn random_number_assign(&mut self, x_register_index: usize, value: u8) {
-        // TODO Cxkk: Random
-        println!("RANDOM NUMBER!!!");
+        self.random_state ^= self.random_state << 13;
+        self.random_state ^= self.random_state >> 17;
+        self.random_state ^= self.random_state << 5;
+        let random_number: u8 = (self.random_state & 0xFF) as u8;
+
+        self.variable_register[x_register_index] = random_number & value;
     }
 
     /// Opcode: Dxyn
