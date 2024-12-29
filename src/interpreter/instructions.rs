@@ -35,7 +35,7 @@ impl Interpreter {
     /// Opcode: 3xkk
     ///
     /// Skips the next instruction if
-    /// `variable_register[x_register_index]` is equal to last byte of the instruction
+    /// `VX` is equal to last byte of the instruction
     pub(super) fn skip_if_equal_value(&mut self, x_register_index: usize, value: u8) {
         if self.variable_register[x_register_index] == value {
             self.program_counter += 2;
@@ -45,7 +45,7 @@ impl Interpreter {
     /// Opcode: 4xkk
     ///
     /// Skips the next instruction if
-    /// `variable_register[x_register_index]` is NOT equal to last byte of the instruction
+    /// `VX` is NOT equal to last byte of the instruction
     pub(super) fn skip_if_not_equal_value(&mut self, x_register_index: usize, value: u8) {
         if self.variable_register[x_register_index] != value {
             self.program_counter += 2;
@@ -55,7 +55,7 @@ impl Interpreter {
     /// Opcode: 5xy0
     ///
     /// Skips the next instruction if
-    /// `variable_register[x_register_index]` equals `variable_register[y_register_index]`
+    /// `VX` equals `VY`
     pub(super) fn skip_if_equal(&mut self, x_register_index: usize, y_register_index: usize) {
         if self.variable_register[x_register_index] == self.variable_register[y_register_index] {
             self.program_counter += 2;
@@ -64,14 +64,14 @@ impl Interpreter {
 
     /// Opcode: 6xkk
     ///
-    /// Sets `variable_register[x_register_index]` to value
+    /// Sets `VX` to `value`
     pub(super) fn assign_value(&mut self, x_register_index: usize, value: u8) {
         self.variable_register[x_register_index] = value;
     }
 
     /// Opcode: 7xkk
     ///
-    /// Adds value to `variable_register[x_register_index]` (carry flag is not changed)
+    /// Adds `value` to `VX` (carry flag is not changed)
     pub(super) fn add_assign_value(&mut self, x_register_index: usize, value: u8) {
         self.variable_register[x_register_index] =
             self.variable_register[x_register_index].wrapping_add(value);
@@ -79,35 +79,35 @@ impl Interpreter {
 
     /// Opcode: 8xy0
     ///
-    /// Sets `variable_register[x_register_index]` to the value of `variable_register[y_register_index]`
+    /// Sets `VX` to the `value` of `VY`
     pub(super) fn assign(&mut self, x_register_index: usize, y_register_index: usize) {
         self.variable_register[x_register_index] = self.variable_register[y_register_index];
     }
 
     /// Opcode: 8xy1
     ///
-    /// Sets `variable_register[x_register_index]` to (`variable_register[x_register_index]` or `variable_register[y_register_index]`) bitwise
+    /// Sets `VX` to (`VX` or `VY`) bitwise
     pub(super) fn bitwise_or_assign(&mut self, x_register_index: usize, y_register_index: usize) {
         self.variable_register[x_register_index] |= self.variable_register[y_register_index];
     }
 
     /// Opcode: 8xy2
     ///
-    /// Sets `variable_register[x_register_index]` to `variable_register[x_register_index]` and `variable_register[y_register_index]` (bitwise)
+    /// Sets `VX` to `VX` and `VY` (bitwise)
     pub(super) fn bitwise_and_assign(&mut self, x_register_index: usize, y_register_index: usize) {
         self.variable_register[x_register_index] &= self.variable_register[y_register_index];
     }
 
     /// Opcode: 8xy3
     ///
-    /// Sets `variable_register[x_register_index]` to `variable_register[x_register_index]` xor `variable_register[y_register_index]` (bitwise)
+    /// Sets `VX` to `VX` xor `VY` (bitwise)
     pub(super) fn bitwise_xor_assign(&mut self, x_register_index: usize, y_register_index: usize) {
         self.variable_register[x_register_index] ^= self.variable_register[y_register_index];
     }
 
     /// Opcode: 8xy4
     ///
-    /// Adds `variable_register[y_register_index]` to `variable_register[x_register_index]`. `variable_register[0xF]` is set to 1 when there's an overflow, and to 0 when there is not
+    /// Adds `VY` to `VX`. `variable_register[0xF]` is set to 1 when there's an overflow, and to 0 when there is not
     pub(super) fn add_assign(&mut self, x_register_index: usize, y_register_index: usize) {
         // TODO 8xy4: +=
         println!("ADD ASSIGN!!!");
@@ -115,7 +115,7 @@ impl Interpreter {
 
     /// Opcode: 8xy5
     ///
-    /// `variable_register[y_register_index]` is subtracted from `variable_register[x_register_index]`. `variable_register[0xF]` is set to 0 when there's an underflow, and 1 when there is not
+    /// `VY` is subtracted from `VX`. `variable_register[0xF]` is set to 0 when there's an underflow, and 1 when there is not
     pub(super) fn sub_assign(&mut self, x_register_index: usize, y_register_index: usize) {
         // TODO 8xy5: -=
         println!("SUBTRACT ASSIGN!!!");
@@ -123,7 +123,7 @@ impl Interpreter {
 
     /// Opcode: 8xy6
     ///
-    /// Stores the least significant bit of `variable_register[x_register_index]` in `variable_register[0xF]` and then shifts `variable_register[x_register_index]` to the right by 1
+    /// Stores the least significant bit of `VX` in `variable_register[0xF]` and then shifts `VX` to the right by 1
     pub(super) fn right_shift_assign(&mut self, x_register_index: usize, y_register_index: usize) {
         // TODO 8xy6: >>=
         println!("RIGHT SHIFT!!!");
@@ -131,14 +131,14 @@ impl Interpreter {
 
     /// Opcode: 8xy7
     ///
-    /// Sets `variable_register[x_register_index]` to `variable_register[y_register_index]` minus `variable_register[x_register_index]`. `variable_register[0xF]` is set to 0 when there's an underflow, and 1 when there is not
+    /// Sets `VX` to `VY` minus `VX`. `variable_register[0xF]` is set to 0 when there's an underflow, and 1 when there is not
     pub(super) fn sub_assign_swapped(&mut self, x_register_index: usize, y_register_index: usize) {
         unimplemented!();
     }
 
     /// Opcode: 8xyE
     ///
-    /// Stores the most significant bit of `variable_register[x_register_index]` in `variable_register[0xF]` and then shifts `variable_register[x_register_index]` to the left by 1
+    /// Stores the most significant bit of `VX` in `variable_register[0xF]` and then shifts `VX` to the left by 1
     pub(super) fn left_shift_assign(&mut self, x_register_index: usize, y_register_index: usize) {
         // TODO 8xyE: <<=
         println!("LEFT SHIFT!!!");
@@ -146,7 +146,7 @@ impl Interpreter {
 
     /// Opcode: 9xy0
     ///
-    /// Skips the next instruction if `variable_register[x_register_index]` does not equal `variable_register[y_register_index]`
+    /// Skips the next instruction if `VX` does not equal `VY`
     pub(super) fn skip_if_not_equal(&mut self, x_register_index: usize, y_register_index: usize) {
         if self.variable_register[x_register_index] != self.variable_register[y_register_index] {
             self.program_counter += 2;
@@ -169,7 +169,7 @@ impl Interpreter {
 
     /// Opcode: Cxkk
     ///
-    /// Sets `variable_register[x_register_index]` to the result of a bitwise and operation on a random number (Typically: 0 to 255) and value
+    /// Sets `VX` to the result of a bitwise and operation on a random number (Typically: 0 to 255) and `value`
     pub(super) fn random_number_assign(&mut self, x_register_index: usize, value: u8) {
         // TODO Cxkk: Random
         println!("RANDOM NUMBER!!!");
@@ -177,7 +177,7 @@ impl Interpreter {
 
     /// Opcode: Dxyn
     ///
-    /// Draws a sprite at coordinate (`variable_register[x_register_index]`, `variable_register[y_register_index]`) that has a width of 8 pixels and a height of `sprite_height` pixels. Each row of 8 pixels is read as bit-coded starting from memory location `address_register`; `variable_register[0xF]` is set to 1 if any screen pixels are flipped from set to unset when the sprite is drawn, and to 0 if that does not happen
+    /// Draws a sprite at coordinate (`VX`, `VY`) that has a width of 8 pixels and a height of `sprite_height` pixels. Each row of 8 pixels is read as bit-coded starting from memory location `address_register`; `variable_register[0xF]` is set to 1 if any screen pixels are flipped from set to unset when the sprite is drawn, and to 0 if that does not happen
     pub(super) fn draw_sprite(
         &mut self,
         x_register_index: usize,
@@ -216,7 +216,7 @@ impl Interpreter {
 
     /// Opcode: Ex9E
     ///
-    /// Skips the next instruction if the key stored in `variable_register[x_register_index]` is pressed
+    /// Skips the next instruction if the key stored in `VX` is pressed
     pub(super) fn skip_on_key_pressed(&mut self, x_register_index: usize) {
         // TODO Ex9E: Key Down
         println!("SKIP ON KEY PRESSED!!!");
@@ -224,7 +224,7 @@ impl Interpreter {
 
     /// Opcode: ExA1
     ///
-    /// Skips the next instruction if the key stored in `variable_register[x_register_index]` is NOT pressed
+    /// Skips the next instruction if the key stored in `VX` is NOT pressed
     pub(super) fn skip_on_key_not_pressed(&mut self, x_register_index: usize) {
         // TODO ExA1: Key Up
         println!("SKIP ON KEY NOT PRESSED!!!");
@@ -232,14 +232,14 @@ impl Interpreter {
 
     /// Opcode: Fx07
     ///
-    /// Sets `variable_register[x_register_index]` to the value of the delay timer
+    /// Sets `VX` to the `value` of the `delay_timer`
     pub(super) fn store_delay_timer(&mut self, x_register_index: usize) {
         self.variable_register[x_register_index] = self.delay_timer;
     }
 
     /// Opcode: Fx0A
     ///
-    /// A key press is awaited, and then stored in `variable_register[x_register_index]`
+    /// A key press is awaited, and then stored in `VX`
     pub(super) fn wait_for_key_press(&mut self, x_register_index: usize) {
         // TODO Fx0A: Wait
         println!("WAIT FOR KEY PRESS!!!");
@@ -247,28 +247,28 @@ impl Interpreter {
 
     /// Opcode: Fx15
     ///
-    /// Sets the delay timer to `variable_register[x_register_index]`
+    /// Sets the `delay_timer` to `VX`
     pub(super) fn delay_timer_assign(&mut self, x_register_index: usize) {
         self.delay_timer = self.variable_register[x_register_index];
     }
 
     /// Opcode: Fx18
     ///
-    /// Sets the sound timer to `variable_register[x_register_index]`
+    /// Sets the `sound_timer` to `VX`
     pub(super) fn sound_timer_assign(&mut self, x_register_index: usize) {
         self.sound_timer = self.variable_register[x_register_index];
     }
 
     /// Opcode: Fx1E
     ///
-    /// Adds `variable_register[x_register_index]` to address_register. `variable_register[0xF]` is not affected.
+    /// Adds `VX` to address_register. `variable_register[0xF]` is not affected.
     pub(super) fn address_register_add_assign(&mut self, x_register_index: usize) {
         self.address_register += self.variable_register[x_register_index] as u16;
     }
 
     /// Opcode: Fx29
     ///
-    /// Sets address_register to the location of the sprite for the character in `variable_register[x_register_index]`
+    /// Sets address_register to the location of the sprite for the character in `VX`
     /// Font starts at memory address 0
     pub(super) fn address_register_assign_character_address(&mut self, x_register_index: usize) {
         // TODO Fx29: Char Addr
@@ -285,7 +285,7 @@ impl Interpreter {
 
     /// Opcode: Fx55
     ///
-    /// Stores from `variable_register[0]` to `variable_register[x_register_index]` (including `variable_register[x_register_index]`) in memory, starting at address address_register. The offset from address_register is increased by 1 for each value written, but address_register itself is left unmodified
+    /// Stores from `variable_register[0]` to `VX` (including `VX`) in memory, starting at address address_register. The offset from address_register is increased by 1 for each value written, but address_register itself is left unmodified
     pub(super) fn store_variable_registers(&mut self, x_register_index: usize) {
         // TODO Fx55: Store Reg
         println!("STORE ALL REGISTERS!!!");
@@ -293,7 +293,7 @@ impl Interpreter {
 
     /// Opcode: Fx65
     ///
-    /// Fills from `variable_register[0]` to `variable_register[x_register_index]` (including `variable_register[x_register_index]`) with values from memory, starting at address address_register. The offset from address_register is increased by 1 for each value read, but address_register itself is left unmodified
+    /// Fills from `variable_register[0]` to `VX` (including `VX`) with values from memory, starting at address address_register. The offset from address_register is increased by 1 for each value read, but address_register itself is left unmodified
     pub(super) fn load_variable_registers(&mut self, x_register_index: usize) {
         // TODO Fx65: Load Reg
         println!("LOAD ALL REGISTERS!!!");
