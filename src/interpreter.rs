@@ -173,15 +173,6 @@ impl Interpreter {
 impl Interpreter {
     /// The timing and operation of the timers
     /// are completely separate from the fetch-decode-execute cycle.
-    /// The logic will look a little something like this:
-    ///
-    /// ```text
-    /// if > 0
-    ///     decrement @ 60 Hz
-    /// else
-    ///     if sound_timer
-    ///         play_sound()
-    /// ```
     fn update_timers(&mut self) {
         // TODO Timers
         /*
