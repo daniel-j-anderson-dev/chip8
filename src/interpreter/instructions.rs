@@ -6,7 +6,8 @@ impl Interpreter {
     }
 
     pub(super) fn return_subroutine(&mut self) {
-        unimplemented!();
+        self.program_counter = self.call_stack[self.call_stack_index];
+        self.call_stack_index -= 1;
     }
 
     pub(super) fn jump(&mut self, address: u16) {
@@ -14,25 +15,33 @@ impl Interpreter {
     }
 
     pub(super) fn call_subroutine(&mut self, address: u16) {
-        unimplemented!();
+        self.call_stack_index += 1;
+        self.call_stack[self.call_stack_index] = self.program_counter;
+        self.program_counter = address;
     }
 
     /// Skips the next instruction if
     /// `variable_register[x_register_index]` is equal to last byte of the instruction
     pub(super) fn skip_if_equal_value(&mut self, x_register_index: usize, value: u8) {
-        unimplemented!();
+        if self.variable_register[x_register_index] == value {
+            self.program_counter += 2;
+        }
     }
 
     /// Skips the next instruction if
     /// `variable_register[x_register_index]` is NOT equal to last byte of the instruction
     pub(super) fn skip_if_not_equal_value(&mut self, x_register_index: usize, value: u8) {
-        unimplemented!();
+        if self.variable_register[x_register_index] != value {
+            self.program_counter += 2;
+        }
     }
 
     /// Skips the next instruction if
     /// `variable_register[x_register_index]` equals `variable_register[y_register_index]`
     pub(super) fn skip_if_equal(&mut self, x_register_index: usize, y_register_index: usize) {
-        unimplemented!();
+        if self.variable_register[x_register_index] == self.variable_register[y_register_index] {
+            self.program_counter += 2;
+        }
     }
 
     /// Sets `variable_register[x_register_index]` to value
@@ -47,22 +56,22 @@ impl Interpreter {
 
     /// Sets `variable_register[x_register_index]` to the value of `variable_register[y_register_index]`
     pub(super) fn assign(&mut self, x_register_index: usize, y_register_index: usize) {
-        unimplemented!();
+        self.variable_register[x_register_index] = self.variable_register[y_register_index];
     }
 
     /// Sets `variable_register[x_register_index]` to (`variable_register[x_register_index]` or `variable_register[y_register_index]`) bitwise
     pub(super) fn bitwise_or_assign(&mut self, x_register_index: usize, y_register_index: usize) {
-        unimplemented!();
+        self.variable_register[x_register_index] |= self.variable_register[y_register_index];
     }
 
     /// Sets `variable_register[x_register_index]` to `variable_register[x_register_index]` and `variable_register[y_register_index]` (bitwise)
     pub(super) fn bitwise_and_assign(&mut self, x_register_index: usize, y_register_index: usize) {
-        unimplemented!();
+        self.variable_register[x_register_index] &= self.variable_register[y_register_index];
     }
 
     /// Sets `variable_register[x_register_index]` to `variable_register[x_register_index]` xor `variable_register[y_register_index]` (bitwise)
     pub(super) fn bitwise_xor_assign(&mut self, x_register_index: usize, y_register_index: usize) {
-        unimplemented!();
+        self.variable_register[x_register_index] ^= self.variable_register[y_register_index];
     }
 
     /// Adds `variable_register[y_register_index]` to `variable_register[x_register_index]`. `variable_register[0xF]` is set to 1 when there's an overflow, and to 0 when there is not
@@ -92,7 +101,9 @@ impl Interpreter {
 
     /// Skips the next instruction if `variable_register[x_register_index]` does not equal `variable_register[y_register_index]`
     pub(super) fn skip_if_not_equal(&mut self, x_register_index: usize, y_register_index: usize) {
-        unimplemented!();
+        if self.variable_register[x_register_index] != self.variable_register[y_register_index] {
+            self.program_counter += 2;
+        }
     }
 
     /// Sets address_register to the address address
@@ -158,7 +169,7 @@ impl Interpreter {
 
     /// Sets `variable_register[x_register_index]` to the value of the delay timer
     pub(super) fn store_delay_timer(&mut self, x_register_index: usize) {
-        unimplemented!();
+        self.variable_register[x_register_index] = self.delay_timer;
     }
 
     /// A key press is awaited, and then stored in `variable_register[x_register_index]`
@@ -168,12 +179,12 @@ impl Interpreter {
 
     /// Sets the delay timer to `variable_register[x_register_index]`
     pub(super) fn delay_timer_assign(&mut self, x_register_index: usize) {
-        unimplemented!();
+        self.delay_timer = self.variable_register[x_register_index];
     }
 
     /// Sets the sound timer to `variable_register[x_register_index]`
     pub(super) fn sound_timer_assign(&mut self, x_register_index: usize) {
-        unimplemented!();
+        self.sound_timer = self.variable_register[x_register_index];
     }
 
     /// Adds `variable_register[x_register_index]` to address_register. `variable_register[0xF]` is not affected.
