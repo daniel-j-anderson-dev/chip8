@@ -169,10 +169,10 @@ impl Interpreter {
 
     /// Opcode: Bxnn
     ///
-    /// Jumps to the address address plus variable_register[0]
-    pub(super) fn jump_offset(&mut self, address: u16) {
-        // TODO Jacob. Bxnn: Jump Offset
-        println!("JUMP OFFSET!!!");
+    /// Jumps to the address address plus `VX`
+    /// TODO Bnnn option to add from `V0` only.
+    pub(super) fn jump_offset(&mut self, x_register_index: usize, address: u16) {
+        self.program_counter = address + self.variable_register[x_register_index] as u16;
     }
 
     /// Opcode: Cxkk
@@ -298,8 +298,15 @@ impl Interpreter {
     ///
     /// Stores the binary-coded decimal representation of variable_register[x_register_index], with the hundreds digit in memory at location in `I`, the tens digit at location `I`+1, and the ones digit at location `I`+2
     pub(super) fn store_binary_coded_decimal_address(&mut self, x_register_index: usize) {
-        // TODO Jacob. Fx33: BCD
-        println!("STORE BCD!!!");
+        let mut accumulator = self.variable_register[x_register_index];
+
+        self.memory[self.address_register as usize + 2] = accumulator % 10;
+        accumulator /= 10;
+
+        self.memory[self.address_register as usize + 1] = accumulator % 10;
+        accumulator /= 10;
+
+        self.memory[self.address_register as usize] = accumulator;
     }
 
     /// Opcode: Fx55
