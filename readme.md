@@ -18,4 +18,4 @@ The main api is `chip8::Interpreter`.
 ## Example
 
 - Run the IBM logo ROM in a terminal with `cargo test ibm_logo -- --nocapture`
-  ![ibm_logo_example](assets/ibm_logo.gif)
+  ![ibm_logo_example](ibm_logo.gif)
