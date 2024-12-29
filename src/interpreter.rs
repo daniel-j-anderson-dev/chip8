@@ -23,7 +23,7 @@ pub const FONT_DATA_END: usize = 0x9F;
 
 /// The chip8 Interpreter that manages the state of a program.
 ///
-/// TODO: Configuration for the Chip8 interpreter.
+/// TODO Options
 /// These options do not exist yet, but will be useful
 /// once we start implementing the options.
 ///
@@ -183,7 +183,7 @@ impl Interpreter {
     ///         play_sound()
     /// ```
     fn update_timers(&mut self) {
-        // TODO
+        // TODO Timers
     }
 
     #[rustfmt::skip]

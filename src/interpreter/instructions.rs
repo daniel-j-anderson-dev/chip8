@@ -170,7 +170,7 @@ impl Interpreter {
     /// Opcode: Bxnn
     ///
     /// Jumps to the address address plus `VX`
-    /// TODO Bnnn: option to add from `V0` only.
+    /// Bnnn: option to add from `V0` only.
     pub(super) fn jump_offset(&mut self, x_register_index: usize, address: u16) {
         self.program_counter = address + self.variable_register[x_register_index] as u16;
     }
