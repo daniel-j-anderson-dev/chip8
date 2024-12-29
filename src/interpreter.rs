@@ -1,8 +1,8 @@
-mod instructions;
-
 use crate::nibbles::{
     concatenate_three_nibbles, concatenate_two_nibbles, get_first_nibble, get_second_nibble,
 };
+
+mod instructions;
 
 /// Offset is commonly done because of old standards.
 /// Most programs written for Chip8 expect programs to start here.
@@ -21,7 +21,7 @@ pub const FONT_DATA: [u8; 80] = [
 pub const FONT_DATA_START: usize = 0x50;
 pub const FONT_DATA_END: usize = 0x9F;
 
-/// The chip8 Interpreter that manages the state of a program
+/// The chip8 Interpreter that manages the state of a program.
 ///
 /// TODO: Configuration for the Chip8 interpreter.
 /// These options do not exist yet, but will be useful
@@ -79,10 +79,14 @@ pub struct Interpreter {
     keypad: [[bool; 4]; 4],
 }
 
+// initialization
 impl Interpreter {
     pub fn new() -> Interpreter {
+        let mut memory = [0; 4096];
+        memory[FONT_DATA_START..=FONT_DATA_END].copy_from_slice(&FONT_DATA);
+        
         Self {
-            memory: [0; 4096],
+            memory,
             program_counter: PROGRAM_START as u16,
             address_register: 0,
             variable_register: [0; 16],
@@ -93,10 +97,6 @@ impl Interpreter {
             display: BLACK_DISPLAY,
             keypad: [[false; 4]; 4],
         }
-    }
-
-    pub fn display(&mut self) -> &[[bool; DISPLAY_WIDTH]; DISPLAY_HEIGHT] {
-        &self.display
     }
 
     pub fn load_program_from_path(
@@ -113,6 +113,13 @@ impl Interpreter {
         let program_size = program_data.len();
 
         self.memory[PROGRAM_START..PROGRAM_START + program_size].copy_from_slice(program_data);
+    }
+}
+
+// accessors
+impl Interpreter {
+    pub fn display(&mut self) -> &[[bool; DISPLAY_WIDTH]; DISPLAY_HEIGHT] {
+        &self.display
     }
 
     /// Returns an array contain the four nibbles of an opcode.
@@ -132,7 +139,10 @@ impl Interpreter {
 
         Some(nibbles)
     }
+}
 
+// mutators
+impl Interpreter {
     /// The timing and operation of the timers
     /// are completely separate from the fetch-decode-execute cycle.
     /// The logic will look a little something like this:
