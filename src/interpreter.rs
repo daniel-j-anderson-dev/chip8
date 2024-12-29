@@ -241,18 +241,80 @@ impl Interpreter {
 
         true
     }
+}
 
-    pub fn execute_program_stdout(&mut self) {
-        const CLEAR_TERMINAL: &str = "\x1B[2J";
-        const RESET_TERMINAL_CURSOR: &str = "\x1B[1;1H";
+#[cfg(feature = "crossterm")]
+use crossterm::{
+    cursor::{Hide, MoveTo, Show},
+    event::{self, Event, KeyCode, KeyEvent, KeyModifiers},
+    terminal::{self, Clear, ClearType},
+    ExecutableCommand,
+};
 
-        print!("{}", CLEAR_TERMINAL);
+use std::io::Write;
+#[cfg(feature = "crossterm")]
+use std::time::Duration;
+
+#[cfg(feature = "crossterm")]
+impl Interpreter {
+    pub fn execute_program_terminal(&mut self) -> Result<(), std::io::Error> {
+        let mut stdout = std::io::stdout();
+
+        terminal::enable_raw_mode()?;
+
+        stdout
+            .execute(Hide)?
+            .execute(Clear(ClearType::All))?
+            .execute(MoveTo(0, 0))?;
+
         loop {
-            print!("{}{}", RESET_TERMINAL_CURSOR, self.display_to_string());
+            // handle input
+            if event::poll(Duration::from_nanos(1))? {
+                if let Event::Key(key_event) = event::read()? {
+                    match key_event.code {
+                        KeyCode::Char('c')
+                            if key_event.modifiers.contains(KeyModifiers::CONTROL) =>
+                        {
+                            break
+                        }
+                        KeyCode::Char('1') => self.keypad[0x0] = true,
+                        KeyCode::Char('2') => self.keypad[0x1] = true,
+                        KeyCode::Char('3') => self.keypad[0x2] = true,
+                        KeyCode::Char('4') => self.keypad[0x3] = true,
+                        KeyCode::Char('q') => self.keypad[0x4] = true,
+                        KeyCode::Char('w') => self.keypad[0x5] = true,
+                        KeyCode::Char('e') => self.keypad[0x6] = true,
+                        KeyCode::Char('r') => self.keypad[0x7] = true,
+                        KeyCode::Char('a') => self.keypad[0x8] = true,
+                        KeyCode::Char('s') => self.keypad[0x9] = true,
+                        KeyCode::Char('d') => self.keypad[0xA] = true,
+                        KeyCode::Char('f') => self.keypad[0xB] = true,
+                        KeyCode::Char('z') => self.keypad[0xC] = true,
+                        KeyCode::Char('x') => self.keypad[0xD] = true,
+                        KeyCode::Char('c') => self.keypad[0xE] = true,
+                        KeyCode::Char('v') => self.keypad[0xF] = true,
+                        _ => {}
+                    }
+                }
+            }
+
+            stdout.execute(MoveTo(0, 0))?;
+
+            let display = self.display_to_string();
+            for (y, line) in display.lines().enumerate() {
+                stdout
+                    .execute(MoveTo(0, y as u16))?
+                    .write_all(line.as_bytes())?;
+            }
 
             if !self.execute_current_instruction() {
                 break;
             }
         }
+
+        stdout.execute(Show)?;
+        terminal::disable_raw_mode()?;
+
+        Ok(())
     }
 }
