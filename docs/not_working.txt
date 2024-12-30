@@ -1,22 +1,12 @@
-puzzle_15
-puzzle_15_alt
-addition_problems
-astro_dodge_hires
-astro_dodge
-breakout
-brix
-clock
-craps
-deflection
-delay_timer_test
-division_test
-hi_lo
-life
-nim
-random_number_test
-space_intercept
-sum_fun
-tank
-time_bomb
-trip_8_demo
-trip_8_hires_demo
+puzzle_15                       BROKE - GLITCHY + NO DISPLAY
+puzzle_15_alt                   BROKE - NO DISPLAY
+delay_timer_test                BROKE - NO DISPLAY
+division_test                   BROKE - NO DISPLAY
+random_number_test              BROKE - NO DISPLAY
+sum_fun                         BROKE - NO DISPLAY
+time_bomb                       BROKE - NO DISPLAY
+figures                         BROKE
+vers                            BROKE
+kaleidoscope                    BROKE - NO MOTION
+programmable_space_fighters     BROKE - NO MOTION
+x_mirror                        BROKE - NO MOTION OR INPUT
