@@ -2,7 +2,7 @@
 
 ## Usage
 
-The main api is `chip8::Interpreter`.
+The main api is `chip8::Interpreter`
 
 - load a rom: `interpreter.load_program_from_path("my_chip8.ch8")?`
 - execute an instruction: `interpreter.execute_current_instruction()`
