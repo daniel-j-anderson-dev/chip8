@@ -251,9 +251,8 @@ use crossterm::{
     ExecutableCommand,
 };
 
-use std::io::Write;
 #[cfg(feature = "crossterm")]
-use std::time::Duration;
+use std::{io::Write, time::Duration};
 
 #[cfg(feature = "crossterm")]
 impl Interpreter {
@@ -269,6 +268,7 @@ impl Interpreter {
 
         loop {
             // handle input
+            self.keypad = [false; 16];
             if event::poll(Duration::from_nanos(1))? {
                 if let Event::Key(key_event) = event::read()? {
                     match key_event.code {
