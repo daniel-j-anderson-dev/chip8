@@ -2,6 +2,8 @@ use crate::nibbles::{
     concatenate_three_nibbles, concatenate_two_nibbles, get_first_nibble, get_second_nibble,
 };
 
+use std::time::{Duration, Instant};
+
 mod instructions;
 
 /// Offset is commonly done because of old standards.
@@ -67,6 +69,8 @@ pub struct Interpreter {
     /// `false` represents a black pixel. `true` represents a white pixel
     display: [[bool; 64]; 32],
 
+    last_timer_tick: Instant,
+
     /// A collection of four rows. `true` represents a pressed button. `false` represents a unpressed button
     /// ```text
     /// keypad
@@ -111,6 +115,7 @@ impl Interpreter {
             sound_timer: 0,
             random_state: 0x13275389,
             display: BLACK_DISPLAY,
+            last_timer_tick: Instant::now(),
             keypad: [false; 16],
         }
     }
@@ -173,17 +178,23 @@ impl Interpreter {
 impl Interpreter {
     /// The timing and operation of the timers
     /// are completely separate from the fetch-decode-execute cycle.
-    /// The logic will look a little something like this:
-    ///
-    /// ```text
-    /// if > 0
-    ///     decrement @ 60 Hz
-    /// else
-    ///     if sound_timer
-    ///         play_sound()
-    /// ```
     fn update_timers(&mut self) {
-        // TODO Timers
+        // We want to decrement our timers once every ~16.67ms (1/60s).
+        let timer_interval = Duration::from_millis(16); 
+        if self.last_timer_tick.elapsed() >= timer_interval {
+            self.last_timer_tick = Instant::now();
+            
+            // Decrement delay timer if > 0
+            if self.delay_timer > 0 {
+                self.delay_timer -= 1;
+            }
+
+            // Decrement sound timer if > 0, print "BEEP!!!"
+            if self.sound_timer > 0 {
+                self.sound_timer -= 1;
+                println!("BEEP!!!");
+            }
+        }
     }
 
     #[rustfmt::skip]
@@ -251,8 +262,7 @@ use crossterm::{
     ExecutableCommand,
 };
 
-#[cfg(feature = "crossterm")]
-use std::{io::Write, time::Duration};
+use std::io::Write;
 
 #[cfg(feature = "crossterm")]
 impl Interpreter {
