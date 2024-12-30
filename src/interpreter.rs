@@ -22,6 +22,7 @@ pub const FONT_DATA: [u8; 80] = [
 ];
 pub const FONT_DATA_START: usize = 0x50;
 pub const FONT_DATA_END: usize = 0x9F;
+pub const INSTRUCTION_DELAY: Duration = Duration::from_nanos(((1.0 / 700.0) * 1e9) as u64);
 
 /// The chip8 Interpreter that manages the state of a program.
 ///
@@ -70,6 +71,7 @@ pub struct Interpreter {
     display: [[bool; 64]; 32],
 
     last_timer_tick: Instant,
+    last_instruction_time: Instant,
 
     /// A collection of four rows. `true` represents a pressed button. `false` represents a unpressed button
     /// ```text
@@ -116,6 +118,7 @@ impl Interpreter {
             random_state: 0x13275389,
             display: BLACK_DISPLAY,
             last_timer_tick: Instant::now(),
+            last_instruction_time: Instant::now(),
             keypad: [false; 16],
         }
     }
@@ -180,10 +183,10 @@ impl Interpreter {
     /// are completely separate from the fetch-decode-execute cycle.
     fn update_timers(&mut self) {
         // We want to decrement our timers once every ~16.67ms (1/60s).
-        let timer_interval = Duration::from_millis(16); 
+        let timer_interval = Duration::from_millis(16);
         if self.last_timer_tick.elapsed() >= timer_interval {
             self.last_timer_tick = Instant::now();
-            
+
             // Decrement delay timer if > 0
             if self.delay_timer > 0 {
                 self.delay_timer -= 1;
@@ -199,6 +202,7 @@ impl Interpreter {
 
     #[rustfmt::skip]
     pub fn execute_current_instruction(&mut self) -> bool {
+
         let Some(nibbles) = self.get_current_instruction() else {
             return false;
         };
@@ -249,6 +253,13 @@ impl Interpreter {
         }
 
         self.update_timers();
+
+        let instruction_duration= self.last_instruction_time.elapsed();
+        self.last_instruction_time = Instant::now();
+
+        if instruction_duration < INSTRUCTION_DELAY {
+            std::thread::sleep(INSTRUCTION_DELAY - instruction_duration);
+        }
 
         true
     }
