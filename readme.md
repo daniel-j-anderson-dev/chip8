@@ -19,15 +19,15 @@ The main api is `chip8::Interpreter`.
 
 ## Example ROM execution in terminal
 
+Hidden
+- ![hidden_example](hidden.gif)
+
 IBM logo
 - ![ibm_logo_example](ibm_logo.gif)
-
 
 Fishie
 - ![fishie_example](fishie.gif)
 
-Hidden (not functioning properly)
-- ![hidden_example](hidden.gif)
 
 ## How to run programs in terminal
 
