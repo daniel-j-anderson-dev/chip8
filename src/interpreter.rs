@@ -278,6 +278,7 @@ impl Interpreter {
 
         loop {
             // handle input
+            self.keypad = [false; 16];
             if event::poll(Duration::from_nanos(1))? {
                 if let Event::Key(key_event) = event::read()? {
                     match key_event.code {
