@@ -151,10 +151,6 @@ impl Interpreter {
 
 // accessors
 impl Interpreter {
-    pub fn keypad_mut(&mut self) -> &mut [bool; 16] {
-        &mut self.keypad
-    }
-
     pub fn display(&self) -> &[[bool; DISPLAY_WIDTH]; DISPLAY_HEIGHT] {
         &self.display
     }
@@ -180,6 +176,10 @@ impl Interpreter {
 
 // mutators
 impl Interpreter {
+    pub fn keypad_mut(&mut self) -> &mut [bool; 16] {
+        &mut self.keypad
+    }
+
     /// The timing and operation of the timers
     /// are completely separate from the fetch-decode-execute cycle.
     fn update_timers(&mut self) {
