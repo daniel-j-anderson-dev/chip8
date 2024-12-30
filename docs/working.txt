@@ -51,3 +51,17 @@ tron
 ufo
 vertical_brix
 zero_demo
+filter                          WORKS
+bowling                         WORKS
+jumping_x_and_o                 WORKS
+rush_hour_alt                   WORKS
+soccer                          WORKS - DO NOT KNOW RULES
+spooky_spot                     WORKS
+tetris                          WORKS
+wall                            WORKS - BETTER FUNCTIONING SQUASH
+wipe_off                        WORKS
+zero_pong                       WORKS
+trip_8_demo                     WORKS
+trip_8_hires_demo               WORKS - MADE FOR SUPERTRIP8
+tank                            WORKS - DO NOT KNOW RULES
+space_intercept                 WORKS - DO NOT KNOW RULES
