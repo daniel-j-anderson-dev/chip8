@@ -1,8 +1,17 @@
 use crate::nibbles::{
     concatenate_three_nibbles, concatenate_two_nibbles, get_first_nibble, get_second_nibble,
 };
-
 use std::time::{Duration, Instant};
+
+#[cfg(feature = "crossterm")]
+use crossterm::{
+    cursor::{Hide, MoveTo, Show},
+    event::{self, Event, KeyCode, KeyEvent, KeyModifiers},
+    terminal::{self, Clear, ClearType},
+    ExecutableCommand,
+};
+#[cfg(feature = "crossterm")]
+use std::io::Write;
 
 mod instructions;
 
@@ -253,16 +262,6 @@ impl Interpreter {
         true
     }
 }
-
-#[cfg(feature = "crossterm")]
-use crossterm::{
-    cursor::{Hide, MoveTo, Show},
-    event::{self, Event, KeyCode, KeyEvent, KeyModifiers},
-    terminal::{self, Clear, ClearType},
-    ExecutableCommand,
-};
-
-use std::io::Write;
 
 #[cfg(feature = "crossterm")]
 impl Interpreter {
