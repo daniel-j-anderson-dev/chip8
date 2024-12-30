@@ -159,18 +159,6 @@ impl Interpreter {
         &self.display
     }
 
-    pub fn display_to_string(&self) -> String {
-        self.display
-            .iter()
-            .enumerate()
-            .flat_map(|(i, row)| {
-                row.iter()
-                    .map(|&pixel| if pixel { '█' } else { ' ' })
-                    .chain(Some('\n'))
-            })
-            .collect::<String>()
-    }
-
     /// Returns an array contain the four nibbles of an opcode.
     /// (a nibble is a four bit number or single hexadecimal digit)
     fn get_current_instruction(&self) -> Option<[u8; 4]> {
@@ -281,10 +269,9 @@ impl Interpreter {
 #[cfg(test)]
 impl Interpreter {
     pub fn execute_program_terminal(&mut self) -> Result<(), std::io::Error> {
+        // prepare the terminal
         let mut stdout = std::io::stdout();
-
         terminal::enable_raw_mode()?;
-
         stdout
             .execute(Hide)?
             .execute(Clear(ClearType::All))?
@@ -322,20 +309,22 @@ impl Interpreter {
                 }
             }
 
-            stdout.execute(MoveTo(0, 0))?;
-
-            let display = self.display_to_string();
-            for (y, line) in display.lines().enumerate() {
-                stdout
-                    .execute(MoveTo(0, y as u16))?
-                    .write_all(line.as_bytes())?;
+            // print display
+            for (y, row) in self.display.iter().enumerate() {
+                stdout.execute(MoveTo(0, y as u16))?;
+                for pixel in row.iter().map(|&pixel| if pixel { "█" } else { " " }) {
+                    stdout.write_all(pixel.as_bytes())?;
+                }
             }
+            stdout.execute(MoveTo(0, DISPLAY_HEIGHT as u16));
 
+            // execute instruction
             if !self.execute_current_instruction() {
                 break;
             }
         }
 
+        // reset the terminal
         stdout.execute(Show)?;
         terminal::disable_raw_mode()?;
 
