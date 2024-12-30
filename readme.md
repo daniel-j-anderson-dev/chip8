@@ -31,9 +31,9 @@ Hidden (not functioning properly)
 
 ## How to run programs in terminal
 
-Execute an included Chip8 program in the terminal: `cargo test included_program -- --nocapture`.
+Execute an included Chip8 program in the terminal: `cargo test included_program`.
 
-Execute any Chip8 program in the terminal: `cargo test user_program -- --nocapture`. (prompts the user for a chip8 program path)
+Execute any Chip8 program in the terminal: `cargo test user_program`. (prompts the user for a chip8 program path)
 
 ## Included Programs
 - `pong_2`
