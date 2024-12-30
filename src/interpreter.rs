@@ -151,6 +151,11 @@ impl Interpreter {
 
 // accessors
 impl Interpreter {
+
+    pub fn keypad_mut(&mut self) -> &mut [bool; 16] {
+        &mut self.keypad
+    }
+
     pub fn display(&self) -> &[[bool; DISPLAY_WIDTH]; DISPLAY_HEIGHT] {
         &self.display
     }
