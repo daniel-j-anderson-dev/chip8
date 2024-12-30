@@ -179,8 +179,6 @@ impl Interpreter {
     /// The timing and operation of the timers
     /// are completely separate from the fetch-decode-execute cycle.
     fn update_timers(&mut self) {
-        // TODO Timers
-
         // We want to decrement our timers once every ~16.67ms (1/60s).
         let timer_interval = Duration::from_millis(16); 
         if self.last_timer_tick.elapsed() >= timer_interval {
