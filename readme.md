@@ -8,15 +8,6 @@ The main api is `chip8::Interpreter`
 - execute an instruction: `interpreter.execute_current_instruction()`
 - get the display's state: `interpreter.display()`
 
-# Features
-
-- `crossterm` feature allows for executing chip8 programs in the terminal using the [crossterm](https://crates.io/crates/crossterm) crate.
-  - To disable put this in your `Cargo.toml`
-  ```
-  [dependencies]
-  chip8 = { git = "https://github.com/daniel-j-anderson-dev/chip8.git", default-features = false }
-  ```
-
 ## Example ROM execution in terminal
 
 Hidden
