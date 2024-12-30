@@ -2,7 +2,7 @@
 
 ## Usage
 
-The main api is `chip8::Interpreter`.
+The main api is `chip8::Interpreter`
 
 - load a rom: `interpreter.load_program_from_path("my_chip8.ch8")?`
 - execute an instruction: `interpreter.execute_current_instruction()`
@@ -19,21 +19,21 @@ The main api is `chip8::Interpreter`.
 
 ## Example ROM execution in terminal
 
+Hidden
+- ![hidden_example](hidden.gif)
+
 IBM logo
 - ![ibm_logo_example](ibm_logo.gif)
-
 
 Fishie
 - ![fishie_example](fishie.gif)
 
-Hidden (not functioning properly)
-- ![hidden_example](hidden.gif)
 
 ## How to run programs in terminal
 
-Execute an included Chip8 program in the terminal: `cargo test included_program -- --nocapture`.
+Execute an included Chip8 program in the terminal: `cargo test included_program`.
 
-Execute any Chip8 program in the terminal: `cargo test user_program -- --nocapture`. (prompts the user for a chip8 program path)
+Execute any Chip8 program in the terminal: `cargo test user_program`. (prompts the user for a chip8 program path)
 
 ## Included Programs
 - `pong_2`
