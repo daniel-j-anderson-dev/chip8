@@ -3,9 +3,5 @@ name = "chip8"
 version = "0.1.0"
 edition = "2021"
 
-[dependencies]
-crossterm = { version = "0.28.1", optional = true }
-
-[features]
-crossterm = ["dep:crossterm"]
-default = ["crossterm"]
+[dev-dependencies]
+crossterm = { version = "0.28.1" }
