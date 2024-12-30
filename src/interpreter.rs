@@ -2,6 +2,8 @@ use crate::nibbles::{
     concatenate_three_nibbles, concatenate_two_nibbles, get_first_nibble, get_second_nibble,
 };
 
+use std::time::{Duration, Instant};
+
 mod instructions;
 
 /// Offset is commonly done because of old standards.
@@ -23,7 +25,7 @@ pub const FONT_DATA_END: usize = 0x9F;
 
 /// The chip8 Interpreter that manages the state of a program.
 ///
-/// TODO: Configuration for the Chip8 interpreter.
+/// TODO Options
 /// These options do not exist yet, but will be useful
 /// once we start implementing the options.
 ///
@@ -60,8 +62,14 @@ pub struct Interpreter {
     /// Decrements at 60hz until zero when a sound is played
     sound_timer: u8,
 
+    /// Using a simple PRNG in the Cxkk instruction.
+    /// This state is used to generate random numbers.
+    random_state: usize,
+
     /// `false` represents a black pixel. `true` represents a white pixel
     display: [[bool; 64]; 32],
+
+    last_timer_tick: Instant,
 
     /// A collection of four rows. `true` represents a pressed button. `false` represents a unpressed button
     /// ```text
@@ -105,7 +113,9 @@ impl Interpreter {
             call_stack_index: 0,
             delay_timer: 0,
             sound_timer: 0,
+            random_state: 0x13275389,
             display: BLACK_DISPLAY,
+            last_timer_tick: Instant::now(),
             keypad: [false; 16],
         }
     }
@@ -168,17 +178,23 @@ impl Interpreter {
 impl Interpreter {
     /// The timing and operation of the timers
     /// are completely separate from the fetch-decode-execute cycle.
-    /// The logic will look a little something like this:
-    ///
-    /// ```text
-    /// if > 0
-    ///     decrement @ 60 Hz
-    /// else
-    ///     if sound_timer
-    ///         play_sound()
-    /// ```
     fn update_timers(&mut self) {
-        // TODO
+        // We want to decrement our timers once every ~16.67ms (1/60s).
+        let timer_interval = Duration::from_millis(16); 
+        if self.last_timer_tick.elapsed() >= timer_interval {
+            self.last_timer_tick = Instant::now();
+            
+            // Decrement delay timer if > 0
+            if self.delay_timer > 0 {
+                self.delay_timer -= 1;
+            }
+
+            // Decrement sound timer if > 0, print "BEEP!!!"
+            if self.sound_timer > 0 {
+                self.sound_timer -= 1;
+                println!("BEEP!!!");
+            }
+        }
     }
 
     #[rustfmt::skip]
@@ -236,18 +252,79 @@ impl Interpreter {
 
         true
     }
+}
 
-    pub fn execute_program_stdout(&mut self) {
-        const CLEAR_TERMINAL: &str = "\x1B[2J";
-        const RESET_TERMINAL_CURSOR: &str = "\x1B[1;1H";
+#[cfg(feature = "crossterm")]
+use crossterm::{
+    cursor::{Hide, MoveTo, Show},
+    event::{self, Event, KeyCode, KeyEvent, KeyModifiers},
+    terminal::{self, Clear, ClearType},
+    ExecutableCommand,
+};
 
-        print!("{}", CLEAR_TERMINAL);
+use std::io::Write;
+
+#[cfg(feature = "crossterm")]
+impl Interpreter {
+    pub fn execute_program_terminal(&mut self) -> Result<(), std::io::Error> {
+        let mut stdout = std::io::stdout();
+
+        terminal::enable_raw_mode()?;
+
+        stdout
+            .execute(Hide)?
+            .execute(Clear(ClearType::All))?
+            .execute(MoveTo(0, 0))?;
+
         loop {
-            print!("{}{}", RESET_TERMINAL_CURSOR, self.display_to_string());
+            // handle input
+            self.keypad = [false; 16];
+            if event::poll(Duration::from_nanos(1))? {
+                if let Event::Key(key_event) = event::read()? {
+                    match key_event.code {
+                        KeyCode::Char('c')
+                            if key_event.modifiers.contains(KeyModifiers::CONTROL) =>
+                        {
+                            break
+                        }
+                        KeyCode::Char('1') => self.keypad[0x0] = true,
+                        KeyCode::Char('2') => self.keypad[0x1] = true,
+                        KeyCode::Char('3') => self.keypad[0x2] = true,
+                        KeyCode::Char('4') => self.keypad[0x3] = true,
+                        KeyCode::Char('q') => self.keypad[0x4] = true,
+                        KeyCode::Char('w') => self.keypad[0x5] = true,
+                        KeyCode::Char('e') => self.keypad[0x6] = true,
+                        KeyCode::Char('r') => self.keypad[0x7] = true,
+                        KeyCode::Char('a') => self.keypad[0x8] = true,
+                        KeyCode::Char('s') => self.keypad[0x9] = true,
+                        KeyCode::Char('d') => self.keypad[0xA] = true,
+                        KeyCode::Char('f') => self.keypad[0xB] = true,
+                        KeyCode::Char('z') => self.keypad[0xC] = true,
+                        KeyCode::Char('x') => self.keypad[0xD] = true,
+                        KeyCode::Char('c') => self.keypad[0xE] = true,
+                        KeyCode::Char('v') => self.keypad[0xF] = true,
+                        _ => {}
+                    }
+                }
+            }
+
+            stdout.execute(MoveTo(0, 0))?;
+
+            let display = self.display_to_string();
+            for (y, line) in display.lines().enumerate() {
+                stdout
+                    .execute(MoveTo(0, y as u16))?
+                    .write_all(line.as_bytes())?;
+            }
 
             if !self.execute_current_instruction() {
                 break;
             }
         }
+
+        stdout.execute(Show)?;
+        terminal::disable_raw_mode()?;
+
+        Ok(())
     }
 }
