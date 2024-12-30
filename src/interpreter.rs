@@ -3,14 +3,14 @@ use crate::nibbles::{
 };
 use std::time::{Duration, Instant};
 
-#[cfg(feature = "crossterm")]
+#[cfg(test)]
 use crossterm::{
     cursor::{Hide, MoveTo, Show},
     event::{self, Event, KeyCode, KeyEvent, KeyModifiers},
     terminal::{self, Clear, ClearType},
     ExecutableCommand,
 };
-#[cfg(feature = "crossterm")]
+#[cfg(test)]
 use std::io::Write;
 
 mod instructions;
@@ -274,7 +274,7 @@ impl Interpreter {
     }
 }
 
-#[cfg(feature = "crossterm")]
+#[cfg(test)]
 impl Interpreter {
     pub fn execute_program_terminal(&mut self) -> Result<(), std::io::Error> {
         let mut stdout = std::io::stdout();
