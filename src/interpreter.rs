@@ -31,20 +31,19 @@ pub const FONT_DATA: [u8; 80] = [
 ];
 pub const FONT_DATA_START: usize = 0x50;
 pub const FONT_DATA_END: usize = 0x9F;
-pub const INSTRUCTION_DELAY: Duration = Duration::from_nanos(((1.0 / 700.0) * 1e9) as u64);
+pub const INSTRUCTIONS_PER_SECOND: f64 = 700.0;
+pub const INSTRUCTION_DELAY: Duration = Duration::from_nanos(((1.0 / INSTRUCTIONS_PER_SECOND) * 1e9) as u64);
 
 /// The chip8 Interpreter that manages the state of a program.
 ///
-/// TODO Options
-/// These options do not exist yet, but will be useful
-/// once we start implementing the options.
-///
-///     DISPLAY_UPDATE_RATE     = 60 Hz
-///     KEY_HELD_PLAYS_SOUND    = true
-///     RUN_SPEED               = 700 instructions per second
-///     USE_ASSEMBLY_SUBROUTINE = false
-///     USE_VARIABLE_OFFSET     = true
-///     INCREMENT_ON_STORE      = false
+/// TODO Config Options
+pub const DISPLAY_UPDATE_RATE_HZ: u64 = 60;
+pub const DISPLAY_UPDATE_DURATION: Duration = Duration::from_nanos(1_000_000_000 / DISPLAY_UPDATE_RATE_HZ);
+pub const KEY_HELD_PLAYS_SOUND: bool = false;
+pub const USE_ASSEMBLY_SUBROUTINES: bool = false;
+pub const USE_VARIABLE_OFFSET: bool = true;
+pub const INCREMENT_ON_STORE: bool = false;
+
 pub struct Interpreter {
     memory: [u8; 4096],
 
@@ -81,6 +80,7 @@ pub struct Interpreter {
 
     last_timer_tick: Instant,
     last_instruction_time: Instant,
+    play_sound: bool,
 
     /// A collection of four rows. `true` represents a pressed button. `false` represents a unpressed button
     /// ```text
@@ -128,6 +128,7 @@ impl Interpreter {
             display: BLACK_DISPLAY,
             last_timer_tick: Instant::now(),
             last_instruction_time: Instant::now(),
+            play_sound: false,
             keypad: [false; 16],
         }
     }
@@ -183,20 +184,19 @@ impl Interpreter {
     /// The timing and operation of the timers
     /// are completely separate from the fetch-decode-execute cycle.
     fn update_timers(&mut self) {
-        // We want to decrement our timers once every ~16.67ms (1/60s).
         let timer_interval = Duration::from_millis(16);
         if self.last_timer_tick.elapsed() >= timer_interval {
             self.last_timer_tick = Instant::now();
 
-            // Decrement delay timer if > 0
             if self.delay_timer > 0 {
                 self.delay_timer -= 1;
             }
 
-            // Decrement sound timer if > 0, print "BEEP!!!"
             if self.sound_timer > 0 {
+                self.play_sound = true;
                 self.sound_timer -= 1;
-                println!("BEEP!!!");
+            } else {
+                self.play_sound = false;
             }
         }
     }
