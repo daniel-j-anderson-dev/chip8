@@ -1,4 +1,5 @@
 use crate::interpreter::{Interpreter, BLACK_DISPLAY, DISPLAY_HEIGHT, DISPLAY_WIDTH};
+use rand::Rng;
 
 impl Interpreter {
     /// Opcode: 00E0
@@ -179,10 +180,8 @@ impl Interpreter {
     ///
     /// Sets `VX` to the result of a bitwise and operation on a random number (Typically: 0 to 255) and `KK`
     pub(super) fn random_number_assign(&mut self, x_register_index: usize, value: u8) {
-        self.random_state ^= self.random_state << 13;
-        self.random_state ^= self.random_state >> 17;
-        self.random_state ^= self.random_state << 5;
-        let random_number: u8 = (self.random_state & 0xFF) as u8;
+        let mut rng = rand::thread_rng();
+        let random_number: u8 = rng.gen();
 
         self.variable_register[x_register_index] = random_number & value;
     }
