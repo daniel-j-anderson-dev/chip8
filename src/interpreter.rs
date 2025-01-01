@@ -32,19 +32,91 @@ pub const FONT_DATA: [u8; 80] = [
 pub const FONT_DATA_START: usize = 0x50;
 pub const FONT_DATA_END: usize = 0x9F;
 
-/// These options will eventually be
-/// included in a builder.
-// TODO Config Options
-pub const INSTRUCTIONS_PER_SECOND: f64 = 700.0;
-pub const DISPLAY_UPDATE_RATE_HZ: u64 = 60;
-pub const KEY_HELD_PLAYS_SOUND: bool = false;
-pub const USE_ASSEMBLY_SUBROUTINES: bool = false;
-pub const USE_VARIABLE_OFFSET: bool = true;
-pub const INCREMENT_ON_STORE: bool = false;
+#[derive(Default)]
+pub struct InterpreterConfig {
+    pub instructions_per_second: f64,
+    pub display_update_rate_hz: u64,
+    pub key_held_plays_sound: bool,
+    pub use_assembly_subroutines: bool,
+    pub use_variable_offset: bool,
+    pub increment_on_store: bool,
+}
 
-/// These are generated from the config options.
-pub const INSTRUCTION_DELAY: Duration = Duration::from_nanos(((1.0 / INSTRUCTIONS_PER_SECOND) * 1e9) as u64);
-pub const DISPLAY_UPDATE_DURATION: Duration = Duration::from_nanos(1_000_000_000 / DISPLAY_UPDATE_RATE_HZ);
+impl InterpreterConfig {
+    pub fn builder() -> InterpreterConfigBuilder {
+        InterpreterConfigBuilder::default()
+    }
+}
+
+pub struct InterpreterConfigBuilder {
+    instructions_per_second: f64,
+    display_update_rate_hz: u64,
+    key_held_plays_sound: bool,
+    use_assembly_subroutines: bool,
+    use_variable_offset: bool,
+    increment_on_store: bool,
+}
+
+impl Default for InterpreterConfigBuilder {
+    fn default() -> Self {
+        InterpreterConfigBuilder {
+            instructions_per_second: 700.0, // default
+            display_update_rate_hz: 60,     // default
+            // other flags default to false
+            ..Self {
+                instructions_per_second: 700.0,
+                display_update_rate_hz: 60,
+                key_held_plays_sound: false,
+                use_assembly_subroutines: false,
+                use_variable_offset: false,
+                increment_on_store: false,
+            }
+        }
+    }
+}
+
+impl InterpreterConfigBuilder {
+    pub fn instructions_per_second(mut self, value: f64) -> Self {
+        self.instructions_per_second = value;
+        self
+    }
+
+    pub fn display_update_rate_hz(mut self, value: u64) -> Self {
+        self.display_update_rate_hz = value;
+        self
+    }
+
+    pub fn key_held_plays_sound(mut self, value: bool) -> Self {
+        self.key_held_plays_sound = value;
+        self
+    }
+
+    pub fn use_assembly_subroutines(mut self, value: bool) -> Self {
+        self.use_assembly_subroutines = value;
+        self
+    }
+
+    pub fn use_variable_offset(mut self, value: bool) -> Self {
+        self.use_variable_offset = value;
+        self
+    }
+
+    pub fn increment_on_store(mut self, value: bool) -> Self {
+        self.increment_on_store = value;
+        self
+    }
+
+    pub fn build(self) -> InterpreterConfig {
+        InterpreterConfig {
+            instructions_per_second: self.instructions_per_second,
+            display_update_rate_hz: self.display_update_rate_hz,
+            key_held_plays_sound: self.key_held_plays_sound,
+            use_assembly_subroutines: self.use_assembly_subroutines,
+            use_variable_offset: self.use_variable_offset,
+            increment_on_store: self.increment_on_store,
+        }
+    }
+}
 
 /// The chip8 Interpreter that manages the state of a program.
 ///
@@ -107,6 +179,7 @@ pub struct Interpreter {
     /// ╚═══╩═══╩═══╩═══╝
     /// ```
     keypad: [bool; 16],
+    config: InterpreterConfig,
 }
 
 // initialization
@@ -129,6 +202,29 @@ impl Interpreter {
             last_instruction_time: Instant::now(),
             play_sound: false,
             keypad: [false; 16],
+            config: InterpreterConfig::default(),
+        }
+    }
+
+    pub fn new_with_config(config: InterpreterConfig) -> Self {
+        let mut memory = [0; 4096];
+        memory[FONT_DATA_START..=FONT_DATA_END].copy_from_slice(&FONT_DATA);
+
+        Self {
+            memory,
+            program_counter: PROGRAM_START as u16,
+            address_register: 0,
+            variable_register: [0; 16],
+            call_stack: [0; 16],
+            call_stack_index: 0,
+            delay_timer: 0,
+            sound_timer: 0,
+            display: BLACK_DISPLAY,
+            last_timer_tick: Instant::now(),
+            last_instruction_time: Instant::now(),
+            play_sound: false,
+            keypad: [false; 16],
+            config,
         }
     }
 
@@ -257,8 +353,12 @@ impl Interpreter {
         let instruction_duration= self.last_instruction_time.elapsed();
         self.last_instruction_time = Instant::now();
 
-        if instruction_duration < INSTRUCTION_DELAY {
-            std::thread::sleep(INSTRUCTION_DELAY - instruction_duration);
+        /// These are generated from the config options.
+        let instruction_delay = Duration::from_nanos(((1.0 / InterpreterConfig::builder().instructions_per_second) * 1e9) as u64);
+        let display_update_duration = Duration::from_nanos(1_000_000_000 / InterpreterConfig::builder().display_update_rate_hz);
+
+        if instruction_duration < instruction_delay {
+            std::thread::sleep(instruction_delay - instruction_duration);
         }
 
         true
