@@ -31,19 +31,23 @@ pub const FONT_DATA: [u8; 80] = [
 ];
 pub const FONT_DATA_START: usize = 0x50;
 pub const FONT_DATA_END: usize = 0x9F;
-pub const INSTRUCTIONS_PER_SECOND: f64 = 700.0;
-pub const INSTRUCTION_DELAY: Duration = Duration::from_nanos(((1.0 / INSTRUCTIONS_PER_SECOND) * 1e9) as u64);
 
-/// The chip8 Interpreter that manages the state of a program.
-///
-/// TODO Config Options
+/// These options will eventually be
+/// included in a builder.
+// TODO Config Options
+pub const INSTRUCTIONS_PER_SECOND: f64 = 700.0;
 pub const DISPLAY_UPDATE_RATE_HZ: u64 = 60;
-pub const DISPLAY_UPDATE_DURATION: Duration = Duration::from_nanos(1_000_000_000 / DISPLAY_UPDATE_RATE_HZ);
 pub const KEY_HELD_PLAYS_SOUND: bool = false;
 pub const USE_ASSEMBLY_SUBROUTINES: bool = false;
 pub const USE_VARIABLE_OFFSET: bool = true;
 pub const INCREMENT_ON_STORE: bool = false;
 
+/// These are generated from the config options.
+pub const INSTRUCTION_DELAY: Duration = Duration::from_nanos(((1.0 / INSTRUCTIONS_PER_SECOND) * 1e9) as u64);
+pub const DISPLAY_UPDATE_DURATION: Duration = Duration::from_nanos(1_000_000_000 / DISPLAY_UPDATE_RATE_HZ);
+
+/// The chip8 Interpreter that manages the state of a program.
+///
 pub struct Interpreter {
     memory: [u8; 4096],
 
