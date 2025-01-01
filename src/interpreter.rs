@@ -247,6 +247,10 @@ impl Interpreter {
 
 // accessors
 impl Interpreter {
+    pub fn play_sound(&self) -> bool {
+        self.play_sound
+    }
+
     pub fn display(&self) -> &[[bool; DISPLAY_WIDTH]; DISPLAY_HEIGHT] {
         &self.display
     }
