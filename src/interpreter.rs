@@ -184,7 +184,7 @@ impl Interpreter {
     /// are completely separate from the fetch-decode-execute cycle.
     fn update_timers(&mut self) {
         // We want to decrement our timers once every ~16.67ms (1/60s).
-        let timer_interval = Duration::from_millis(16);
+        let timer_interval = Duration::from_nanos(16_666_667);
         if self.last_timer_tick.elapsed() >= timer_interval {
             self.last_timer_tick = Instant::now();
 
