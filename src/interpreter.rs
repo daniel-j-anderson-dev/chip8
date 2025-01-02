@@ -1,5 +1,8 @@
-use crate::nibbles::{
-    concatenate_three_nibbles, concatenate_two_nibbles, get_first_nibble, get_second_nibble,
+use crate::{
+    nibbles::{
+        concatenate_three_nibbles, concatenate_two_nibbles, get_first_nibble, get_second_nibble,
+    },
+    Configuration,
 };
 use std::time::{Duration, Instant};
 
@@ -13,6 +16,7 @@ use crossterm::{
 #[cfg(test)]
 use std::io::Write;
 
+pub mod builder;
 mod instructions;
 
 /// Offset is commonly done because of old standards.
@@ -46,6 +50,7 @@ pub const INSTRUCTION_DELAY: Duration = Duration::from_nanos(((1.0 / 700.0) * 1e
 ///     USE_VARIABLE_OFFSET     = true
 ///     INCREMENT_ON_STORE      = false
 pub struct Interpreter {
+    configuration: Configuration,
     memory: [u8; 4096],
 
     /// Index to the current byte in memory.
@@ -111,11 +116,16 @@ pub struct Interpreter {
 
 // initialization
 impl Interpreter {
+    pub fn builder() -> Configuration {
+        Configuration::default()
+    }
+
     pub fn new() -> Interpreter {
         let mut memory = [0; 4096];
         memory[FONT_DATA_START..=FONT_DATA_END].copy_from_slice(&FONT_DATA);
 
         Self {
+            configuration: Default::default(),
             memory,
             program_counter: PROGRAM_START as u16,
             address_register: 0,
@@ -151,25 +161,8 @@ impl Interpreter {
 
 // accessors
 impl Interpreter {
-
-    pub fn keypad_mut(&mut self) -> &mut [bool; 16] {
-        &mut self.keypad
-    }
-
     pub fn display(&self) -> &[[bool; DISPLAY_WIDTH]; DISPLAY_HEIGHT] {
         &self.display
-    }
-
-    pub fn display_to_string(&self) -> String {
-        self.display
-            .iter()
-            .enumerate()
-            .flat_map(|(i, row)| {
-                row.iter()
-                    .map(|&pixel| if pixel { '█' } else { ' ' })
-                    .chain(Some('\n'))
-            })
-            .collect::<String>()
     }
 
     /// Returns an array contain the four nibbles of an opcode.
@@ -193,11 +186,15 @@ impl Interpreter {
 
 // mutators
 impl Interpreter {
+    pub fn keypad_mut(&mut self) -> &mut [bool; 16] {
+        &mut self.keypad
+    }
+
     /// The timing and operation of the timers
     /// are completely separate from the fetch-decode-execute cycle.
     fn update_timers(&mut self) {
         // We want to decrement our timers once every ~16.67ms (1/60s).
-        let timer_interval = Duration::from_millis(16);
+        let timer_interval = Duration::from_nanos(16_666_667);
         if self.last_timer_tick.elapsed() >= timer_interval {
             self.last_timer_tick = Instant::now();
 
@@ -282,10 +279,9 @@ impl Interpreter {
 #[cfg(test)]
 impl Interpreter {
     pub fn execute_program_terminal(&mut self) -> Result<(), std::io::Error> {
+        // prepare the terminal
         let mut stdout = std::io::stdout();
-
         terminal::enable_raw_mode()?;
-
         stdout
             .execute(Hide)?
             .execute(Clear(ClearType::All))?
@@ -323,20 +319,22 @@ impl Interpreter {
                 }
             }
 
-            stdout.execute(MoveTo(0, 0))?;
-
-            let display = self.display_to_string();
-            for (y, line) in display.lines().enumerate() {
-                stdout
-                    .execute(MoveTo(0, y as u16))?
-                    .write_all(line.as_bytes())?;
+            // print display
+            for (y, row) in self.display.iter().enumerate() {
+                stdout.execute(MoveTo(0, y as u16))?;
+                for pixel in row.iter().map(|&pixel| if pixel { "█" } else { " " }) {
+                    stdout.write_all(pixel.as_bytes())?;
+                }
             }
+            stdout.execute(MoveTo(0, DISPLAY_HEIGHT as u16));
 
+            // execute instruction
             if !self.execute_current_instruction() {
                 break;
             }
         }
 
+        // reset the terminal
         stdout.execute(Show)?;
         terminal::disable_raw_mode()?;
 
