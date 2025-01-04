@@ -1,186 +1,229 @@
-use std::time::Instant;
-
 use super::Interpreter;
+use std::time::{Duration, Instant};
 
+/// Offset is commonly done because of old standards.
+/// Most programs written for Chip8 expect programs to start here.
+pub const DEFAULT_PROGRAM_START: usize = 0x200;
+pub const DEFAULT_DISPLAY_WIDTH: usize = 64;
+pub const DEFAULT_DISPLAY_HEIGHT: usize = 32;
+pub const DEFAULT_BLACK_DISPLAY: [[bool; DEFAULT_DISPLAY_WIDTH]; DEFAULT_DISPLAY_HEIGHT] =
+    [[false; DEFAULT_DISPLAY_WIDTH]; DEFAULT_DISPLAY_HEIGHT];
+pub const DEFAULT_FONT_DATA: [u8; 80] = [
+    0xF0, 0x90, 0x90, 0x90, 0xF0, 0x20, 0x60, 0x20, 0x20, 0x70, 0xF0, 0x10, 0xF0, 0x80, 0xF0, 0xF0,
+    0x10, 0xF0, 0x10, 0xF0, 0x90, 0x90, 0xF0, 0x10, 0x10, 0xF0, 0x80, 0xF0, 0x10, 0xF0, 0xF0, 0x80,
+    0xF0, 0x90, 0xF0, 0xF0, 0x10, 0x20, 0x40, 0x40, 0xF0, 0x90, 0xF0, 0x90, 0xF0, 0xF0, 0x90, 0xF0,
+    0x10, 0xF0, 0xF0, 0x90, 0xF0, 0x90, 0x90, 0xE0, 0x90, 0xE0, 0x90, 0xE0, 0xF0, 0x80, 0x80, 0x80,
+    0xF0, 0xE0, 0x90, 0x90, 0x90, 0xE0, 0xF0, 0x80, 0xF0, 0x80, 0xF0, 0xF0, 0x80, 0xF0, 0x80, 0x80,
+];
+pub const DEFAULT_FONT_DATA_START: usize = 0x50;
+pub const DEFAULT_FONT_DATA_END: usize = 0x9F;
+pub const DEFAULT_INSTRUCTION_DELAY: Duration = Duration::from_nanos(((1.0 / 700.0) * 1e9) as u64);
+pub const DEFAULT_MEMORY_SIZE: usize = 4096;
+
+#[derive(Debug)]
 pub struct Configuration {
-    pub instructions_per_second: usize,
-    pub key_held_plays_sound: bool,
-    pub use_assembly_routine: bool,
-    pub use_variable_offset: bool,
-    pub increment_on_store: bool,
-    pub program_start: usize,
-    pub display_width: usize,
-    pub display_height: usize,
-    pub font_data: [u8; 80],
-    pub font_data_start: usize,
-    pub font_data_end: usize,
+    instruction_delay: Duration,
+    memory_size: usize,
+    key_held_plays_sound: bool,
+    use_assembly_routine: bool,
+    use_variable_offset: bool,
+    increment_on_store: bool,
+    program_start: usize,
+    display_width: usize,
+    display_height: usize,
+    font_data: [u8; 80],
+    font_data_start: usize,
+    font_data_end: usize,
 }
 impl Default for Configuration {
     fn default() -> Self {
         Self {
-            instructions_per_second: 700,
+            instruction_delay: DEFAULT_INSTRUCTION_DELAY,
             key_held_plays_sound: true,
             use_assembly_routine: false,
             use_variable_offset: true,
             increment_on_store: false,
-            program_start: 0x200,
-            display_width: 64,
-            display_height: 32,
-            font_data: [
-                0xF0, 0x90, 0x90, 0x90, 0xF0, 0x20, 0x60, 0x20, 0x20, 0x70, 0xF0, 0x10, 0xF0, 0x80,
-                0xF0, 0xF0, 0x10, 0xF0, 0x10, 0xF0, 0x90, 0x90, 0xF0, 0x10, 0x10, 0xF0, 0x80, 0xF0,
-                0x10, 0xF0, 0xF0, 0x80, 0xF0, 0x90, 0xF0, 0xF0, 0x10, 0x20, 0x40, 0x40, 0xF0, 0x90,
-                0xF0, 0x90, 0xF0, 0xF0, 0x90, 0xF0, 0x10, 0xF0, 0xF0, 0x90, 0xF0, 0x90, 0x90, 0xE0,
-                0x90, 0xE0, 0x90, 0xE0, 0xF0, 0x80, 0x80, 0x80, 0xF0, 0xE0, 0x90, 0x90, 0x90, 0xE0,
-                0xF0, 0x80, 0xF0, 0x80, 0xF0, 0xF0, 0x80, 0xF0, 0x80, 0x80,
-            ],
-            font_data_start: 0x50,
-            font_data_end: 0x9F,
+            program_start: DEFAULT_PROGRAM_START,
+            display_width: DEFAULT_DISPLAY_WIDTH,
+            display_height: DEFAULT_DISPLAY_HEIGHT,
+            font_data: DEFAULT_FONT_DATA,
+            font_data_start: DEFAULT_FONT_DATA_START,
+            font_data_end: DEFAULT_FONT_DATA_END,
+            memory_size: DEFAULT_MEMORY_SIZE,
         }
     }
 }
-
 impl Configuration {
+    pub fn instruction_delay(&self) -> Duration {
+        self.instruction_delay
+    }
+    pub fn memory_size(&self) -> usize {
+        self.memory_size
+    }
+    pub fn key_held_plays_sound(&self) -> bool {
+        self.key_held_plays_sound
+    }
+    pub fn use_assembly_routine(&self) -> bool {
+        self.use_assembly_routine
+    }
+    pub fn use_variable_offset(&self) -> bool {
+        self.use_variable_offset
+    }
+    pub fn increment_on_store(&self) -> bool {
+        self.increment_on_store
+    }
+    pub fn program_start(&self) -> usize {
+        self.program_start
+    }
+    pub fn display_width(&self) -> usize {
+        self.display_width
+    }
+    pub fn display_height(&self) -> usize {
+        self.display_height
+    }
+    pub fn font_data(&self) -> &[u8; 80] {
+        &self.font_data
+    }
+    pub fn font_data_start(&self) -> usize {
+        self.font_data_start
+    }
+    pub fn font_data_end(&self) -> usize {
+        self.font_data_end
+    }
+}
+
+#[derive(Debug, Default)]
+pub struct Builder(Configuration);
+impl Builder {
     pub fn build(self) -> Interpreter {
-        let mut memory = [0; 4096];
-        memory[self.font_data_start..=self.font_data_end].copy_from_slice(&self.font_data);
+        let mut memory = vec![0; self.0.memory_size].into_boxed_slice();
+        memory[self.0.font_data_start..=self.0.font_data_end].copy_from_slice(&self.0.font_data);
 
         Interpreter {
             memory,
-            program_counter: self.program_start as u16,
+            program_counter: self.0.program_start as u16,
             address_register: 0,
             variable_register: [0; 16],
             call_stack: [0; 16],
             call_stack_index: 0,
             delay_timer: 0,
             sound_timer: 0,
-            random_state: 0x13275389,
-            display: [[false; 64]; 32],
             last_timer_tick: Instant::now(),
             last_instruction_time: Instant::now(),
+            random_state: 0x13275389,
+            display: vec![
+                vec![false; self.0.display_width].into_boxed_slice();
+                self.0.display_height
+            ]
+            .into_boxed_slice(),
             keypad: [false; 16],
-            configuration: self,
+            configuration: self.0,
         }
     }
 }
-
-impl Configuration {
-    pub fn instructions_per_second(self, value: usize) -> Self {
-        Self {
-            instructions_per_second: value,
-            ..self
-        }
+impl Builder {
+    pub fn instruction_delay(self, value: Duration) -> Self {
+        Self(Configuration {
+            instruction_delay: value,
+            ..self.0
+        })
     }
-
+    pub fn memory_size(self, value: usize) -> Self {
+        Self(Configuration {
+            memory_size: value,
+            ..self.0
+        })
+    }
     pub fn key_held_plays_sound(self, value: bool) -> Self {
-        Self {
+        Self(Configuration {
             key_held_plays_sound: value,
-            ..self
-        }
+            ..self.0
+        })
     }
-
     pub fn use_assembly_routine(self, value: bool) -> Self {
-        Self {
+        Self(Configuration {
             use_assembly_routine: value,
-            ..self
-        }
+            ..self.0
+        })
     }
-
     pub fn use_variable_offset(self, value: bool) -> Self {
-        Self {
+        Self(Configuration {
             use_variable_offset: value,
-            ..self
-        }
+            ..self.0
+        })
     }
-
     pub fn increment_on_store(self, value: bool) -> Self {
-        Self {
+        Self(Configuration {
             increment_on_store: value,
-            ..self
-        }
+            ..self.0
+        })
     }
-
     pub fn program_start(self, value: usize) -> Self {
-        Self {
+        Self(Configuration {
             program_start: value,
-            ..self
-        }
+            ..self.0
+        })
     }
-
     pub fn display_width(self, value: usize) -> Self {
-        Self {
+        Self(Configuration {
             display_width: value,
-            ..self
-        }
+            ..self.0
+        })
     }
-
     pub fn display_height(self, value: usize) -> Self {
-        Self {
+        Self(Configuration {
             display_height: value,
-            ..self
-        }
+            ..self.0
+        })
     }
-
     pub fn font_data(self, value: [u8; 80]) -> Self {
-        Self {
+        Self(Configuration {
             font_data: value,
-            ..self
-        }
+            ..self.0
+        })
     }
-
     pub fn font_data_start(self, value: usize) -> Self {
-        Self {
+        Self(Configuration {
             font_data_start: value,
-            ..self
-        }
+            ..self.0
+        })
     }
-
     pub fn font_data_end(self, value: usize) -> Self {
-        Self {
+        Self(Configuration {
             font_data_end: value,
-            ..self
-        }
+            ..self.0
+        })
     }
-}
-
-#[test]
-fn test_builder() {
-    let chip8 = Interpreter::builder()
-        .display_height(100)
-        .display_height(200)
-        .program_start(0x200)
-        .build();
 }
 
 #[test]
 fn generate_builder_methods() {
-    let fields = include_str!("./builder.rs")
-        .lines()
-        .skip(1)
-        .take(11)
-        .filter_map(|line| {
-            let line = line.trim();
+    const SELF_SOURCE: &str = include_str!("./builder.rs");
+    let fields_start = SELF_SOURCE.find("pub struct Configuration {\n").unwrap()
+        + "pub struct Configuration {\n".len();
+    let fields_end = SELF_SOURCE[fields_start..].find('}').unwrap() + fields_start;
+    let fields = SELF_SOURCE[fields_start..fields_end].lines().map(|line| {
+        let line = line.trim();
+        let field_name_end = line.find(':').unwrap();
+        let field_name = &line[..field_name_end];
 
-            const FIELD_NAME_START: usize = 3;
-            let field_name_end = line.find(':')?;
-            let field_name = &line[FIELD_NAME_START..field_name_end];
+        let field_type_start = field_name_end + 1;
+        let field_type = &line[field_type_start..];
 
-            let field_type_start = field_name_end + 1;
-            let field_type = &line[field_type_start..];
+        (field_name, field_type)
+    });
 
-            Some((field_name, field_type))
-        });
-
+    println!("impl Builder {{");
     for (field_name, field_type) in fields {
-        println!(
+        print!(
             "
 pub fn {field_name}(self, value: {field_type}) -> Self {{
-    Self {{
+    Self(Configuration{{
         {field_name}: value,
-        ..self
-    }}
-}}
-"
+        ..self.0
+    }})
+}}"
         )
     }
+    println!("}}");
 }
