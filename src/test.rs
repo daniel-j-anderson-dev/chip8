@@ -1,4 +1,4 @@
-use crate::interpreter::{Interpreter, BLACK_DISPLAY, DISPLAY_HEIGHT, DISPLAY_WIDTH};
+use crate::interpreter::Interpreter;
 
 fn get_input(prompt: &str) -> Result<String, std::io::Error> {
     {
@@ -17,7 +17,7 @@ fn get_input(prompt: &str) -> Result<String, std::io::Error> {
 
 #[test]
 fn user_program() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     let program_path = get_input("Enter path to a Chip8 program: ").unwrap();
     interpreter.load_program_from_path(program_path).unwrap();
@@ -27,7 +27,7 @@ fn user_program() {
 
 #[test]
 fn pong_2() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/pong_2.ch8")
@@ -38,7 +38,10 @@ fn pong_2() {
 
 #[test]
 fn hires_stars() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::builder()
+        .display_width(128)
+        .display_height(64)
+        .build();
 
     interpreter
         .load_program_from_path("roms/hires_stars.ch8")
@@ -49,7 +52,7 @@ fn hires_stars() {
 
 #[test]
 fn paddles() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/paddles.ch8")
@@ -60,7 +63,10 @@ fn paddles() {
 
 #[test]
 fn hires_particle_demo() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::builder()
+        .display_width(128)
+        .display_height(64)
+        .build();
 
     interpreter
         .load_program_from_path("roms/hires_particle_demo.ch8")
@@ -71,7 +77,7 @@ fn hires_particle_demo() {
 
 #[test]
 fn puzzle_15_alt() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/15_puzzle_alt.ch8")
@@ -82,7 +88,7 @@ fn puzzle_15_alt() {
 
 #[test]
 fn ch8_logo() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/ch8_logo.ch8")
@@ -93,7 +99,7 @@ fn ch8_logo() {
 
 #[test]
 fn ibm_logo() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/ibm_logo.ch8")
@@ -104,7 +110,7 @@ fn ibm_logo() {
 
 #[test]
 fn kaleidoscope() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/kaleidoscope.ch8")
@@ -115,7 +121,7 @@ fn kaleidoscope() {
 
 #[test]
 fn hi_lo() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/hi_lo.ch8")
@@ -126,7 +132,7 @@ fn hi_lo() {
 
 #[test]
 fn guess() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/guess.ch8")
@@ -137,7 +143,7 @@ fn guess() {
 
 #[test]
 fn submarine() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/submarine.ch8")
@@ -148,7 +154,7 @@ fn submarine() {
 
 #[test]
 fn jumping_x_and_o() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/jumping_x_and_o.ch8")
@@ -159,7 +165,7 @@ fn jumping_x_and_o() {
 
 #[test]
 fn soccer() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/soccer.ch8")
@@ -170,7 +176,7 @@ fn soccer() {
 
 #[test]
 fn zero_pong() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/zero_pong.ch8")
@@ -181,7 +187,7 @@ fn zero_pong() {
 
 #[test]
 fn puzzle() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/puzzle.ch8")
@@ -192,7 +198,7 @@ fn puzzle() {
 
 #[test]
 fn division_test() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/division_test.ch8")
@@ -203,7 +209,7 @@ fn division_test() {
 
 #[test]
 fn bmp_viewer_hello() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/bmp_viewer_hello.ch8")
@@ -214,7 +220,7 @@ fn bmp_viewer_hello() {
 
 #[test]
 fn blitz() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/blitz.ch8")
@@ -225,7 +231,7 @@ fn blitz() {
 
 #[test]
 fn most_dangerous_game() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/most_dangerous_game.ch8")
@@ -236,7 +242,7 @@ fn most_dangerous_game() {
 
 #[test]
 fn life() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter.load_program_from_path("roms/life.ch8").unwrap();
 
@@ -245,7 +251,7 @@ fn life() {
 
 #[test]
 fn hidden() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/hidden.ch8")
@@ -256,7 +262,7 @@ fn hidden() {
 
 #[test]
 fn brix() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter.load_program_from_path("roms/brix.ch8").unwrap();
 
@@ -265,7 +271,7 @@ fn brix() {
 
 #[test]
 fn pong_alt() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/pong_alt.ch8")
@@ -276,7 +282,7 @@ fn pong_alt() {
 
 #[test]
 fn nim() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter.load_program_from_path("roms/nim.ch8").unwrap();
 
@@ -285,7 +291,7 @@ fn nim() {
 
 #[test]
 fn reversi() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/reversi.ch8")
@@ -296,7 +302,7 @@ fn reversi() {
 
 #[test]
 fn blinky() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/blinky.ch8")
@@ -307,7 +313,7 @@ fn blinky() {
 
 #[test]
 fn tapeworm() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/tapeworm.ch8")
@@ -318,7 +324,7 @@ fn tapeworm() {
 
 #[test]
 fn blinky_alt() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/blinky_alt.ch8")
@@ -329,7 +335,7 @@ fn blinky_alt() {
 
 #[test]
 fn missile() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/missile.ch8")
@@ -340,7 +346,7 @@ fn missile() {
 
 #[test]
 fn squash() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/squash.ch8")
@@ -351,7 +357,7 @@ fn squash() {
 
 #[test]
 fn breakout() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/breakout.ch8")
@@ -362,7 +368,7 @@ fn breakout() {
 
 #[test]
 fn breakout_brix() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/breakout_brix.ch8")
@@ -373,7 +379,7 @@ fn breakout_brix() {
 
 #[test]
 fn tic_tac_toe() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/tic_tac_toe.ch8")
@@ -384,7 +390,7 @@ fn tic_tac_toe() {
 
 #[test]
 fn space_intercept() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/space_intercept.ch8")
@@ -395,7 +401,7 @@ fn space_intercept() {
 
 #[test]
 fn maze_alt() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/maze_alt.ch8")
@@ -406,7 +412,7 @@ fn maze_alt() {
 
 #[test]
 fn space_flight() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/space_flight.ch8")
@@ -417,7 +423,7 @@ fn space_flight() {
 
 #[test]
 fn tron() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter.load_program_from_path("roms/tron.ch8").unwrap();
 
@@ -426,7 +432,7 @@ fn tron() {
 
 #[test]
 fn vertical_brix() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/vertical_brix.ch8")
@@ -437,7 +443,7 @@ fn vertical_brix() {
 
 #[test]
 fn animal_race() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/animal_race.ch8")
@@ -448,7 +454,11 @@ fn animal_race() {
 
 #[test]
 fn hires_s_triangle() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::builder()
+        .display_width(128)
+        .display_height(64)
+        .instruction_delay(std::time::Duration::from_nanos(0))
+        .build();
 
     interpreter
         .load_program_from_path("roms/hires_s_triangle.ch8")
@@ -459,7 +469,7 @@ fn hires_s_triangle() {
 
 #[test]
 fn tetris() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/tetris.ch8")
@@ -470,7 +480,7 @@ fn tetris() {
 
 #[test]
 fn sierpinski() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/sierpinski.ch8")
@@ -481,7 +491,7 @@ fn sierpinski() {
 
 #[test]
 fn space_invaders() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/space_invaders.ch8")
@@ -492,7 +502,10 @@ fn space_invaders() {
 
 #[test]
 fn astro_dodge_hires() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::builder()
+        .display_width(128)
+        .display_height(64)
+        .build();
 
     interpreter
         .load_program_from_path("roms/astro_dodge_hires.ch8")
@@ -503,7 +516,7 @@ fn astro_dodge_hires() {
 
 #[test]
 fn spooky_spot() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/spooky_spot.ch8")
@@ -514,7 +527,7 @@ fn spooky_spot() {
 
 #[test]
 fn fishie() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/fishie.ch8")
@@ -525,7 +538,7 @@ fn fishie() {
 
 #[test]
 fn astro_dodge() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/astro_dodge.ch8")
@@ -536,7 +549,7 @@ fn astro_dodge() {
 
 #[test]
 fn bowling() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/bowling.ch8")
@@ -547,7 +560,7 @@ fn bowling() {
 
 #[test]
 fn connect_4() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/connect_4.ch8")
@@ -558,7 +571,7 @@ fn connect_4() {
 
 #[test]
 fn mastermind_4_row() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/mastermind_4_row.ch8")
@@ -569,7 +582,7 @@ fn mastermind_4_row() {
 
 #[test]
 fn random_number_test() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/random_number_test.ch8")
@@ -580,7 +593,7 @@ fn random_number_test() {
 
 #[test]
 fn sum_fun() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/sum_fun.ch8")
@@ -591,7 +604,7 @@ fn sum_fun() {
 
 #[test]
 fn time_bomb() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/time_bomb.ch8")
@@ -602,7 +615,7 @@ fn time_bomb() {
 
 #[test]
 fn delay_timer_test() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/delay_timer_test.ch8")
@@ -613,7 +626,7 @@ fn delay_timer_test() {
 
 #[test]
 fn slide() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/slide.ch8")
@@ -624,7 +637,7 @@ fn slide() {
 
 #[test]
 fn keypad_test() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/keypad_test.ch8")
@@ -635,7 +648,7 @@ fn keypad_test() {
 
 #[test]
 fn framed_mk2() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/framed_mk2.ch8")
@@ -646,7 +659,7 @@ fn framed_mk2() {
 
 #[test]
 fn trip_8_demo() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/trip_8_demo.ch8")
@@ -657,7 +670,7 @@ fn trip_8_demo() {
 
 #[test]
 fn rush_hour_alt() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/rush_hour_alt.ch8")
@@ -668,7 +681,7 @@ fn rush_hour_alt() {
 
 #[test]
 fn framed_mk1() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/framed_mk1.ch8")
@@ -679,7 +692,7 @@ fn framed_mk1() {
 
 #[test]
 fn lunar_lander() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/lunar_lander.ch8")
@@ -690,7 +703,7 @@ fn lunar_lander() {
 
 #[test]
 fn syzygy() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/syzygy.ch8")
@@ -701,7 +714,7 @@ fn syzygy() {
 
 #[test]
 fn tank() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter.load_program_from_path("roms/tank.ch8").unwrap();
 
@@ -710,7 +723,7 @@ fn tank() {
 
 #[test]
 fn rush_hour() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/rush_hour.ch8")
@@ -721,7 +734,7 @@ fn rush_hour() {
 
 #[test]
 fn deflection() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/deflection.ch8")
@@ -732,7 +745,7 @@ fn deflection() {
 
 #[test]
 fn brick_brix() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/brick_brix.ch8")
@@ -743,7 +756,7 @@ fn brick_brix() {
 
 #[test]
 fn wipe_off() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/wipe_off.ch8")
@@ -754,7 +767,7 @@ fn wipe_off() {
 
 #[test]
 fn worm_v4() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/worm_v4.ch8")
@@ -765,7 +778,7 @@ fn worm_v4() {
 
 #[test]
 fn programmable_space_fighters() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/programmable_space_fighters.ch8")
@@ -776,7 +789,7 @@ fn programmable_space_fighters() {
 
 #[test]
 fn figures() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/figures.ch8")
@@ -787,7 +800,7 @@ fn figures() {
 
 #[test]
 fn addition_problems() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/addition_problems.ch8")
@@ -798,7 +811,7 @@ fn addition_problems() {
 
 #[test]
 fn sqrt_test() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/sqrt_test.ch8")
@@ -809,7 +822,7 @@ fn sqrt_test() {
 
 #[test]
 fn space_invaders_alt() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/space_invaders_alt.ch8")
@@ -820,7 +833,7 @@ fn space_invaders_alt() {
 
 #[test]
 fn ch8_picture() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/ch8_picture.ch8")
@@ -831,7 +844,7 @@ fn ch8_picture() {
 
 #[test]
 fn stars() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/stars.ch8")
@@ -842,7 +855,7 @@ fn stars() {
 
 #[test]
 fn min_game() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/min_game.ch8")
@@ -853,7 +866,7 @@ fn min_game() {
 
 #[test]
 fn pong_1_player() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/pong_1_player.ch8")
@@ -864,7 +877,7 @@ fn pong_1_player() {
 
 #[test]
 fn coin_flip() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/coin_flip.ch8")
@@ -875,7 +888,7 @@ fn coin_flip() {
 
 #[test]
 fn ufo() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter.load_program_from_path("roms/ufo.ch8").unwrap();
 
@@ -884,7 +897,7 @@ fn ufo() {
 
 #[test]
 fn guess_alt() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/guess_alt.ch8")
@@ -895,7 +908,7 @@ fn guess_alt() {
 
 #[test]
 fn rocket_launch() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/rocket_launch.ch8")
@@ -906,7 +919,7 @@ fn rocket_launch() {
 
 #[test]
 fn zero_demo() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/zero_demo.ch8")
@@ -917,7 +930,7 @@ fn zero_demo() {
 
 #[test]
 fn filter() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/filter.ch8")
@@ -928,7 +941,7 @@ fn filter() {
 
 #[test]
 fn shooting_stars() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/shooting_stars.ch8")
@@ -939,7 +952,10 @@ fn shooting_stars() {
 
 #[test]
 fn hires_test() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::builder()
+        .display_width(128)
+        .display_height(64)
+        .build();
 
     interpreter
         .load_program_from_path("roms/hires_test.ch8")
@@ -950,7 +966,7 @@ fn hires_test() {
 
 #[test]
 fn vers() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter.load_program_from_path("roms/vers.ch8").unwrap();
 
@@ -959,7 +975,7 @@ fn vers() {
 
 #[test]
 fn wall() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter.load_program_from_path("roms/wall.ch8").unwrap();
 
@@ -968,7 +984,7 @@ fn wall() {
 
 #[test]
 fn sierpinski_alt() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/sierpinski_alt.ch8")
@@ -979,7 +995,7 @@ fn sierpinski_alt() {
 
 #[test]
 fn maze() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter.load_program_from_path("roms/maze.ch8").unwrap();
 
@@ -988,7 +1004,7 @@ fn maze() {
 
 #[test]
 fn craps() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/craps.ch8")
@@ -999,7 +1015,7 @@ fn craps() {
 
 #[test]
 fn rocket_launcher() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/rocket_launcher.ch8")
@@ -1010,7 +1026,7 @@ fn rocket_launcher() {
 
 #[test]
 fn puzzle_15() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/15_puzzle.ch8")
@@ -1021,7 +1037,7 @@ fn puzzle_15() {
 
 #[test]
 fn particle_demo() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/particle_demo.ch8")
@@ -1032,7 +1048,7 @@ fn particle_demo() {
 
 #[test]
 fn clock() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/clock.ch8")
@@ -1043,7 +1059,7 @@ fn clock() {
 
 #[test]
 fn x_mirror() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/x_mirror.ch8")
@@ -1054,7 +1070,7 @@ fn x_mirror() {
 
 #[test]
 fn merlin() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/merlin.ch8")
@@ -1065,7 +1081,7 @@ fn merlin() {
 
 #[test]
 fn pong() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter.load_program_from_path("roms/pong.ch8").unwrap();
 
@@ -1074,7 +1090,7 @@ fn pong() {
 
 #[test]
 fn landing() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/landing.ch8")
@@ -1085,7 +1101,7 @@ fn landing() {
 
 #[test]
 fn airplane() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/airplane.ch8")
@@ -1096,7 +1112,7 @@ fn airplane() {
 
 #[test]
 fn biorhythm() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/biorhythm.ch8")
@@ -1107,7 +1123,7 @@ fn biorhythm() {
 
 #[test]
 fn cave() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter.load_program_from_path("roms/cave.ch8").unwrap();
 
@@ -1116,7 +1132,7 @@ fn cave() {
 
 #[test]
 fn sequence_shoot() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/sequence_shoot.ch8")
@@ -1127,7 +1143,10 @@ fn sequence_shoot() {
 
 #[test]
 fn hires_maze() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::builder()
+        .display_width(128)
+        .display_height(64)
+        .build();
 
     interpreter
         .load_program_from_path("roms/hires_maze.ch8")
@@ -1138,7 +1157,7 @@ fn hires_maze() {
 
 #[test]
 fn rocket() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/rocket.ch8")
@@ -1149,7 +1168,10 @@ fn rocket() {
 
 #[test]
 fn hires_worm_v4() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::builder()
+        .display_width(128)
+        .display_height(64)
+        .build();
 
     interpreter
         .load_program_from_path("roms/hires_worm_v4.ch8")
@@ -1160,7 +1182,10 @@ fn hires_worm_v4() {
 
 #[test]
 fn trip_8_hires_demo() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::builder()
+        .display_width(128)
+        .display_height(64)
+        .build();
 
     interpreter
         .load_program_from_path("roms/trip_8_hires_demo.ch8")
@@ -1171,7 +1196,7 @@ fn trip_8_hires_demo() {
 
 #[test]
 fn russian_roulette() {
-    let mut interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::default();
 
     interpreter
         .load_program_from_path("roms/russian_roulette.ch8")

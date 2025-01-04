@@ -1,11 +1,11 @@
-use crate::interpreter::{Interpreter, BLACK_DISPLAY, DISPLAY_HEIGHT, DISPLAY_WIDTH};
+use crate::interpreter::Interpreter;
 
 impl Interpreter {
     /// Opcode: 00E0
     ///
     /// Clears the display.
     pub(super) fn clear_display(&mut self) {
-        self.display = BLACK_DISPLAY;
+        self.display.iter_mut().flatten().for_each(|p| *p = false);
     }
 
     /// Opcode: 00EE
@@ -196,19 +196,21 @@ impl Interpreter {
         y_register_index: usize,
         sprite_height: u8,
     ) {
+        let display_width = self.configuration.display_width();
+        let display_height = self.configuration.display_height();
         let address_register = self.address_register as usize;
-        let x_position = self.variable_register[x_register_index] as usize % DISPLAY_WIDTH;
-        let y_position = self.variable_register[y_register_index] as usize % DISPLAY_HEIGHT;
+        let x_position = self.variable_register[x_register_index] as usize % display_width;
+        let y_position = self.variable_register[y_register_index] as usize % display_height;
 
         self.variable_register[0xF] = 0;
 
         for sprite_row_index in 0..sprite_height as usize {
-            let display_row_index = (y_position + sprite_row_index) % 32;
+            let display_row_index = (y_position + sprite_row_index) % display_height;
 
             let sprite_byte = self.memory[address_register + sprite_row_index];
 
             for sprite_column_index in 0..8 {
-                let display_column_index = (x_position + sprite_column_index) % 64;
+                let display_column_index = (x_position + sprite_column_index) % display_width;
 
                 let pixel_bitmask = 0b10000000 >> sprite_column_index as u8;
                 let sprite_pixel = (sprite_byte & pixel_bitmask) > 0;

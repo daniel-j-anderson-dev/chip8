@@ -1,8 +1,6 @@
-use crate::{
-    nibbles::{
-        concatenate_three_nibbles, concatenate_two_nibbles, get_first_nibble, get_second_nibble,
-    },
-    Configuration,
+pub use crate::interpreter::builder::{Builder, Configuration};
+use crate::nibbles::{
+    concatenate_three_nibbles, concatenate_two_nibbles, get_first_nibble, get_second_nibble,
 };
 use std::time::{Duration, Instant};
 
@@ -19,39 +17,11 @@ use std::io::Write;
 pub mod builder;
 mod instructions;
 
-/// Offset is commonly done because of old standards.
-/// Most programs written for Chip8 expect programs to start here.
-pub const PROGRAM_START: usize = 0x200;
-pub const DISPLAY_WIDTH: usize = 64;
-pub const DISPLAY_HEIGHT: usize = 32;
-pub const BLACK_DISPLAY: [[bool; DISPLAY_WIDTH]; DISPLAY_HEIGHT] =
-    [[false; DISPLAY_WIDTH]; DISPLAY_HEIGHT];
-pub const FONT_DATA: [u8; 80] = [
-    0xF0, 0x90, 0x90, 0x90, 0xF0, 0x20, 0x60, 0x20, 0x20, 0x70, 0xF0, 0x10, 0xF0, 0x80, 0xF0, 0xF0,
-    0x10, 0xF0, 0x10, 0xF0, 0x90, 0x90, 0xF0, 0x10, 0x10, 0xF0, 0x80, 0xF0, 0x10, 0xF0, 0xF0, 0x80,
-    0xF0, 0x90, 0xF0, 0xF0, 0x10, 0x20, 0x40, 0x40, 0xF0, 0x90, 0xF0, 0x90, 0xF0, 0xF0, 0x90, 0xF0,
-    0x10, 0xF0, 0xF0, 0x90, 0xF0, 0x90, 0x90, 0xE0, 0x90, 0xE0, 0x90, 0xE0, 0xF0, 0x80, 0x80, 0x80,
-    0xF0, 0xE0, 0x90, 0x90, 0x90, 0xE0, 0xF0, 0x80, 0xF0, 0x80, 0xF0, 0xF0, 0x80, 0xF0, 0x80, 0x80,
-];
-pub const FONT_DATA_START: usize = 0x50;
-pub const FONT_DATA_END: usize = 0x9F;
-pub const INSTRUCTION_DELAY: Duration = Duration::from_nanos(((1.0 / 700.0) * 1e9) as u64);
-
 /// The chip8 Interpreter that manages the state of a program.
-///
-/// TODO Options
-/// These options do not exist yet, but will be useful
-/// once we start implementing the options.
-///
-///     DISPLAY_UPDATE_RATE     = 60 Hz
-///     KEY_HELD_PLAYS_SOUND    = true
-///     RUN_SPEED               = 700 instructions per second
-///     USE_ASSEMBLY_SUBROUTINE = false
-///     USE_VARIABLE_OFFSET     = true
-///     INCREMENT_ON_STORE      = false
+#[derive(Debug)]
 pub struct Interpreter {
     configuration: Configuration,
-    memory: [u8; 4096],
+    memory: Box<[u8]>,
 
     /// Index to the current byte in memory.
     program_counter: u16,
@@ -82,7 +52,7 @@ pub struct Interpreter {
     random_state: usize,
 
     /// `false` represents a black pixel. `true` represents a white pixel
-    display: [[bool; 64]; 32],
+    display: Box<[Box<[bool]>]>,
 
     last_timer_tick: Instant,
     last_instruction_time: Instant,
@@ -115,31 +85,14 @@ pub struct Interpreter {
 }
 
 // initialization
-impl Interpreter {
-    pub fn builder() -> Configuration {
-        Configuration::default()
+impl Default for Interpreter {
+    fn default() -> Self {
+        Self::builder().build()
     }
-
-    pub fn new() -> Interpreter {
-        let mut memory = [0; 4096];
-        memory[FONT_DATA_START..=FONT_DATA_END].copy_from_slice(&FONT_DATA);
-
-        Self {
-            configuration: Default::default(),
-            memory,
-            program_counter: PROGRAM_START as u16,
-            address_register: 0,
-            variable_register: [0; 16],
-            call_stack: [0; 16],
-            call_stack_index: 0,
-            delay_timer: 0,
-            sound_timer: 0,
-            random_state: 0x13275389,
-            display: BLACK_DISPLAY,
-            last_timer_tick: Instant::now(),
-            last_instruction_time: Instant::now(),
-            keypad: [false; 16],
-        }
+}
+impl Interpreter {
+    pub fn builder() -> Builder {
+        Builder::default()
     }
 
     pub fn load_program_from_path(
@@ -154,14 +107,15 @@ impl Interpreter {
     pub fn load_program_from_bytes(&mut self, program_data: impl AsRef<[u8]>) {
         let program_data = program_data.as_ref();
         let program_size = program_data.len();
+        let program_start = self.configuration.program_start();
 
-        self.memory[PROGRAM_START..PROGRAM_START + program_size].copy_from_slice(program_data);
+        self.memory[program_start..program_start + program_size].copy_from_slice(program_data);
     }
 }
 
 // accessors
 impl Interpreter {
-    pub fn display(&self) -> &[[bool; DISPLAY_WIDTH]; DISPLAY_HEIGHT] {
+    pub fn display(&self) -> &[Box<[bool]>] {
         &self.display
     }
 
@@ -268,8 +222,9 @@ impl Interpreter {
         let instruction_duration= self.last_instruction_time.elapsed();
         self.last_instruction_time = Instant::now();
 
-        if instruction_duration < INSTRUCTION_DELAY {
-            std::thread::sleep(INSTRUCTION_DELAY - instruction_duration);
+        let instruction_delay = self.configuration.instruction_delay();
+        if instruction_duration < instruction_delay {
+            std::thread::sleep(instruction_delay - instruction_duration);
         }
 
         true
@@ -326,7 +281,7 @@ impl Interpreter {
                     stdout.write_all(pixel.as_bytes())?;
                 }
             }
-            stdout.execute(MoveTo(0, DISPLAY_HEIGHT as u16));
+            stdout.execute(MoveTo(0, self.configuration.display_height() as u16));
 
             // execute instruction
             if !self.execute_current_instruction() {
