@@ -1,4 +1,4 @@
-use chip8::interpreter::Interpreter;
+use chip8::interpreter::{Builder, Interpreter};
 use macroquad::{
     miniquad::window::screen_size,
     prelude::*,
@@ -6,25 +6,29 @@ use macroquad::{
 };
 use std::ops::DerefMut;
 
+const DEFAULT_CHIP8: Builder = Interpreter::builder().instruction_delay(std::time::Duration::ZERO);
+const HIGH_RESOLUTION_CHIP8: Builder = DEFAULT_CHIP8.display_width(128).display_height(64);
+
 #[macroquad::main("chip8")]
 async fn main() {
-    let mut chip8 = Interpreter::builder()
-        .instruction_delay(std::time::Duration::ZERO)
-        .build();
-    let display_width = chip8.configuration().display_width();
-    let display_height = chip8.configuration().display_height();
+    let mut chip8 = DEFAULT_CHIP8.build();
 
     let mut load_program_error = None::<String>;
 
-    let mut display_image = Image::gen_image_color(display_width as _, display_height as _, WHITE);
-    let display_texture = Texture2D::from_image(&display_image);
+    let mut display_image = Image::gen_image_color(
+        chip8.configuration().display_width() as _,
+        chip8.configuration().display_height() as _,
+        WHITE,
+    );
+    let mut display_texture = Texture2D::from_image(&display_image);
 
     let programs = std::fs::read_dir("roms")
         .map(|dir| {
             dir.filter_map(Result::ok)
                 .map(|entry| {
                     let path = entry.path();
-                    let name = path.to_string_lossy()[5..].to_owned();
+                    let name = path.to_string_lossy();
+                    let name = name[5..name.len() - 4].to_owned();
                     let name_dimensions = measure_text(&name, None, 16, 1.0);
                     (path, name, name_dimensions)
                 })
@@ -36,6 +40,7 @@ async fn main() {
         .max_by_key(|(_, name, _)| name.len())
         .map(|(_, _, name_dimensions)| name_dimensions.width)
         .unwrap_or_default();
+    let mut display_scale = 100.0;
 
     loop {
         clear_background(WHITE);
@@ -50,9 +55,9 @@ async fn main() {
             screen_dimensions.y,
         );
         let display_texture_size = vec2(
-            display_width as f32 * (screen_dimensions.x / 100.0),
-            display_height as f32 * (screen_dimensions.y / 100.0),
-        );
+            chip8.configuration().display_width() as f32 * screen_dimensions.x,
+            chip8.configuration().display_height() as f32 * screen_dimensions.y,
+        ) / display_scale;
         let display_texture_position = (display_window_size - display_texture_size) / 2.0;
 
         widgets::Window::new(hash!(), Vec2::ZERO, display_window_size)
@@ -79,7 +84,22 @@ async fn main() {
                         ))
                         .ui(ui)
                     {
-                        chip8 = Interpreter::default();
+                        chip8 = if name.contains("hires") {
+                            display_scale = 200.0;
+                            HIGH_RESOLUTION_CHIP8
+                        } else {
+                            display_scale = 100.0;
+                            DEFAULT_CHIP8
+                        }
+                        .build();
+
+                        display_image = Image::gen_image_color(
+                            chip8.configuration().display_width() as _,
+                            chip8.configuration().display_height() as _,
+                            WHITE,
+                        );
+                        display_texture = Texture2D::from_image(&display_image);
+
                         if let Err(e) = chip8.load_program_from_path(path) {
                             load_program_error = Some(e.to_string());
                         }
