@@ -35,8 +35,8 @@ pub struct Configuration {
     font_data_start: usize,
     font_data_end: usize,
 }
-impl Default for Configuration {
-    fn default() -> Self {
+impl Configuration {
+    pub const fn new() -> Self {
         Self {
             instruction_delay: DEFAULT_INSTRUCTION_DELAY,
             key_held_plays_sound: true,
@@ -53,41 +53,46 @@ impl Default for Configuration {
         }
     }
 }
+impl Default for Configuration {
+    fn default() -> Self {
+        Self::new()
+    }
+}
 impl Configuration {
-    pub fn instruction_delay(&self) -> Duration {
+    pub const fn instruction_delay(&self) -> Duration {
         self.instruction_delay
     }
-    pub fn memory_size(&self) -> usize {
+    pub const fn memory_size(&self) -> usize {
         self.memory_size
     }
-    pub fn key_held_plays_sound(&self) -> bool {
+    pub const fn key_held_plays_sound(&self) -> bool {
         self.key_held_plays_sound
     }
-    pub fn use_assembly_routine(&self) -> bool {
+    pub const fn use_assembly_routine(&self) -> bool {
         self.use_assembly_routine
     }
-    pub fn use_variable_offset(&self) -> bool {
+    pub const fn use_variable_offset(&self) -> bool {
         self.use_variable_offset
     }
-    pub fn increment_on_store(&self) -> bool {
+    pub const fn increment_on_store(&self) -> bool {
         self.increment_on_store
     }
-    pub fn program_start(&self) -> usize {
+    pub const fn program_start(&self) -> usize {
         self.program_start
     }
-    pub fn display_width(&self) -> usize {
+    pub const fn display_width(&self) -> usize {
         self.display_width
     }
-    pub fn display_height(&self) -> usize {
+    pub const fn display_height(&self) -> usize {
         self.display_height
     }
-    pub fn font_data(&self) -> &[u8; 80] {
+    pub const fn font_data(&self) -> &[u8; 80] {
         &self.font_data
     }
-    pub fn font_data_start(&self) -> usize {
+    pub const fn font_data_start(&self) -> usize {
         self.font_data_start
     }
-    pub fn font_data_end(&self) -> usize {
+    pub const fn font_data_end(&self) -> usize {
         self.font_data_end
     }
 }
@@ -95,6 +100,9 @@ impl Configuration {
 #[derive(Debug, Default)]
 pub struct Builder(Configuration);
 impl Builder {
+    pub const fn new() -> Self {
+        Self(Configuration::new())
+    }
     pub fn build(self) -> Interpreter {
         let mut memory = vec![0; self.0.memory_size].into_boxed_slice();
         memory[self.0.font_data_start..=self.0.font_data_end].copy_from_slice(&self.0.font_data);
@@ -122,73 +130,73 @@ impl Builder {
     }
 }
 impl Builder {
-    pub fn instruction_delay(self, value: Duration) -> Self {
+    pub const fn instruction_delay(self, value: Duration) -> Self {
         Self(Configuration {
             instruction_delay: value,
             ..self.0
         })
     }
-    pub fn memory_size(self, value: usize) -> Self {
+    pub const fn memory_size(self, value: usize) -> Self {
         Self(Configuration {
             memory_size: value,
             ..self.0
         })
     }
-    pub fn key_held_plays_sound(self, value: bool) -> Self {
+    pub const fn key_held_plays_sound(self, value: bool) -> Self {
         Self(Configuration {
             key_held_plays_sound: value,
             ..self.0
         })
     }
-    pub fn use_assembly_routine(self, value: bool) -> Self {
+    pub const fn use_assembly_routine(self, value: bool) -> Self {
         Self(Configuration {
             use_assembly_routine: value,
             ..self.0
         })
     }
-    pub fn use_variable_offset(self, value: bool) -> Self {
+    pub const fn use_variable_offset(self, value: bool) -> Self {
         Self(Configuration {
             use_variable_offset: value,
             ..self.0
         })
     }
-    pub fn increment_on_store(self, value: bool) -> Self {
+    pub const fn increment_on_store(self, value: bool) -> Self {
         Self(Configuration {
             increment_on_store: value,
             ..self.0
         })
     }
-    pub fn program_start(self, value: usize) -> Self {
+    pub const fn program_start(self, value: usize) -> Self {
         Self(Configuration {
             program_start: value,
             ..self.0
         })
     }
-    pub fn display_width(self, value: usize) -> Self {
+    pub const fn display_width(self, value: usize) -> Self {
         Self(Configuration {
             display_width: value,
             ..self.0
         })
     }
-    pub fn display_height(self, value: usize) -> Self {
+    pub const fn display_height(self, value: usize) -> Self {
         Self(Configuration {
             display_height: value,
             ..self.0
         })
     }
-    pub fn font_data(self, value: [u8; 80]) -> Self {
+    pub const fn font_data(self, value: [u8; 80]) -> Self {
         Self(Configuration {
             font_data: value,
             ..self.0
         })
     }
-    pub fn font_data_start(self, value: usize) -> Self {
+    pub const fn font_data_start(self, value: usize) -> Self {
         Self(Configuration {
             font_data_start: value,
             ..self.0
         })
     }
-    pub fn font_data_end(self, value: usize) -> Self {
+    pub const fn font_data_end(self, value: usize) -> Self {
         Self(Configuration {
             font_data_end: value,
             ..self.0
@@ -217,7 +225,7 @@ fn generate_builder_methods() {
     for (field_name, field_type) in fields {
         print!(
             "
-pub fn {field_name}(self, value: {field_type}) -> Self {{
+pub const fn {field_name}(self, value: {field_type}) -> Self {{
     Self(Configuration{{
         {field_name}: value,
         ..self.0

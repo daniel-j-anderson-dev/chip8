@@ -91,8 +91,8 @@ impl Default for Interpreter {
     }
 }
 impl Interpreter {
-    pub fn builder() -> Builder {
-        Builder::default()
+    pub const fn builder() -> Builder {
+        Builder::new()
     }
 
     pub fn load_program_from_path(
@@ -115,7 +115,11 @@ impl Interpreter {
 
 // accessors
 impl Interpreter {
-    pub fn display(&self) -> &[Box<[bool]>] {
+    pub const fn configuration(&self) -> &Configuration {
+        &self.configuration
+    }
+
+    pub const fn display(&self) -> &[Box<[bool]>] {
         &self.display
     }
 
@@ -140,7 +144,7 @@ impl Interpreter {
 
 // mutators
 impl Interpreter {
-    pub fn keypad_mut(&mut self) -> &mut [bool; 16] {
+    pub const fn keypad_mut(&mut self) -> &mut [bool; 16] {
         &mut self.keypad
     }
 
