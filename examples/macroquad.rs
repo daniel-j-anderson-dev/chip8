@@ -117,6 +117,24 @@ async fn main() {
     }
 }
 
+fn get_programs() -> Vec<(std::path::PathBuf, String, TextDimensions)> {
+    let mut programs = std::fs::read_dir("roms")
+        .map(|dir| {
+            dir.filter_map(Result::ok)
+                .map(|entry| {
+                    let path = entry.path();
+                    let name = path.to_string_lossy();
+                    let name = name[5..name.len() - 4].to_owned();
+                    let name_dimensions = measure_text(&name, None, 16, 1.0);
+                    (path, name, name_dimensions)
+                })
+                .collect::<Vec<_>>()
+        })
+        .unwrap_or_default();
+    programs.sort_by_key(|(_, name, _)| name.chars().next().unwrap());
+    programs
+}
+
 fn update_display(display: &[Box<[bool]>], display_image: &mut Image, display_texture: &Texture2D) {
     for (y, row) in display.iter().enumerate() {
         for (x, &pixel) in row.iter().enumerate() {
