@@ -23,19 +23,7 @@ async fn main() {
     let mut display_texture = Texture2D::from_image(&display_image);
     display_texture.set_filter(FilterMode::Nearest);
 
-    let programs = std::fs::read_dir("roms")
-        .map(|dir| {
-            dir.filter_map(Result::ok)
-                .map(|entry| {
-                    let path = entry.path();
-                    let name = path.to_string_lossy();
-                    let name = name[5..name.len() - 4].to_owned();
-                    let name_dimensions = measure_text(&name, None, 16, 1.0);
-                    (path, name, name_dimensions)
-                })
-                .collect::<Vec<_>>()
-        })
-        .unwrap_or_default();
+    let programs = get_programs();
     let longest_program_name_width = programs
         .iter()
         .max_by_key(|(_, name, _)| name.len())
