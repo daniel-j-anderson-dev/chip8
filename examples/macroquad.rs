@@ -21,6 +21,7 @@ async fn main() {
         WHITE,
     );
     let mut display_texture = Texture2D::from_image(&display_image);
+    display_texture.set_filter(FilterMode::Nearest);
 
     let programs = std::fs::read_dir("roms")
         .map(|dir| {
@@ -99,6 +100,7 @@ async fn main() {
                             WHITE,
                         );
                         display_texture = Texture2D::from_image(&display_image);
+                        display_texture.set_filter(FilterMode::Nearest);
 
                         if let Err(e) = chip8.load_program_from_path(path) {
                             load_program_error = Some(e.to_string());
