@@ -3,7 +3,10 @@ use quote::quote;
 use syn::{parse_macro_input, DeriveInput, Ident};
 
 #[proc_macro]
-pub fn generate_terminal_tests(_: TokenStream) -> TokenStream {
+pub fn generate_terminal_tests(input: TokenStream) -> TokenStream {
+    if !input.is_empty() {
+        panic!("generate_terminal_tests takes no arguments!");
+    }
     let tests = std::fs::read_dir("roms")
         .unwrap()
         .map(|entry| {
