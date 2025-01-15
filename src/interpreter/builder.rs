@@ -20,7 +20,7 @@ pub const DEFAULT_FONT_DATA_END: usize = 0x9F;
 pub const DEFAULT_INSTRUCTION_DELAY: Duration = Duration::from_nanos(((1.0 / 700.0) * 1e9) as u64);
 pub const DEFAULT_MEMORY_SIZE: usize = 4096;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy, macros::CopyGetters)]
 pub struct Configuration {
     instruction_delay: Duration,
     memory_size: usize,
@@ -56,44 +56,6 @@ impl Configuration {
 impl Default for Configuration {
     fn default() -> Self {
         Self::new()
-    }
-}
-impl Configuration {
-    pub const fn instruction_delay(&self) -> Duration {
-        self.instruction_delay
-    }
-    pub const fn memory_size(&self) -> usize {
-        self.memory_size
-    }
-    pub const fn key_held_plays_sound(&self) -> bool {
-        self.key_held_plays_sound
-    }
-    pub const fn use_assembly_routine(&self) -> bool {
-        self.use_assembly_routine
-    }
-    pub const fn use_variable_offset(&self) -> bool {
-        self.use_variable_offset
-    }
-    pub const fn increment_on_store(&self) -> bool {
-        self.increment_on_store
-    }
-    pub const fn program_start(&self) -> usize {
-        self.program_start
-    }
-    pub const fn display_width(&self) -> usize {
-        self.display_width
-    }
-    pub const fn display_height(&self) -> usize {
-        self.display_height
-    }
-    pub const fn font_data(&self) -> &[u8; 80] {
-        &self.font_data
-    }
-    pub const fn font_data_start(&self) -> usize {
-        self.font_data_start
-    }
-    pub const fn font_data_end(&self) -> usize {
-        self.font_data_end
     }
 }
 
