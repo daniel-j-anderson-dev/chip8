@@ -34,7 +34,7 @@ pub fn generate_terminal_tests(input: TokenStream) -> TokenStream {
                     }}
             })
         })
-        .collect::<Result<Vec<_>, Box<dyn ::core::error::Error>>>()
+        .collect::<Result<Vec<_>, std::io::Error>>()
         .unwrap();
     quote! { #(#tests)* }.into()
 }
