@@ -325,6 +325,10 @@ impl Interpreter {
         for offset in 0..=x_register_index {
             self.memory[address + offset] = self.variable_register[offset];
         }
+
+        if self.configuration.increment_on_store() {
+            self.address_register += x_register_index as u16 + 1;
+        }
     }
 
     /// Opcode: Fx65
@@ -336,6 +340,10 @@ impl Interpreter {
 
         for offset in 0..=x_register_index {
             self.variable_register[offset] = self.memory[address + offset];
+        }
+
+        if self.configuration.increment_on_store() {
+            self.address_register += x_register_index as u16 + 1;
         }
     }
 }

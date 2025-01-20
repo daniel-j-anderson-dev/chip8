@@ -1,3 +1,13 @@
-BNNN => jump_offset(address)
-    // OPTION
-    program_counter = address + registers[0]
+use_variable_offset -> implement false case
+
+if increment_on_store == true
+    each store or load
+        increment I
+    then
+        I = I + X + 1
+
+for offset in 0..=x {
+    memory[I] = V[offset];
+    I += 1;
+}
+

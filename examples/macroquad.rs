@@ -6,8 +6,10 @@ use macroquad::{
 };
 use std::ops::DerefMut;
 
-const DEFAULT_CHIP8: ConfigurationBuilder = Interpreter::builder().instruction_delay(std::time::Duration::ZERO);
-const HIGH_RESOLUTION_CHIP8: ConfigurationBuilder = DEFAULT_CHIP8.display_width(128).display_height(64);
+const DEFAULT_CHIP8: ConfigurationBuilder =
+    Interpreter::builder().instruction_delay(std::time::Duration::ZERO);
+const HIGH_RESOLUTION_CHIP8: ConfigurationBuilder =
+    DEFAULT_CHIP8.display_width(128).display_height(64);
 
 #[macroquad::main("chip8")]
 async fn main() {
