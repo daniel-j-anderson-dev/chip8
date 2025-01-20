@@ -1,4 +1,4 @@
-use chip8::interpreter::{Builder, Interpreter};
+use chip8::interpreter::{ConfigurationBuilder, Interpreter};
 use macroquad::{
     miniquad::window::screen_size,
     prelude::*,
@@ -6,8 +6,8 @@ use macroquad::{
 };
 use std::ops::DerefMut;
 
-const DEFAULT_CHIP8: Builder = Interpreter::builder().instruction_delay(std::time::Duration::ZERO);
-const HIGH_RESOLUTION_CHIP8: Builder = DEFAULT_CHIP8.display_width(128).display_height(64);
+const DEFAULT_CHIP8: ConfigurationBuilder = Interpreter::builder().instruction_delay(std::time::Duration::ZERO);
+const HIGH_RESOLUTION_CHIP8: ConfigurationBuilder = DEFAULT_CHIP8.display_width(128).display_height(64);
 
 #[macroquad::main("chip8")]
 async fn main() {
