@@ -1,52 +1,17 @@
+pub use crate::interpreter::builder::{ConfigurationBuilder, Configuration};
 use crate::nibbles::{
     concatenate_three_nibbles, concatenate_two_nibbles, get_first_nibble, get_second_nibble,
 };
 use std::time::{Duration, Instant};
 
-#[cfg(test)]
-use crossterm::{
-    cursor::{Hide, MoveTo, Show},
-    event::{self, Event, KeyCode, KeyEvent, KeyModifiers},
-    terminal::{self, Clear, ClearType},
-    ExecutableCommand,
-};
-#[cfg(test)]
-use std::io::Write;
-
+pub mod builder;
 mod instructions;
 
-/// Offset is commonly done because of old standards.
-/// Most programs written for Chip8 expect programs to start here.
-pub const PROGRAM_START: usize = 0x200;
-pub const DISPLAY_WIDTH: usize = 64;
-pub const DISPLAY_HEIGHT: usize = 32;
-pub const BLACK_DISPLAY: [[bool; DISPLAY_WIDTH]; DISPLAY_HEIGHT] =
-    [[false; DISPLAY_WIDTH]; DISPLAY_HEIGHT];
-pub const FONT_DATA: [u8; 80] = [
-    0xF0, 0x90, 0x90, 0x90, 0xF0, 0x20, 0x60, 0x20, 0x20, 0x70, 0xF0, 0x10, 0xF0, 0x80, 0xF0, 0xF0,
-    0x10, 0xF0, 0x10, 0xF0, 0x90, 0x90, 0xF0, 0x10, 0x10, 0xF0, 0x80, 0xF0, 0x10, 0xF0, 0xF0, 0x80,
-    0xF0, 0x90, 0xF0, 0xF0, 0x10, 0x20, 0x40, 0x40, 0xF0, 0x90, 0xF0, 0x90, 0xF0, 0xF0, 0x90, 0xF0,
-    0x10, 0xF0, 0xF0, 0x90, 0xF0, 0x90, 0x90, 0xE0, 0x90, 0xE0, 0x90, 0xE0, 0xF0, 0x80, 0x80, 0x80,
-    0xF0, 0xE0, 0x90, 0x90, 0x90, 0xE0, 0xF0, 0x80, 0xF0, 0x80, 0xF0, 0xF0, 0x80, 0xF0, 0x80, 0x80,
-];
-pub const FONT_DATA_START: usize = 0x50;
-pub const FONT_DATA_END: usize = 0x9F;
-pub const INSTRUCTION_DELAY: Duration = Duration::from_nanos(((1.0 / 700.0) * 1e9) as u64);
-
 /// The chip8 Interpreter that manages the state of a program.
-///
-/// TODO Options
-/// These options do not exist yet, but will be useful
-/// once we start implementing the options.
-///
-///     DISPLAY_UPDATE_RATE     = 60 Hz
-///     KEY_HELD_PLAYS_SOUND    = true
-///     RUN_SPEED               = 700 instructions per second
-///     USE_ASSEMBLY_SUBROUTINE = false
-///     USE_VARIABLE_OFFSET     = true
-///     INCREMENT_ON_STORE      = false
+#[derive(Debug)]
 pub struct Interpreter {
-    memory: [u8; 4096],
+    configuration: Configuration,
+    memory: Box<[u8]>,
 
     /// Index to the current byte in memory.
     program_counter: u16,
@@ -77,7 +42,7 @@ pub struct Interpreter {
     random_state: usize,
 
     /// `false` represents a black pixel. `true` represents a white pixel
-    display: [[bool; 64]; 32],
+    display: Box<[Box<[bool]>]>,
 
     last_timer_tick: Instant,
     last_instruction_time: Instant,
@@ -110,28 +75,15 @@ pub struct Interpreter {
 }
 
 // initialization
-impl Interpreter {
-    pub fn new() -> Interpreter {
-        let mut memory = [0; 4096];
-        memory[FONT_DATA_START..=FONT_DATA_END].copy_from_slice(&FONT_DATA);
-
-        Self {
-            memory,
-            program_counter: PROGRAM_START as u16,
-            address_register: 0,
-            variable_register: [0; 16],
-            call_stack: [0; 16],
-            call_stack_index: 0,
-            delay_timer: 0,
-            sound_timer: 0,
-            random_state: 0x13275389,
-            display: BLACK_DISPLAY,
-            last_timer_tick: Instant::now(),
-            last_instruction_time: Instant::now(),
-            keypad: [false; 16],
-        }
+impl Default for Interpreter {
+    fn default() -> Self {
+        Self::builder().build()
     }
-
+}
+impl Interpreter {
+    pub const fn builder() -> ConfigurationBuilder {
+        ConfigurationBuilder::new()
+    }
     pub fn load_program_from_path(
         &mut self,
         path: impl AsRef<std::path::Path>,
@@ -140,36 +92,23 @@ impl Interpreter {
         self.load_program_from_bytes(program_data);
         Ok(())
     }
-
     pub fn load_program_from_bytes(&mut self, program_data: impl AsRef<[u8]>) {
         let program_data = program_data.as_ref();
         let program_size = program_data.len();
+        let program_start = self.configuration.program_start();
 
-        self.memory[PROGRAM_START..PROGRAM_START + program_size].copy_from_slice(program_data);
+        self.memory[program_start..program_start + program_size].copy_from_slice(program_data);
     }
 }
 
 // accessors
 impl Interpreter {
-
-    pub fn keypad_mut(&mut self) -> &mut [bool; 16] {
-        &mut self.keypad
+    pub const fn configuration(&self) -> &Configuration {
+        &self.configuration
     }
 
-    pub fn display(&self) -> &[[bool; DISPLAY_WIDTH]; DISPLAY_HEIGHT] {
+    pub fn display(&self) -> &[Box<[bool]>] {
         &self.display
-    }
-
-    pub fn display_to_string(&self) -> String {
-        self.display
-            .iter()
-            .enumerate()
-            .flat_map(|(i, row)| {
-                row.iter()
-                    .map(|&pixel| if pixel { '█' } else { ' ' })
-                    .chain(Some('\n'))
-            })
-            .collect::<String>()
     }
 
     /// Returns an array contain the four nibbles of an opcode.
@@ -193,12 +132,16 @@ impl Interpreter {
 
 // mutators
 impl Interpreter {
+    pub const fn keypad_mut(&mut self) -> &mut [bool; 16] {
+        &mut self.keypad
+    }
+
     /// The timing and operation of the timers
     /// are completely separate from the fetch-decode-execute cycle.
     fn update_timers(&mut self) {
         // We want to decrement our timers once every ~16.67ms (1/60s).
-        let timer_interval = Duration::from_millis(16);
-        if self.last_timer_tick.elapsed() >= timer_interval {
+        const TIMER_INTERVAL: Duration = Duration::from_nanos(16_666_667);
+        if self.last_timer_tick.elapsed() >= TIMER_INTERVAL {
             self.last_timer_tick = Instant::now();
 
             // Decrement delay timer if > 0
@@ -271,75 +214,11 @@ impl Interpreter {
         let instruction_duration= self.last_instruction_time.elapsed();
         self.last_instruction_time = Instant::now();
 
-        if instruction_duration < INSTRUCTION_DELAY {
-            std::thread::sleep(INSTRUCTION_DELAY - instruction_duration);
+        let instruction_delay = self.configuration.instruction_delay();
+        if instruction_duration < instruction_delay {
+            std::thread::sleep(instruction_delay - instruction_duration);
         }
 
         true
-    }
-}
-
-#[cfg(test)]
-impl Interpreter {
-    pub fn execute_program_terminal(&mut self) -> Result<(), std::io::Error> {
-        let mut stdout = std::io::stdout();
-
-        terminal::enable_raw_mode()?;
-
-        stdout
-            .execute(Hide)?
-            .execute(Clear(ClearType::All))?
-            .execute(MoveTo(0, 0))?;
-
-        loop {
-            // handle input
-            self.keypad = [false; 16];
-            if event::poll(Duration::from_nanos(1))? {
-                if let Event::Key(key_event) = event::read()? {
-                    match key_event.code {
-                        KeyCode::Char('c')
-                            if key_event.modifiers.contains(KeyModifiers::CONTROL) =>
-                        {
-                            break
-                        }
-                        KeyCode::Char('1') => self.keypad[0x0] = true,
-                        KeyCode::Char('2') => self.keypad[0x1] = true,
-                        KeyCode::Char('3') => self.keypad[0x2] = true,
-                        KeyCode::Char('4') => self.keypad[0x3] = true,
-                        KeyCode::Char('q') => self.keypad[0x4] = true,
-                        KeyCode::Char('w') => self.keypad[0x5] = true,
-                        KeyCode::Char('e') => self.keypad[0x6] = true,
-                        KeyCode::Char('r') => self.keypad[0x7] = true,
-                        KeyCode::Char('a') => self.keypad[0x8] = true,
-                        KeyCode::Char('s') => self.keypad[0x9] = true,
-                        KeyCode::Char('d') => self.keypad[0xA] = true,
-                        KeyCode::Char('f') => self.keypad[0xB] = true,
-                        KeyCode::Char('z') => self.keypad[0xC] = true,
-                        KeyCode::Char('x') => self.keypad[0xD] = true,
-                        KeyCode::Char('c') => self.keypad[0xE] = true,
-                        KeyCode::Char('v') => self.keypad[0xF] = true,
-                        _ => {}
-                    }
-                }
-            }
-
-            stdout.execute(MoveTo(0, 0))?;
-
-            let display = self.display_to_string();
-            for (y, line) in display.lines().enumerate() {
-                stdout
-                    .execute(MoveTo(0, y as u16))?
-                    .write_all(line.as_bytes())?;
-            }
-
-            if !self.execute_current_instruction() {
-                break;
-            }
-        }
-
-        stdout.execute(Show)?;
-        terminal::disable_raw_mode()?;
-
-        Ok(())
     }
 }

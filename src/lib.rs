@@ -6,3 +6,5 @@ pub mod nibbles;
 
 #[cfg(test)]
 pub mod test;
+
+pub use interpreter::Interpreter;

@@ -3,5 +3,9 @@ name = "chip8"
 version = "0.1.0"
 edition = "2021"
 
+[dependencies]
+macros = { path = "macros"}
+
 [dev-dependencies]
 crossterm = { version = "0.28.1" }
+macroquad = "0.4.13"
