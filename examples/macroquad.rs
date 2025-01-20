@@ -75,14 +75,11 @@ async fn main() {
                         ))
                         .ui(ui)
                     {
-                        chip8 = if name.contains("hires") {
-                            display_scale = 200.0;
-                            HIGH_RESOLUTION_CHIP8
+                        (chip8, display_scale) = if name.contains("hires") {
+                            (HIGH_RESOLUTION_CHIP8.build(), 200.0)
                         } else {
-                            display_scale = 100.0;
-                            DEFAULT_CHIP8
-                        }
-                        .build();
+                            (DEFAULT_CHIP8.build(), 100.0)
+                        };
 
                         display_image = Image::gen_image_color(
                             chip8.configuration().display_width() as _,
@@ -121,7 +118,7 @@ fn get_programs() -> Vec<(std::path::PathBuf, String, TextDimensions)> {
                 .collect::<Vec<_>>()
         })
         .unwrap_or_default();
-    programs.sort_by_key(|(_, name, _)| name.chars().next().unwrap());
+    programs.sort_by_key(|(_, name, _)| name.to_lowercase());
     programs
 }
 
