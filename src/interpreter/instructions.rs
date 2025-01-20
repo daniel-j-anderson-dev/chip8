@@ -172,7 +172,12 @@ impl Interpreter {
     /// Jumps to the address address plus `VX`
     /// Bnnn: option to add from `V0` only.
     pub(super) fn jump_offset(&mut self, x_register_index: usize, address: u16) {
-        self.program_counter = address + self.variable_register[x_register_index] as u16;
+        let offset = if self.configuration.use_variable_offset() {
+            self.variable_register[x_register_index] as u16
+        } else {
+            self.variable_register[0xF] as u16
+        };
+        self.program_counter = address + offset;
     }
 
     /// Opcode: Cxkk
