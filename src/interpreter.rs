@@ -1,18 +1,8 @@
-pub use crate::interpreter::builder::{Builder, Configuration};
+pub use crate::interpreter::builder::{ConfigurationBuilder, Configuration};
 use crate::nibbles::{
     concatenate_three_nibbles, concatenate_two_nibbles, get_first_nibble, get_second_nibble,
 };
 use std::time::{Duration, Instant};
-
-#[cfg(test)]
-use crossterm::{
-    cursor::{Hide, MoveTo, Show},
-    event::{self, Event, KeyCode, KeyEvent, KeyModifiers},
-    terminal::{self, Clear, ClearType},
-    ExecutableCommand,
-};
-#[cfg(test)]
-use std::io::Write;
 
 pub mod builder;
 mod instructions;
@@ -91,10 +81,9 @@ impl Default for Interpreter {
     }
 }
 impl Interpreter {
-    pub const fn builder() -> Builder {
-        Builder::new()
+    pub const fn builder() -> ConfigurationBuilder {
+        ConfigurationBuilder::new()
     }
-
     pub fn load_program_from_path(
         &mut self,
         path: impl AsRef<std::path::Path>,
@@ -103,7 +92,6 @@ impl Interpreter {
         self.load_program_from_bytes(program_data);
         Ok(())
     }
-
     pub fn load_program_from_bytes(&mut self, program_data: impl AsRef<[u8]>) {
         let program_data = program_data.as_ref();
         let program_size = program_data.len();
@@ -119,7 +107,7 @@ impl Interpreter {
         &self.configuration
     }
 
-    pub const fn display(&self) -> &[Box<[bool]>] {
+    pub fn display(&self) -> &[Box<[bool]>] {
         &self.display
     }
 
@@ -232,71 +220,5 @@ impl Interpreter {
         }
 
         true
-    }
-}
-
-#[cfg(test)]
-impl Interpreter {
-    pub fn execute_program_terminal(&mut self) -> Result<(), std::io::Error> {
-        // prepare the terminal
-        let mut stdout = std::io::stdout();
-        terminal::enable_raw_mode()?;
-        stdout
-            .execute(Hide)?
-            .execute(Clear(ClearType::All))?
-            .execute(MoveTo(0, 0))?;
-
-        loop {
-            // handle input
-            self.keypad = [false; 16];
-            if event::poll(Duration::from_nanos(1))? {
-                if let Event::Key(key_event) = event::read()? {
-                    match key_event.code {
-                        KeyCode::Char('c')
-                            if key_event.modifiers.contains(KeyModifiers::CONTROL) =>
-                        {
-                            break
-                        }
-                        KeyCode::Char('1') => self.keypad[0x0] = true,
-                        KeyCode::Char('2') => self.keypad[0x1] = true,
-                        KeyCode::Char('3') => self.keypad[0x2] = true,
-                        KeyCode::Char('4') => self.keypad[0x3] = true,
-                        KeyCode::Char('q') => self.keypad[0x4] = true,
-                        KeyCode::Char('w') => self.keypad[0x5] = true,
-                        KeyCode::Char('e') => self.keypad[0x6] = true,
-                        KeyCode::Char('r') => self.keypad[0x7] = true,
-                        KeyCode::Char('a') => self.keypad[0x8] = true,
-                        KeyCode::Char('s') => self.keypad[0x9] = true,
-                        KeyCode::Char('d') => self.keypad[0xA] = true,
-                        KeyCode::Char('f') => self.keypad[0xB] = true,
-                        KeyCode::Char('z') => self.keypad[0xC] = true,
-                        KeyCode::Char('x') => self.keypad[0xD] = true,
-                        KeyCode::Char('c') => self.keypad[0xE] = true,
-                        KeyCode::Char('v') => self.keypad[0xF] = true,
-                        _ => {}
-                    }
-                }
-            }
-
-            // print display
-            for (y, row) in self.display.iter().enumerate() {
-                stdout.execute(MoveTo(0, y as u16))?;
-                for pixel in row.iter().map(|&pixel| if pixel { "█" } else { " " }) {
-                    stdout.write_all(pixel.as_bytes())?;
-                }
-            }
-            stdout.execute(MoveTo(0, self.configuration.display_height() as u16));
-
-            // execute instruction
-            if !self.execute_current_instruction() {
-                break;
-            }
-        }
-
-        // reset the terminal
-        stdout.execute(Show)?;
-        terminal::disable_raw_mode()?;
-
-        Ok(())
     }
 }
