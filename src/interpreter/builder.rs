@@ -77,6 +77,7 @@ impl ConfigurationBuilder {
             sound_timer: 0,
             last_timer_tick: Instant::now(),
             last_instruction_time: Instant::now(),
+            play_sound: false,
             random_state: 0x13275389,
             display: vec![
                 vec![false; self.0.display_width].into_boxed_slice();

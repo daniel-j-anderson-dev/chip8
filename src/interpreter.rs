@@ -46,6 +46,7 @@ pub struct Interpreter {
 
     last_timer_tick: Instant,
     last_instruction_time: Instant,
+    play_sound: bool,
 
     /// A collection of four rows. `true` represents a pressed button. `false` represents a unpressed button
     /// ```text
@@ -152,7 +153,9 @@ impl Interpreter {
             // Decrement sound timer if > 0, print "BEEP!!!"
             if self.sound_timer > 0 {
                 self.sound_timer -= 1;
-                println!("BEEP!!!");
+                self.play_sound = true;
+            } else {
+                self.play_sound = false;
             }
         }
     }

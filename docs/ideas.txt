@@ -1,3 +1,17 @@
-BNNN => jump_offset(address)
-    // OPTION
-    program_counter = address + registers[0]
+
+    instruction_delay
+    memory_size
+
+    key_held_plays_sound
+    use_assembly_routine
+    use_variable_offset
+    increment_on_store
+
+    program_start
+
+    display_width
+    display_height
+
+    font_data
+    font_data_start
+    font_data_end
