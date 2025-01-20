@@ -1,0 +1,27 @@
+animal_race                     KINDA
+hires_test                      KINDA
+maze                            KINDA - GLITCHY
+paddles                         KINDA
+particle_demo                   KINDA - GLITCHY
+pong                            KINDA - GLITCHY
+puzzle                          KINDA - GLITCHY
+rocket_launch                   KINDA - GLITCHY
+rocket                          KINDA - GLITCHY
+rush_hour                       KINDA - GLITCHY
+shooting_stars                  KINDA - GLITCHY
+sqrt_test                       KINDA - DRAWS BUT NO INPUT
+squash                          KINDA - DRAWS AND BOUNCES, NO INPUT
+stars                           KINDA - GLITCHY
+submarine                       KINDA - DRAWS AND MOVES, NO INPUT
+worm_v4                         KINDA - GLITCHY
+addition_problems               KINDA - DO NOT KNOW RULES.
+astro_dodge_hires               KINDA - DRAWS WEIRD, NO INPUT.
+astro_dodge                     KINDA - GLITCHY
+breakout                        KINDA - GLITCHY
+brix                            KINDA - GLITCHY
+clock                           KINDA - INPUT MAKES DIGITS BLOCKS
+craps                           KINDA - NO DRAW, HOLD 4 KEY and LOSE APPEARS
+deflection                      KINDA - DRAWS AFTER INPUT
+hi_lo                           KINDA - ON INPUT HI OR LO APPEAR
+life                            KINDA - SMALL PIXEL FLICKERS ALL OVER THE SCREEN
+nim                             KINDA - GLITCHY; ANIMAL_RACE CLONE

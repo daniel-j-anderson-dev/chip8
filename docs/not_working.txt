@@ -1,0 +1,12 @@
+puzzle_15                       BROKE - GLITCHY + NO DISPLAY
+puzzle_15_alt                   BROKE - NO DISPLAY
+delay_timer_test                BROKE - NO DISPLAY
+division_test                   BROKE - NO DISPLAY
+random_number_test              BROKE - NO DISPLAY
+sum_fun                         BROKE - NO DISPLAY
+time_bomb                       BROKE - NO DISPLAY
+figures                         BROKE
+vers                            BROKE
+kaleidoscope                    BROKE - NO MOTION
+programmable_space_fighters     BROKE - NO MOTION
+x_mirror                        BROKE - NO MOTION OR INPUT
