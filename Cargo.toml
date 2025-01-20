@@ -4,7 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-macros = { path = "macros"}
+macros = { path = "macros" }
+rand = "0.8.5"
 
 [dev-dependencies]
 crossterm = { version = "0.28.1" }
