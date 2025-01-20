@@ -1,4 +1,4 @@
-pub use crate::interpreter::builder::{ConfigurationBuilder, Configuration};
+pub use crate::interpreter::builder::{Configuration, ConfigurationBuilder};
 use crate::nibbles::{
     concatenate_three_nibbles, concatenate_two_nibbles, get_first_nibble, get_second_nibble,
 };
