@@ -104,11 +104,7 @@ impl Interpreter {
 
 // accessors
 impl Interpreter {
-    pub const fn configuration(&self) -> &Configuration {
-        &self.configuration
-    }
-
-    pub fn display(&self) -> &[Box<[bool]>] {
+    pub fn display(&self) -> &[[bool; DISPLAY_WIDTH]; DISPLAY_HEIGHT] {
         &self.display
     }
 
@@ -133,7 +129,7 @@ impl Interpreter {
 
 // mutators
 impl Interpreter {
-    pub const fn keypad_mut(&mut self) -> &mut [bool; 16] {
+    pub fn keypad_mut(&mut self) -> &mut [bool; 16] {
         &mut self.keypad
     }
 
@@ -141,8 +137,8 @@ impl Interpreter {
     /// are completely separate from the fetch-decode-execute cycle.
     fn update_timers(&mut self) {
         // We want to decrement our timers once every ~16.67ms (1/60s).
-        const TIMER_INTERVAL: Duration = Duration::from_nanos(16_666_667);
-        if self.last_timer_tick.elapsed() >= TIMER_INTERVAL {
+        let timer_interval = Duration::from_nanos(16_666_667);
+        if self.last_timer_tick.elapsed() >= timer_interval {
             self.last_timer_tick = Instant::now();
 
             // Decrement delay timer if > 0
@@ -223,5 +219,71 @@ impl Interpreter {
         }
 
         true
+    }
+}
+
+#[cfg(test)]
+impl Interpreter {
+    pub fn execute_program_terminal(&mut self) -> Result<(), std::io::Error> {
+        // prepare the terminal
+        let mut stdout = std::io::stdout();
+        terminal::enable_raw_mode()?;
+        stdout
+            .execute(Hide)?
+            .execute(Clear(ClearType::All))?
+            .execute(MoveTo(0, 0))?;
+
+        loop {
+            // handle input
+            self.keypad = [false; 16];
+            if event::poll(Duration::from_nanos(1))? {
+                if let Event::Key(key_event) = event::read()? {
+                    match key_event.code {
+                        KeyCode::Char('c')
+                            if key_event.modifiers.contains(KeyModifiers::CONTROL) =>
+                        {
+                            break
+                        }
+                        KeyCode::Char('1') => self.keypad[0x0] = true,
+                        KeyCode::Char('2') => self.keypad[0x1] = true,
+                        KeyCode::Char('3') => self.keypad[0x2] = true,
+                        KeyCode::Char('4') => self.keypad[0x3] = true,
+                        KeyCode::Char('q') => self.keypad[0x4] = true,
+                        KeyCode::Char('w') => self.keypad[0x5] = true,
+                        KeyCode::Char('e') => self.keypad[0x6] = true,
+                        KeyCode::Char('r') => self.keypad[0x7] = true,
+                        KeyCode::Char('a') => self.keypad[0x8] = true,
+                        KeyCode::Char('s') => self.keypad[0x9] = true,
+                        KeyCode::Char('d') => self.keypad[0xA] = true,
+                        KeyCode::Char('f') => self.keypad[0xB] = true,
+                        KeyCode::Char('z') => self.keypad[0xC] = true,
+                        KeyCode::Char('x') => self.keypad[0xD] = true,
+                        KeyCode::Char('c') => self.keypad[0xE] = true,
+                        KeyCode::Char('v') => self.keypad[0xF] = true,
+                        _ => {}
+                    }
+                }
+            }
+
+            // print display
+            for (y, row) in self.display.iter().enumerate() {
+                stdout.execute(MoveTo(0, y as u16))?;
+                for pixel in row.iter().map(|&pixel| if pixel { "█" } else { " " }) {
+                    stdout.write_all(pixel.as_bytes())?;
+                }
+            }
+            stdout.execute(MoveTo(0, DISPLAY_HEIGHT as u16));
+
+            // execute instruction
+            if !self.execute_current_instruction() {
+                break;
+            }
+        }
+
+        // reset the terminal
+        stdout.execute(Show)?;
+        terminal::disable_raw_mode()?;
+
+        Ok(())
     }
 }
